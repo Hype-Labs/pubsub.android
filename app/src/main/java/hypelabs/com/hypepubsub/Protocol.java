@@ -34,38 +34,42 @@ public class Protocol {
         INVALID /**< Represents a invalid packet */
     }
 
-    public void sendSubscribeMsg(byte serviceKey[], byte destNetworkId[]) throws IOException
+    public byte[] sendSubscribeMsg(byte serviceKey[], byte destNetworkId[]) throws IOException
     {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         outputStream.write((byte) SUBSCRIBE_SERVICE.ordinal());
         outputStream.write(serviceKey);
         byte packet[] = outputStream.toByteArray();
+        return packet;
     }
 
-    public void sendUnsubscribeMsg(byte serviceKey[], byte destNetworkId[]) throws IOException
+    public byte[] sendUnsubscribeMsg(byte serviceKey[], byte destNetworkId[]) throws IOException
     {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         outputStream.write((byte) MessageType.UNSUBSCRIBE_SERVICE.ordinal());
         outputStream.write(serviceKey);
         byte packet[] = outputStream.toByteArray();
+        return packet;
     }
 
-    public void sendPublishMsg(byte serviceKey[], byte destNetworkId[], String msg) throws IOException
+    public byte[] sendPublishMsg(byte serviceKey[], byte destNetworkId[], String msg) throws IOException
     {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         outputStream.write((byte) MessageType.PUBLISH.ordinal());
         outputStream.write(serviceKey);
         outputStream.write(msg.getBytes());
         byte packet[] = outputStream.toByteArray();
+        return packet;
     }
 
-    public void sendInfoMsg(byte serviceKey[], byte destNetworkId[], String msg) throws IOException
+    public byte[] sendInfoMsg(byte serviceKey[], byte destNetworkId[], String msg) throws IOException
     {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         outputStream.write((byte) MessageType.INFO.ordinal());
         outputStream.write(serviceKey);
         outputStream.write(msg.getBytes());
         byte packet[] = outputStream.toByteArray();
+        return packet;
     }
 
     public int receiveMsg(byte originNetworkId[], byte msg[]) throws IOException, NoSuchAlgorithmException {
