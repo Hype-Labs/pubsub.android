@@ -1,18 +1,16 @@
 package hypelabs.com.hypepubsub;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.LinkedList;
-import java.util.ListIterator;
 
 public class ServiceManager
 {
     byte serviceKey[];
-    ListClients subscribers;
+    ClientsList subscribers;
 
     public ServiceManager(byte service_key[])
     {
         this.serviceKey = service_key;
-        this.subscribers = new ListClients();
+        this.subscribers = new ClientsList();
     }
 
     public void addSubscriber(byte subscriberId[]) throws NoSuchAlgorithmException

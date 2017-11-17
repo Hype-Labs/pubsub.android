@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 
-public class ListSubscriptions extends LinkedList<Subscription>
+public class SubscriptionsList extends LinkedList<Subscription>
 {
     public int add(String serviceName, byte managerId[]) throws NoSuchAlgorithmException
     {

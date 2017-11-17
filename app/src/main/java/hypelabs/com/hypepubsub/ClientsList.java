@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 
-public class ListClients extends LinkedList<Client>
+public class ClientsList extends LinkedList<Client>
 {
     public int add(byte clientId[]) throws NoSuchAlgorithmException
     {

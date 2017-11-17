@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 
-public class ListServiceManagers extends LinkedList<ServiceManager>
+public class ServiceManagersList extends LinkedList<ServiceManager>
 {
     public int add(byte serviceKey[]) throws NoSuchAlgorithmException
     {

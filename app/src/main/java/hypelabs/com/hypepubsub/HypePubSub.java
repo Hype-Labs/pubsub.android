@@ -5,15 +5,14 @@ import android.util.Log;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.LinkedList;
 import java.util.ListIterator;
 
 public class HypePubSub
 {
     static HypePubSub hpb = null; // Singleton
 
-    ListSubscriptions ownSubscriptions;
-    ListServiceManagers managedServices;
+    SubscriptionsList ownSubscriptions;
+    ServiceManagersList managedServices;
 
     public static HypePubSub getInstance() throws NoSuchAlgorithmException
     {
@@ -27,8 +26,8 @@ public class HypePubSub
 
     private HypePubSub() throws NoSuchAlgorithmException
     {
-        this.ownSubscriptions = new ListSubscriptions();
-        this.managedServices = new ListServiceManagers();
+        this.ownSubscriptions = new SubscriptionsList();
+        this.managedServices = new ServiceManagersList();
     }
 
     int issueSubscribeReq(String serviceName) throws NoSuchAlgorithmException, IOException
