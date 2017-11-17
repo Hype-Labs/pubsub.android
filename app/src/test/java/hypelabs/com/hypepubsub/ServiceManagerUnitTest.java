@@ -29,6 +29,8 @@ public class ServiceManagerUnitTest
         assertEquals(serv1.subscribers.size(), 1);
         serv1.subscribers.add(SUBSCRIBER_ID2);
         assertEquals(serv1.subscribers.size(), 2);
+        serv1.subscribers.add(SUBSCRIBER_ID1); // Add duplicated subscriber
+        assertEquals(serv1.subscribers.size(), 2);
         assertArrayEquals(serv1.subscribers.get(0).id, SUBSCRIBER_ID1);
         assertArrayEquals(serv1.subscribers.get(1).id, SUBSCRIBER_ID2);
 
@@ -36,7 +38,7 @@ public class ServiceManagerUnitTest
         serv1.subscribers.remove(SUBSCRIBER_ID2);
         assertEquals(serv1.subscribers.size(), 1);
         assertArrayEquals(serv1.subscribers.get(0).id, SUBSCRIBER_ID1);
-        serv1.subscribers.remove(SUBSCRIBER_ID2);
+        serv1.subscribers.remove(SUBSCRIBER_ID2); // Remove subscriber that was already removed
         assertEquals(serv1.subscribers.size(), 1);
         assertArrayEquals(serv1.subscribers.get(0).id, SUBSCRIBER_ID1);
         serv1.subscribers.remove(SUBSCRIBER_ID1);
