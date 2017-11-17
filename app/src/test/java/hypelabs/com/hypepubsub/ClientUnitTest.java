@@ -1,27 +1,19 @@
 package hypelabs.com.hypepubsub;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.security.NoSuchAlgorithmException;
 
 import static org.junit.Assert.*;
 
-
-@RunWith(AndroidJUnit4.class)
-public class ClientTest {
+/**
+ * Example local unit test, which will execute on the development machine (host).
+ *
+ * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ */
+public class ClientUnitTest
+{
     @Test
-    public void useAppContext() throws Exception {
-        // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
-
-        assertEquals("hypelabs.com.hypepubsub", appContext.getPackageName());
-    }
-
     public void testObjectCreation() throws NoSuchAlgorithmException {
         byte CLIENT1_ID[] = new byte[] {(byte) 0x85, (byte) 0xa9, (byte) 0xd4, (byte) 0xc4, (byte) 0xde, (byte) 0xd2, (byte) 0x87, (byte) 0x75, (byte) 0x0f, (byte) 0xc0, (byte) 0xed, (byte) 0x32};
         byte CLIENT2_ID[] = new byte[] {(byte) 0x66, (byte) 0xd8, (byte) 0xf2, (byte) 0x20, (byte) 0x6a, (byte) 0x56, (byte) 0xdb, (byte) 0xe9, (byte) 0x91, (byte) 0x23, (byte) 0x3b, (byte) 0xc2};
@@ -36,11 +28,11 @@ public class ClientTest {
         Client cl3 = new Client(CLIENT3_ID);
 
         // Validate the IDs and keys of the structs created
-        assertEquals(cl1.id, CLIENT1_ID);
-        assertEquals(cl2.id, CLIENT2_ID);
-        assertEquals(cl3.id, CLIENT3_ID);
-        assertEquals(cl1.key, CLIENT1_ID_KEY);
-        assertEquals(cl2.key, CLIENT2_ID_KEY);
-        assertEquals(cl3.key, CLIENT3_ID_KEY);
+        assertArrayEquals(cl1.id, CLIENT1_ID);
+        assertArrayEquals(cl2.id, CLIENT2_ID);
+        assertArrayEquals(cl3.id, CLIENT3_ID);
+        assertArrayEquals(cl1.key, CLIENT1_ID_KEY);
+        assertArrayEquals(cl2.key, CLIENT2_ID_KEY);
+        assertArrayEquals(cl3.key, CLIENT3_ID_KEY);
     }
 }
