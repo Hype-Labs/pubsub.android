@@ -6,30 +6,35 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 
-public class ClientsList extends LinkedList<Client>
+public class ClientsList
 {
+    // Used composition instead of inheritance to hide the methods that shouldn't be called in
+    // a ServiceManagersList.
+
+    private LinkedList<Client> clients = new LinkedList<>();
+
     public int add(byte clientId[]) throws NoSuchAlgorithmException
     {
-        if(this.find(clientId) != null) // do not add the client if it is already present
+        if(find(clientId) != null) // do not add the client if it is already present
             return -1;
 
-        super.add(new Client(clientId));
+        clients.add(new Client(clientId));
         return 0;
     }
 
     public int remove(byte clientId[]) throws NoSuchAlgorithmException
     {
-        Client client = this.find(clientId);
+        Client client = find(clientId);
         if(client == null)
             return -1;
 
-        super.remove(client);
+        clients.remove(client);
         return 0;
     }
 
     public Client find(byte clientId[])
     {
-        ListIterator<Client> it = this.listIterator();
+        ListIterator<Client> it = listIterator();
         while(it.hasNext())
         {
             Client currentClient = it.next();
@@ -38,5 +43,18 @@ public class ClientsList extends LinkedList<Client>
             }
         }
         return null;
+    }
+
+    // Methods from LinkedList that we want to enable.
+    public ListIterator<Client> listIterator() {
+        return clients.listIterator();
+    }
+
+    public int size() {
+        return clients.size();
+    }
+
+    public Client get(int index) {
+        return clients.get(index);
     }
 }

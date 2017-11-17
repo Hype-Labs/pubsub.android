@@ -7,17 +7,21 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 
-public class SubscriptionsList extends LinkedList<Subscription>
+public class SubscriptionsList
 {
+    // Used composition instead of inheritance to hide the methods that shouldn't be called in
+    // a SubscriptionsList.
+    private LinkedList<Subscription> subscriptions = new LinkedList<>();
+
     public int add(String serviceName, byte managerId[]) throws NoSuchAlgorithmException
     {
         MessageDigest md = MessageDigest.getInstance("SHA-1");
         byte serviceKey[] = md.digest(serviceName.getBytes());
 
-        if(this.find(serviceKey) != null)
+        if(find(serviceKey) != null)
             return -1;
 
-        super.add(new Subscription(serviceName, managerId));
+        subscriptions.add(new Subscription(serviceName, managerId));
         return 0;
     }
 
@@ -26,17 +30,17 @@ public class SubscriptionsList extends LinkedList<Subscription>
         MessageDigest md = MessageDigest.getInstance("SHA-1");
         byte serviceKey[] = md.digest(serviceName.getBytes());
 
-        Subscription subscription = this.find(serviceKey);
+        Subscription subscription = find(serviceKey);
         if(subscription == null)
             return -1;
 
-        super.remove(subscription);
+        subscriptions.remove(subscription);
         return 0;
     }
 
     public Subscription find(byte serviceKey[])
     {
-        ListIterator<Subscription> it = this.listIterator();
+        ListIterator<Subscription> it = listIterator();
         while(it.hasNext())
         {
             Subscription currentSubs = it.next();
@@ -45,5 +49,18 @@ public class SubscriptionsList extends LinkedList<Subscription>
             }
         }
         return null;
+    }
+
+    // Methods from LinkedList that we want to enable.
+    public ListIterator<Subscription> listIterator() {
+        return subscriptions.listIterator();
+    }
+
+    public int size() {
+        return subscriptions.size();
+    }
+
+    public Subscription get(int index) {
+        return subscriptions.get(index);
     }
 }

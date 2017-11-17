@@ -57,7 +57,7 @@ public class SubscriptionsListUnitTest
         assertEquals(subscriptions.size(), 2);
 
         // Test non-existent element removal
-        subscriptions.remove(NON_EXISTENT_KEY);
+        subscriptions.remove("NonExistentService");
         assertEquals(subscriptions.size(), 2);
 
         // Test element removal

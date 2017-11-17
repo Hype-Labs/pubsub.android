@@ -6,30 +6,35 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 
-public class ServiceManagersList extends LinkedList<ServiceManager>
+public class ServiceManagersList
 {
+    // Used composition instead of inheritance to hide the methods that shouldn't be called in
+    // a ServiceManagersList.
+
+    private LinkedList<ServiceManager> serviceManagers = new LinkedList<>();
+
     public int add(byte serviceKey[]) throws NoSuchAlgorithmException
     {
-        if(this.find(serviceKey) != null)
+        if(find(serviceKey) != null)
             return -1;
 
-        super.add(new ServiceManager(serviceKey));
+        serviceManagers.add(new ServiceManager(serviceKey));
         return 0;
     }
 
     public int remove(byte serviceKey[]) throws NoSuchAlgorithmException
     {
-        ServiceManager servMan = this.find(serviceKey);
+        ServiceManager servMan = find(serviceKey);
         if(servMan == null)
             return -1;
 
-        super.remove(servMan);
+        serviceManagers.remove(servMan);
         return 0;
     }
 
     public ServiceManager find(byte serviceKey[])
     {
-        ListIterator<ServiceManager> it = this.listIterator();
+        ListIterator<ServiceManager> it = listIterator();
         while(it.hasNext())
         {
             ServiceManager currentServMan = it.next();
@@ -38,6 +43,23 @@ public class ServiceManagersList extends LinkedList<ServiceManager>
             }
         }
         return null;
+    }
+
+    // Methods from LinkedList that we want to enable.
+    public ListIterator<ServiceManager> listIterator() {
+        return serviceManagers.listIterator();
+    }
+
+    public int size() {
+        return serviceManagers.size();
+    }
+
+    public ServiceManager get(int index) {
+        return serviceManagers.get(index);
+    }
+
+    public ServiceManager getLast() {
+        return serviceManagers.getLast();
     }
 
 }

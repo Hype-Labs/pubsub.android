@@ -112,8 +112,7 @@ public class HypePubSub
 
     int processUnsubscribeReq(byte serviceKey[], byte requesterClientId[]) throws NoSuchAlgorithmException {
         ServiceManager serviceManager = this.managedServices.find(serviceKey);
-        if(serviceManager == null) // If the service does not exist we create it.
-        {
+        if(serviceManager == null) { // If the service does not exist nothing is done
             return -1;
         }
 
@@ -156,18 +155,6 @@ public class HypePubSub
         Log.d("HypePubSub", "Message received from service " + subscription.serviceName);
         Log.d("HypePubSub", "Message: " + msg);
         return 0;
-    }
-
-    boolean removeSubscription(String serviceName)
-    {
-        ListIterator<Subscription> it = this.ownSubscriptions.listIterator();
-        while(it.hasNext())
-        {
-            if(it.next().serviceName.equals(serviceName)) {
-                it.remove();
-            }
-        }
-        return false;
     }
 
     int updateManagedServices() throws NoSuchAlgorithmException
