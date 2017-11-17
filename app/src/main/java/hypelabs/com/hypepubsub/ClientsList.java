@@ -1,6 +1,7 @@
 package hypelabs.com.hypepubsub;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -32,7 +33,7 @@ public class ClientsList extends LinkedList<Client>
         while(it.hasNext())
         {
             Client currentClient = it.next();
-            if(currentClient.id.equals(clientId)) {
+            if(Arrays.equals(currentClient.id, clientId)) {
                 return currentClient;
             }
         }

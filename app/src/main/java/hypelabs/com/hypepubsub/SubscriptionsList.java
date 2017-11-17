@@ -2,6 +2,7 @@ package hypelabs.com.hypepubsub;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -39,7 +40,7 @@ public class SubscriptionsList extends LinkedList<Subscription>
         while(it.hasNext())
         {
             Subscription currentSubs = it.next();
-            if(currentSubs.serviceKey.equals(serviceKey)) {
+            if(Arrays.equals(currentSubs.serviceKey, serviceKey)) {
                 return currentSubs;
             }
         }

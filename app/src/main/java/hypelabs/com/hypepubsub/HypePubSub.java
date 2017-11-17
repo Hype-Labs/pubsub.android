@@ -5,6 +5,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.ListIterator;
 
 public class HypePubSub
@@ -44,7 +45,7 @@ public class HypePubSub
 
         // if this client is the manager of the service we don't need to send the subscribe message to
         // the protocol manager
-        if(network.ownClient.id.equals(managerId))
+        if(Arrays.equals(network.ownClient.id, managerId))
             this.processSubscribeReq(serviceKey, network.ownClient.id);
         else
             protocol.sendSubscribeMsg(serviceKey, managerId);
@@ -71,7 +72,7 @@ public class HypePubSub
 
         // if this client is the manager of the service we don't need to send the unsubscribe message
         // to the protocol manager
-        if(network.ownClient.id.equals(managerId))
+        if(Arrays.equals(network.ownClient.id, managerId))
             this.processUnsubscribeReq(serviceKey, network.ownClient.id);
         else
             protocol.sendUnsubscribeMsg(serviceKey, managerId);
@@ -89,7 +90,7 @@ public class HypePubSub
 
         // if this client is the manager of the service we don't need to send the publish message
         // to the protocol manager
-        if(network.ownClient.id.equals(managerId))
+        if(Arrays.equals(network.ownClient.id, managerId))
             this.processPublishReq(serviceKey, msg);
         else
             protocol.sendPublishMsg(serviceKey, managerId, msg);
@@ -134,7 +135,7 @@ public class HypePubSub
             if(client == null)
                 continue;
 
-            if(network.ownClient.id.equals(client.id))
+            if(Arrays.equals(network.ownClient.id, client.id))
                 this.processInfoMsg(serviceKey, msg);
             else
                 protocol.sendInfoMsg(serviceKey, client.id, msg);
@@ -180,7 +181,7 @@ public class HypePubSub
             // Check if a new Hype client with a closer key to this service key has appeared. If this happens
             // we remove the service from the list of managed services of this Hype client.
             byte newManagerId[] = network.getServiceManagerId(servMan.serviceKey);
-            if(newManagerId.equals(network.ownClient.id) == false)
+            if(Arrays.equals(newManagerId, network.ownClient.id) == false)
                 this.managedServices.remove(servMan.serviceKey);
         };
         return 0;
@@ -199,7 +200,7 @@ public class HypePubSub
             byte newManagerId[] = network.getServiceManagerId(subscription.serviceKey);
 
             // If there is a node with a closer key to the service key we change the manager
-            if (newManagerId.equals(subscription.managerId) == false)
+            if (Arrays.equals(newManagerId, subscription.managerId) == false)
             {
                 subscription.managerId = newManagerId;
                 this.issueSubscribeReq(subscription.serviceName); // re-send the subscribe request to the new manager

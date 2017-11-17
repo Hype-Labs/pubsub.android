@@ -22,6 +22,13 @@ public class ClientUnitTest
         Client cl2 = new Client(CLIENT2_ID);
         Client cl3 = new Client(CLIENT3_ID);
 
+        assertNotNull(cl1.id);
+        assertNotNull(cl2.id);
+        assertNotNull(cl3.id);
+        assertNotNull(cl1.key);
+        assertNotNull(cl2.key);
+        assertNotNull(cl3.key);
+
         // Validate the IDs and keys of the structs created
         assertArrayEquals(cl1.id, CLIENT1_ID);
         assertArrayEquals(cl2.id, CLIENT2_ID);

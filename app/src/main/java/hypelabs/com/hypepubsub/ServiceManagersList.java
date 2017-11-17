@@ -1,6 +1,7 @@
 package hypelabs.com.hypepubsub;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -32,7 +33,7 @@ public class ServiceManagersList extends LinkedList<ServiceManager>
         while(it.hasNext())
         {
             ServiceManager currentServMan = it.next();
-            if(currentServMan.serviceKey.equals(serviceKey)) {
+            if(Arrays.equals(currentServMan.serviceKey, serviceKey)) {
                 return currentServMan;
             }
         }

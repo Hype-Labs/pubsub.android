@@ -25,6 +25,13 @@ public class SubscriptionUnitTest
         Subscription subsc2 = new Subscription(SUBS2_SERVICE_NAME, SUBS2_MANAGER);
         Subscription subsc3 = new Subscription(SUBS3_SERVICE_NAME, SUBS3_MANAGER);
 
+        assertNotNull(subsc1.serviceKey);
+        assertNotNull(subsc1.managerId);
+        assertNotNull(subsc2.serviceKey);
+        assertNotNull(subsc2.managerId);
+        assertNotNull(subsc3.serviceKey);
+        assertNotNull(subsc3.managerId);
+
         assertEquals(subsc1.serviceName, SUBS1_SERVICE_NAME);
         assertEquals(subsc2.serviceName, SUBS2_SERVICE_NAME);
         assertEquals(subsc3.serviceName, SUBS3_SERVICE_NAME);

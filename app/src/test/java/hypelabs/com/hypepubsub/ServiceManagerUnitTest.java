@@ -17,6 +17,11 @@ public class ServiceManagerUnitTest
         ServiceManager serv1 = new ServiceManager(SERVICE1_KEY);
         ServiceManager serv2 = new ServiceManager(SERVICE2_KEY);
 
+        assertNotNull(serv1.serviceKey);
+        assertNotNull(serv2.serviceKey);
+        assertNotNull(serv1.subscribers);
+        assertNotNull(serv2.subscribers);
+
         assertArrayEquals(serv1.serviceKey, SERVICE1_KEY);
         assertArrayEquals(serv2.serviceKey, SERVICE2_KEY);
         assertEquals(serv1.subscribers.size(), 0);
