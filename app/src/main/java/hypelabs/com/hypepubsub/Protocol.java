@@ -126,7 +126,7 @@ public class Protocol {
         return 0;
     }
 
-    int receiveInfoMsg(byte msg[])
+    int receiveInfoMsg(byte msg[]) throws NoSuchAlgorithmException
     {
         if(msg.length <= (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
             return -1;

@@ -15,13 +15,20 @@ public class HypePubSub
     ListSubscriptions ownSubscriptions;
     ListServiceManagers managedServices;
 
-    public static HypePubSub getInstance()
+    public static HypePubSub getInstance() throws NoSuchAlgorithmException
     {
-        if (hpb == null) {
+        if (hpb == null)
+        {
             hpb = new HypePubSub();
         }
 
         return hpb;
+    }
+
+    private HypePubSub() throws NoSuchAlgorithmException
+    {
+        this.ownSubscriptions = new ListSubscriptions();
+        this.managedServices = new ListServiceManagers();
     }
 
     int issueSubscribeReq(String serviceName) throws NoSuchAlgorithmException, IOException

@@ -12,6 +12,7 @@ public class ServiceManager
     public ServiceManager(byte service_key[])
     {
         this.serviceKey = service_key;
+        this.subscribers = new ListClients();
     }
 
     public void addSubscriber(byte subscriberId[]) throws NoSuchAlgorithmException
