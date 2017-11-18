@@ -1,7 +1,6 @@
 package hypelabs.com.hypepubsub;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.LinkedList;
 import java.util.ListIterator;
 
 
@@ -11,11 +10,12 @@ public class Network
     static Network network = null; // Singleton
 
     Client ownClient;
-    LinkedList<Client> networkClients;
+    ClientsList networkClients;
 
     private Network() throws NoSuchAlgorithmException
     {
         this.ownClient = new Client(this.getOwnId());
+        this.networkClients = new ClientsList();
     }
 
     public static Network getInstance() throws NoSuchAlgorithmException
