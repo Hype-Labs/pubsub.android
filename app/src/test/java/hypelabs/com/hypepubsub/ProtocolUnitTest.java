@@ -11,26 +11,7 @@ import static org.junit.Assert.*;
 public class ProtocolUnitTest
 {
     @Test
-    public void testProtocol() throws IOException
-    {
-        testMessageSending();
-        testMessageReceiving();
-    }
-
-    void testMessageSending() throws IOException
-    {
-        testSendingSubscribe();
-        testSendingUnsubscribe();
-        testSendingPublish();
-        testSendingInfo();
-    }
-
-    void testMessageReceiving() throws IOException
-    {
-        testGetMessageType();
-    }
-
-    void testSendingSubscribe() throws IOException
+    public void testSendingSubscribe() throws IOException
     {
         Protocol protocol = Protocol.getInstance();
 
@@ -51,7 +32,8 @@ public class ProtocolUnitTest
         assertArrayEquals(Arrays.copyOfRange(packet, offset, packet.length), SERVICE_KEY2);
     }
 
-    void testSendingUnsubscribe() throws IOException
+    @Test
+    public void testSendingUnsubscribe() throws IOException
     {
         Protocol protocol = Protocol.getInstance();
 
@@ -73,7 +55,8 @@ public class ProtocolUnitTest
         assertArrayEquals(Arrays.copyOfRange(packet, offset, packet.length), SERVICE_KEY2);
     }
 
-    void testSendingPublish() throws IOException
+    @Test
+    public void testSendingPublish() throws IOException
     {
         Protocol protocol = Protocol.getInstance();
 
@@ -101,7 +84,8 @@ public class ProtocolUnitTest
         assertArrayEquals(Arrays.copyOfRange(packet, offset, packet.length), MSG2.getBytes());
     }
 
-    void testSendingInfo() throws IOException
+    @Test
+    public void testSendingInfo() throws IOException
     {
         Protocol protocol = Protocol.getInstance();
 
@@ -129,7 +113,8 @@ public class ProtocolUnitTest
         assertArrayEquals(Arrays.copyOfRange(packet, offset, packet.length), MSG2.getBytes());
     }
 
-    void testGetMessageType() throws IOException
+    @Test
+    public void testGetMessageType() throws IOException
     {
         Protocol protocol = Protocol.getInstance();
 

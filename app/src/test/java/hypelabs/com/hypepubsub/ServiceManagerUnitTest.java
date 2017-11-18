@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 public class ServiceManagerUnitTest
 {
     @Test
-    public void testObjectCreation() throws NoSuchAlgorithmException
+    public void testServiceManager() throws NoSuchAlgorithmException
     {
         byte SERVICE1_KEY[] = {(byte) 0x49, (byte) 0x48, (byte) 0xf4, (byte) 0xe7, (byte) 0x11, (byte) 0x80, (byte) 0x98, (byte) 0x0f, (byte) 0xd7, (byte) 0xb9, (byte) 0x6b, (byte) 0x22, (byte) 0xbe, (byte) 0x91, (byte) 0x54, (byte) 0x20, (byte) 0xe4, (byte) 0xcd, (byte) 0x7e, (byte) 0x2b};
         byte SERVICE2_KEY[] = {(byte) 0x0f, (byte) 0x20, (byte) 0xf1, (byte) 0x8b, (byte) 0x65, (byte) 0xbf, (byte) 0x1e, (byte) 0xa0, (byte) 0xcb, (byte) 0x21, (byte) 0xda, (byte) 0x6f, (byte) 0xd8, (byte) 0xf9, (byte) 0xe5, (byte) 0x5b, (byte) 0x0b, (byte) 0xcb, (byte) 0x54, (byte) 0x84};

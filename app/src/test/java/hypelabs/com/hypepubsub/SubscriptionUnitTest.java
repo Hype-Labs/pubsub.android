@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 public class SubscriptionUnitTest
 {
     @Test
-    public void testObjectCreation() throws NoSuchAlgorithmException
+    public void testSubscription() throws NoSuchAlgorithmException
     {
         String SUBS1_SERVICE_NAME = "CoffeService";
         String SUBS2_SERVICE_NAME = "HypeSports";

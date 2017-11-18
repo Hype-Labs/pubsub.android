@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 public class ClientsListUnitTest
 {
     @Test
-    public void testListOperations() throws NoSuchAlgorithmException
+    public void testClientsList() throws NoSuchAlgorithmException
     {
         byte CLIENT_ID1[] = new byte[] {(byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05, (byte) 0x06, (byte) 0x07, (byte) 0x08, (byte) 0x09, (byte) 0x10, (byte) 0x11, (byte) 0x12};
         byte CLIENT_ID2[] = new byte[] {(byte) 0x12, (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05, (byte) 0x06, (byte) 0x07, (byte) 0x08, (byte) 0x09, (byte) 0x10, (byte) 0x11};

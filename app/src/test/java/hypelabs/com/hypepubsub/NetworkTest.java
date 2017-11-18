@@ -12,12 +12,7 @@ import static org.junit.Assert.*;
 public class NetworkTest
 {
     @Test
-    public void testNetwork() throws NoSuchAlgorithmException
-    {
-        testGetServiceManager();
-    }
-
-    private void testGetServiceManager() throws NoSuchAlgorithmException
+    public void testGetServiceManager() throws NoSuchAlgorithmException
     {
         Network network = Network.getInstance();
 
