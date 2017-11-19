@@ -6,13 +6,67 @@
     android:layout_height="match_parent"
     tools:context="hypelabs.com.hypepubsub.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <Button
+        android:id="@+id/subscribeButton"
+        android:layout_width="120dp"
+        android:layout_height="49dp"
+        android:text="Subscribe"
+        tools:layout_editor_absoluteX="224dp"
+        tools:layout_editor_absoluteY="55dp" />
 
+    <Button
+        android:id="@+id/unsubscribeButton"
+        android:layout_width="120dp"
+        android:layout_height="47dp"
+        android:text="Unsubscribe"
+        tools:layout_editor_absoluteX="224dp"
+        tools:layout_editor_absoluteY="124dp" />
+
+    <Button
+        android:id="@+id/publishButton"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="Publish"
+        tools:layout_editor_absoluteX="224dp"
+        tools:layout_editor_absoluteY="242dp" />
+
+    <EditText
+        android:id="@+id/subscribeText"
+        android:layout_width="190dp"
+        android:layout_height="43dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="ServiceToSubscribe"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="55dp" />
+
+    <EditText
+        android:id="@+id/unsubscribeText"
+        android:layout_width="190dp"
+        android:layout_height="45dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="ServiceToUnsubscribe"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="124dp" />
+
+    <EditText
+        android:id="@+id/publishServiceText"
+        android:layout_width="190dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="ServiceToPublish"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="215dp" />
+
+    <EditText
+        android:id="@+id/publishMsgText"
+        android:layout_width="190dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="MessageToPublish"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="275dp" />
 </android.support.constraint.ConstraintLayout>
