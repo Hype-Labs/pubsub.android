@@ -115,8 +115,11 @@ public class HypePubSub
         if(serviceManager == null) { // If the service does not exist nothing is done
             return -1;
         }
-
         serviceManager.subscribers.remove(requesterClientId);
+
+        if(serviceManager.subscribers.size() == 0) // Remove the service if there is no subscribers
+            this.managedServices.remove(serviceKey);
+
         return 0;
     }
 
