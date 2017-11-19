@@ -25,7 +25,7 @@ public class SubscriptionsListUnitTest
         Subscription auxSubscr;
         SubscriptionsList subscriptions = new SubscriptionsList();
         assertNotNull(subscriptions);
-        assertEquals(subscriptions.size(), 0);
+        assertEquals(0, subscriptions.size());
 
         // Add 3 subscriptions to the list
         subscriptions.add(SERVICE3_NAME, MANAGER_ID3);
@@ -33,13 +33,13 @@ public class SubscriptionsListUnitTest
         subscriptions.add(SERVICE2_NAME, MANAGER_ID2);
 
         // Validate that the subscriptions are inserted in the right order
-        assertArrayEquals(subscriptions.get(0).managerId, MANAGER_ID3);
-        assertEquals(subscriptions.get(0).serviceName, SERVICE3_NAME);
-        assertArrayEquals(subscriptions.get(1).managerId, MANAGER_ID1);
-        assertEquals(subscriptions.get(1).serviceName, SERVICE1_NAME);
-        assertArrayEquals(subscriptions.get(2).managerId, MANAGER_ID2);
-        assertEquals(subscriptions.get(2).serviceName, SERVICE2_NAME);
-        assertEquals(subscriptions.size(), 3);
+        assertArrayEquals(MANAGER_ID3, subscriptions.get(0).managerId);
+        assertEquals(SERVICE3_NAME, subscriptions.get(0).serviceName);
+        assertArrayEquals(MANAGER_ID1, subscriptions.get(1).managerId);
+        assertEquals(SERVICE1_NAME, subscriptions.get(1).serviceName);
+        assertArrayEquals(MANAGER_ID2, subscriptions.get(2).managerId);
+        assertEquals(SERVICE2_NAME, subscriptions.get(2).serviceName);
+        assertEquals(3, subscriptions.size());
 
         // Test find against existent and non-existent service keys
         byte NON_EXISTENT_KEY[] = new byte[] {(byte) 0xee, (byte) 0x5d, (byte) 0xa9, (byte) 0xde, (byte) 0x58, (byte) 0xa0, (byte) 0xa5, (byte) 0xfb, (byte) 0x42, (byte) 0x14, (byte) 0x7b, (byte) 0xab, (byte) 0x42, (byte) 0xa4, (byte) 0x07, (byte) 0x80, (byte) 0xdf, (byte) 0x94, (byte) 0x48, (byte) 0x88};
@@ -50,24 +50,24 @@ public class SubscriptionsListUnitTest
 
         // Test element removal
         subscriptions.remove(SERVICE3_NAME);
-        assertArrayEquals(subscriptions.get(0).managerId, MANAGER_ID1);
-        assertEquals(subscriptions.get(0).serviceName, SERVICE1_NAME);
-        assertArrayEquals(subscriptions.get(1).managerId, MANAGER_ID2);
-        assertEquals(subscriptions.get(1).serviceName, SERVICE2_NAME);
-        assertEquals(subscriptions.size(), 2);
+        assertArrayEquals(MANAGER_ID1, subscriptions.get(0).managerId);
+        assertEquals(SERVICE1_NAME, subscriptions.get(0).serviceName);
+        assertArrayEquals(MANAGER_ID2, subscriptions.get(1).managerId);
+        assertEquals(SERVICE2_NAME, subscriptions.get(1).serviceName);
+        assertEquals(2, subscriptions.size());
 
         // Test non-existent element removal
         subscriptions.remove("NonExistentService");
-        assertEquals(subscriptions.size(), 2);
+        assertEquals(2, subscriptions.size());
 
         // Test element removal
         subscriptions.remove(SERVICE2_NAME);
-        assertArrayEquals(subscriptions.get(0).managerId, MANAGER_ID1);
-        assertEquals(subscriptions.get(0).serviceName, SERVICE1_NAME);
-        assertEquals(subscriptions.size(), 1);
+        assertArrayEquals(MANAGER_ID1, subscriptions.get(0).managerId);
+        assertEquals(SERVICE1_NAME, subscriptions.get(0).serviceName);
+        assertEquals(1, subscriptions.size());
 
         // Test last element removal
         subscriptions.remove(SERVICE1_NAME);
-        assertEquals(subscriptions.size(), 0);
+        assertEquals(0, subscriptions.size());
     }
 }

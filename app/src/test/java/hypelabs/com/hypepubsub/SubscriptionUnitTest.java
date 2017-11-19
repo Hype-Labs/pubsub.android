@@ -32,16 +32,16 @@ public class SubscriptionUnitTest
         assertNotNull(subsc3.serviceKey);
         assertNotNull(subsc3.managerId);
 
-        assertEquals(subsc1.serviceName, SUBS1_SERVICE_NAME);
-        assertEquals(subsc2.serviceName, SUBS2_SERVICE_NAME);
-        assertEquals(subsc3.serviceName, SUBS3_SERVICE_NAME);
+        assertEquals(SUBS1_SERVICE_NAME, subsc1.serviceName);
+        assertEquals(SUBS2_SERVICE_NAME, subsc2.serviceName);
+        assertEquals(SUBS3_SERVICE_NAME, subsc3.serviceName);
 
-        assertArrayEquals(subsc1.serviceKey, SUBS1_SERVICE_KEY);
-        assertArrayEquals(subsc2.serviceKey, SUBS2_SERVICE_KEY);
-        assertArrayEquals(subsc3.serviceKey, SUBS3_SERVICE_KEY);
+        assertArrayEquals(SUBS1_SERVICE_KEY, subsc1.serviceKey);
+        assertArrayEquals(SUBS2_SERVICE_KEY, subsc2.serviceKey);
+        assertArrayEquals(SUBS3_SERVICE_KEY, subsc3.serviceKey);
 
-        assertArrayEquals(subsc1.managerId, SUBS1_MANAGER);
-        assertArrayEquals(subsc2.managerId, SUBS2_MANAGER);
-        assertArrayEquals(subsc3.managerId, SUBS3_MANAGER);
+        assertArrayEquals(SUBS1_MANAGER, subsc1.managerId);
+        assertArrayEquals(SUBS2_MANAGER, subsc2.managerId);
+        assertArrayEquals(SUBS3_MANAGER, subsc3.managerId);
     }
 }

@@ -34,8 +34,8 @@ public class NetworkTest
         network.ownClient.id = fakeOwnClient.id;
         network.ownClient.key = fakeOwnClient.key;
 
-        assertArrayEquals(network.getServiceManagerId(SERVICE_KEY1), ID4);
-        assertArrayEquals(network.getServiceManagerId(SERVICE_KEY2), ID1);
+        assertArrayEquals(ID4, network.getServiceManagerId(SERVICE_KEY1));
+        assertArrayEquals(ID1, network.getServiceManagerId(SERVICE_KEY2));
     }
 
 }

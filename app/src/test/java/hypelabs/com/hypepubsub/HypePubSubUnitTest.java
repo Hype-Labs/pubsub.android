@@ -31,24 +31,24 @@ public class HypePubSubUnitTest
     {
         HypePubSub hpb = HypePubSub.getInstance();
 
-        assertEquals(hpb.managedServices.size(), 0);
+        assertEquals(0, hpb.managedServices.size());
 
-        assertEquals(hpb.processUnsubscribeReq(HPB_TEST_SERVICE1, HPB_TEST_CLIENT1), -1);
+        assertEquals(-1, hpb.processUnsubscribeReq(HPB_TEST_SERVICE1, HPB_TEST_CLIENT1));
 
         // Basic test with 2 services with 3 clients
         hpb.processSubscribeReq(HPB_TEST_SERVICE1, HPB_TEST_CLIENT1);
-        assertEquals(hpb.managedServices.size(), 1);
+        assertEquals(1, hpb.managedServices.size());
         hpb.processSubscribeReq(HPB_TEST_SERVICE2, HPB_TEST_CLIENT2);
-        assertEquals(hpb.managedServices.size(), 2);
+        assertEquals(2, hpb.managedServices.size());
         hpb.processSubscribeReq(HPB_TEST_SERVICE1, HPB_TEST_CLIENT3);
-        assertEquals(hpb.managedServices.size(), 2);
+        assertEquals(2, hpb.managedServices.size());
 
         ServiceManager service1 = hpb.managedServices.find(HPB_TEST_SERVICE1);
         assertNotNull(service1);
-        assertEquals(service1.subscribers.size(), 2);
+        assertEquals(2, service1.subscribers.size());
         ServiceManager service2 = hpb.managedServices.find(HPB_TEST_SERVICE2);
         assertNotNull(service2);
-        assertEquals(service2.subscribers.size(), 1);
+        assertEquals(1, service2.subscribers.size());
 
         assertNotNull(service1.subscribers.find(HPB_TEST_CLIENT1));
         assertNull(service1.subscribers.find(HPB_TEST_CLIENT2));
@@ -59,11 +59,11 @@ public class HypePubSubUnitTest
 
         // Test unsubscriptions on the 1st managed service
         hpb.processUnsubscribeReq(HPB_TEST_SERVICE1, HPB_TEST_CLIENT1);
-        assertEquals(service1.subscribers.size(), 1);
+        assertEquals(1, service1.subscribers.size());
         hpb.processUnsubscribeReq(HPB_TEST_SERVICE1, HPB_TEST_CLIENT2);
-        assertEquals(service1.subscribers.size(), 1);
+        assertEquals(1, service1.subscribers.size());
         hpb.processUnsubscribeReq(HPB_TEST_SERVICE1, HPB_TEST_CLIENT3);
-        assertEquals(hpb.managedServices.size(), 1);
+        assertEquals(1, hpb.managedServices.size());
 
         // Test subscriptions on the 2nd managed service
         hpb.processSubscribeReq(HPB_TEST_SERVICE2, HPB_TEST_CLIENT1);
@@ -76,7 +76,7 @@ public class HypePubSubUnitTest
         hpb.processSubscribeReq(HPB_TEST_SERVICE2, HPB_TEST_CLIENT8);
         hpb.processSubscribeReq(HPB_TEST_SERVICE2, HPB_TEST_CLIENT9);
         hpb.processSubscribeReq(HPB_TEST_SERVICE2, HPB_TEST_CLIENT10);
-        assertEquals(service2.subscribers.size(), 10);
+        assertEquals(10, service2.subscribers.size());
         assertNotNull(service2.subscribers.find(HPB_TEST_CLIENT1));
         assertNotNull(service2.subscribers.find(HPB_TEST_CLIENT2));
         assertNotNull(service2.subscribers.find(HPB_TEST_CLIENT3));
@@ -92,7 +92,7 @@ public class HypePubSubUnitTest
         hpb.processUnsubscribeReq(HPB_TEST_SERVICE2, HPB_TEST_CLIENT3);
         hpb.processUnsubscribeReq(HPB_TEST_SERVICE2, HPB_TEST_CLIENT7);
         hpb.processUnsubscribeReq(HPB_TEST_SERVICE2, HPB_TEST_CLIENT9);
-        assertEquals(service2.subscribers.size(), 7);
+        assertEquals(7, service2.subscribers.size());
         assertNull(service2.subscribers.find(HPB_TEST_CLIENT3));
         assertNull(service2.subscribers.find(HPB_TEST_CLIENT7));
         assertNull(service2.subscribers.find(HPB_TEST_CLIENT9));

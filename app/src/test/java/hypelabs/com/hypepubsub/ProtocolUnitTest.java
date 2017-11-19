@@ -24,12 +24,12 @@ public class ProtocolUnitTest
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
 
         byte packet[] = protocol.sendSubscribeMsg(SERVICE_KEY1, DEST_ID1);
-        assertEquals(packet[0], (byte) Protocol.MessageType.SUBSCRIBE_SERVICE.ordinal());
-        assertArrayEquals(Arrays.copyOfRange(packet, offset, packet.length), SERVICE_KEY1);
+        assertEquals((byte) Protocol.MessageType.SUBSCRIBE_SERVICE.ordinal(), packet[0]);
+        assertArrayEquals(SERVICE_KEY1, Arrays.copyOfRange(packet, offset, packet.length));
 
         packet = protocol.sendSubscribeMsg(SERVICE_KEY2, DEST_ID2);
-        assertEquals(packet[0], (byte) Protocol.MessageType.SUBSCRIBE_SERVICE.ordinal());
-        assertArrayEquals(Arrays.copyOfRange(packet, offset, packet.length), SERVICE_KEY2);
+        assertEquals((byte) Protocol.MessageType.SUBSCRIBE_SERVICE.ordinal(), packet[0]);
+        assertArrayEquals(SERVICE_KEY2, Arrays.copyOfRange(packet, offset, packet.length));
     }
 
     @Test
@@ -47,12 +47,12 @@ public class ProtocolUnitTest
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
 
         packet = protocol.sendUnsubscribeMsg(SERVICE_KEY1, DEST_ID1);
-        assertEquals(packet[0], (byte) Protocol.MessageType.UNSUBSCRIBE_SERVICE.ordinal());
-        assertArrayEquals(Arrays.copyOfRange(packet, offset, packet.length), SERVICE_KEY1);
+        assertEquals((byte) Protocol.MessageType.UNSUBSCRIBE_SERVICE.ordinal(), packet[0]);
+        assertArrayEquals(SERVICE_KEY1, Arrays.copyOfRange(packet, offset, packet.length));
 
         packet = protocol.sendUnsubscribeMsg(SERVICE_KEY2, DEST_ID2);
-        assertEquals(packet[0], (byte) Protocol.MessageType.UNSUBSCRIBE_SERVICE.ordinal());
-        assertArrayEquals(Arrays.copyOfRange(packet, offset, packet.length), SERVICE_KEY2);
+        assertEquals((byte) Protocol.MessageType.UNSUBSCRIBE_SERVICE.ordinal(), packet[0]);
+        assertArrayEquals(SERVICE_KEY2, Arrays.copyOfRange(packet, offset, packet.length));
     }
 
     @Test
@@ -70,18 +70,18 @@ public class ProtocolUnitTest
         String MSG2 = "HypePubSubApp";
 
         packet = protocol.sendPublishMsg(SERVICE_KEY1, DEST_ID1, MSG1);
-        assertEquals(packet[0], (byte) Protocol.MessageType.PUBLISH.ordinal());
+        assertEquals((byte) Protocol.MessageType.PUBLISH.ordinal(), packet[0]);
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
-        assertArrayEquals(Arrays.copyOfRange(packet, offset, offset+Constants.SHA1_BYTE_SIZE), SERVICE_KEY1);
+        assertArrayEquals(SERVICE_KEY1, Arrays.copyOfRange(packet, offset, offset+Constants.SHA1_BYTE_SIZE));
         offset += Constants.SHA1_BYTE_SIZE;
-        assertArrayEquals(Arrays.copyOfRange(packet, offset, packet.length), MSG1.getBytes());
+        assertArrayEquals(MSG1.getBytes(), Arrays.copyOfRange(packet, offset, packet.length));
 
         packet = protocol.sendPublishMsg(SERVICE_KEY2, DEST_ID2, MSG2);
-        assertEquals(packet[0], (byte) Protocol.MessageType.PUBLISH.ordinal());
+        assertEquals((byte) Protocol.MessageType.PUBLISH.ordinal(), packet[0]);
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
-        assertArrayEquals(Arrays.copyOfRange(packet, offset, offset+Constants.SHA1_BYTE_SIZE), SERVICE_KEY2);
+        assertArrayEquals(SERVICE_KEY2, Arrays.copyOfRange(packet, offset, offset+Constants.SHA1_BYTE_SIZE));
         offset += Constants.SHA1_BYTE_SIZE;
-        assertArrayEquals(Arrays.copyOfRange(packet, offset, packet.length), MSG2.getBytes());
+        assertArrayEquals(MSG2.getBytes(), Arrays.copyOfRange(packet, offset, packet.length));
     }
 
     @Test
@@ -99,18 +99,18 @@ public class ProtocolUnitTest
         String MSG2 = "Info-HypePubSubApp";
 
         packet = protocol.sendInfoMsg(SERVICE_KEY1, DEST_ID1, MSG1);
-        assertEquals(packet[0], (byte) Protocol.MessageType.INFO.ordinal());
+        assertEquals((byte) Protocol.MessageType.INFO.ordinal(), packet[0]);
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
-        assertArrayEquals(Arrays.copyOfRange(packet, offset, offset+Constants.SHA1_BYTE_SIZE), SERVICE_KEY1);
+        assertArrayEquals(SERVICE_KEY1, Arrays.copyOfRange(packet, offset, offset+Constants.SHA1_BYTE_SIZE));
         offset += Constants.SHA1_BYTE_SIZE;
-        assertArrayEquals(Arrays.copyOfRange(packet, offset, packet.length), MSG1.getBytes());
+        assertArrayEquals(MSG1.getBytes(), Arrays.copyOfRange(packet, offset, packet.length));
 
         packet = protocol.sendInfoMsg(SERVICE_KEY2, DEST_ID2, MSG2);
-        assertEquals(packet[0], (byte) Protocol.MessageType.INFO.ordinal());
+        assertEquals((byte) Protocol.MessageType.INFO.ordinal(), packet[0]);
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
-        assertArrayEquals(Arrays.copyOfRange(packet, offset, offset+Constants.SHA1_BYTE_SIZE), SERVICE_KEY2);
+        assertArrayEquals(SERVICE_KEY2, Arrays.copyOfRange(packet, offset, offset+Constants.SHA1_BYTE_SIZE));
         offset += Constants.SHA1_BYTE_SIZE;
-        assertArrayEquals(Arrays.copyOfRange(packet, offset, packet.length), MSG2.getBytes());
+        assertArrayEquals(MSG2.getBytes(), Arrays.copyOfRange(packet, offset, packet.length));
     }
 
     @Test
@@ -126,32 +126,32 @@ public class ProtocolUnitTest
         outputStream.write((byte) Protocol.MessageType.SUBSCRIBE_SERVICE.ordinal());
         outputStream.write(SERVICE_KEY);
         packet = outputStream.toByteArray();
-        assertEquals(protocol.getMessageType(packet), Protocol.MessageType.SUBSCRIBE_SERVICE);
+        assertEquals(Protocol.MessageType.SUBSCRIBE_SERVICE, protocol.getMessageType(packet));
 
         outputStream.reset();
         outputStream.write((byte) Protocol.MessageType.UNSUBSCRIBE_SERVICE.ordinal());
         outputStream.write(SERVICE_KEY);
         packet = outputStream.toByteArray();
-        assertEquals(protocol.getMessageType(packet), Protocol.MessageType.UNSUBSCRIBE_SERVICE);
+        assertEquals(Protocol.MessageType.UNSUBSCRIBE_SERVICE, protocol.getMessageType(packet));
 
         outputStream.reset();
         outputStream.write((byte) Protocol.MessageType.PUBLISH.ordinal());
         outputStream.write(SERVICE_KEY);
         outputStream.write(MSG.getBytes());
         packet = outputStream.toByteArray();
-        assertEquals(protocol.getMessageType(packet), Protocol.MessageType.PUBLISH);
+        assertEquals(Protocol.MessageType.PUBLISH, protocol.getMessageType(packet));
 
         outputStream.reset();
         outputStream.write((byte) Protocol.MessageType.INFO.ordinal());
         outputStream.write(SERVICE_KEY);
         outputStream.write(MSG.getBytes());
         packet = outputStream.toByteArray();
-        assertEquals(protocol.getMessageType(packet), Protocol.MessageType.INFO);
+        assertEquals(Protocol.MessageType.INFO, protocol.getMessageType(packet));
 
         outputStream.reset();
         outputStream.write((byte) 0xFF);
         outputStream.write(SERVICE_KEY);
         packet = outputStream.toByteArray();
-        assertEquals(protocol.getMessageType(packet), Protocol.MessageType.INVALID);
+        assertEquals(Protocol.MessageType.INVALID, protocol.getMessageType(packet));
     }
 }

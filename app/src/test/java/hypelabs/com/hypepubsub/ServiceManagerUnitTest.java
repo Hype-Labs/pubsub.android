@@ -22,31 +22,31 @@ public class ServiceManagerUnitTest
         assertNotNull(serv1.subscribers);
         assertNotNull(serv2.subscribers);
 
-        assertArrayEquals(serv1.serviceKey, SERVICE1_KEY);
-        assertArrayEquals(serv2.serviceKey, SERVICE2_KEY);
-        assertEquals(serv1.subscribers.size(), 0);
-        assertEquals(serv2.subscribers.size(),0);
+        assertArrayEquals(SERVICE1_KEY, serv1.serviceKey);
+        assertArrayEquals(SERVICE2_KEY, serv2.serviceKey);
+        assertEquals(0, serv1.subscribers.size());
+        assertEquals(0, serv2.subscribers.size());
 
         // Test add_subscriber
         byte SUBSCRIBER_ID1[] = {(byte) 0x85, (byte) 0xa9, (byte) 0xd4, (byte) 0xc4, (byte) 0xde, (byte) 0xd2, (byte) 0x87, (byte) 0x75, (byte) 0x0f, (byte) 0xc0, (byte) 0xed, (byte) 0x32};
         byte SUBSCRIBER_ID2[] = {(byte) 0xe7, (byte) 0x79, (byte) 0x34, (byte) 0x6c, (byte) 0x66, (byte) 0x9c, (byte) 0x17, (byte) 0xf4, (byte) 0x34, (byte) 0xc8, (byte) 0xce, (byte) 0x0e};
         serv1.subscribers.add(SUBSCRIBER_ID1);
-        assertEquals(serv1.subscribers.size(), 1);
+        assertEquals(1, serv1.subscribers.size());
         serv1.subscribers.add(SUBSCRIBER_ID2);
-        assertEquals(serv1.subscribers.size(), 2);
+        assertEquals(2, serv1.subscribers.size());
         serv1.subscribers.add(SUBSCRIBER_ID1); // Add duplicated subscriber
-        assertEquals(serv1.subscribers.size(), 2);
-        assertArrayEquals(serv1.subscribers.get(0).id, SUBSCRIBER_ID1);
-        assertArrayEquals(serv1.subscribers.get(1).id, SUBSCRIBER_ID2);
+        assertEquals(2, serv1.subscribers.size());
+        assertArrayEquals(SUBSCRIBER_ID1, serv1.subscribers.get(0).id);
+        assertArrayEquals(SUBSCRIBER_ID2, serv1.subscribers.get(1).id);
 
         // Test remove_subscriber
         serv1.subscribers.remove(SUBSCRIBER_ID2);
-        assertEquals(serv1.subscribers.size(), 1);
-        assertArrayEquals(serv1.subscribers.get(0).id, SUBSCRIBER_ID1);
+        assertEquals(1, serv1.subscribers.size());
+        assertArrayEquals(SUBSCRIBER_ID1, serv1.subscribers.get(0).id);
         serv1.subscribers.remove(SUBSCRIBER_ID2); // Remove subscriber that was already removed
-        assertEquals(serv1.subscribers.size(), 1);
-        assertArrayEquals(serv1.subscribers.get(0).id, SUBSCRIBER_ID1);
+        assertEquals(1, serv1.subscribers.size());
+        assertArrayEquals(SUBSCRIBER_ID1, serv1.subscribers.get(0).id);
         serv1.subscribers.remove(SUBSCRIBER_ID1);
-        assertEquals(serv1.subscribers.size(), 0);
+        assertEquals(0, serv1.subscribers.size());
     }
 }

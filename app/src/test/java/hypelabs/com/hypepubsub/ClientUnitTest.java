@@ -30,11 +30,11 @@ public class ClientUnitTest
         assertNotNull(cl3.key);
 
         // Validate the IDs and keys of the structs created
-        assertArrayEquals(cl1.id, CLIENT1_ID);
-        assertArrayEquals(cl2.id, CLIENT2_ID);
-        assertArrayEquals(cl3.id, CLIENT3_ID);
-        assertArrayEquals(cl1.key, CLIENT1_ID_KEY);
-        assertArrayEquals(cl2.key, CLIENT2_ID_KEY);
-        assertArrayEquals(cl3.key, CLIENT3_ID_KEY);
+        assertArrayEquals(CLIENT1_ID, cl1.id);
+        assertArrayEquals(CLIENT2_ID, cl2.id);
+        assertArrayEquals(CLIENT3_ID, cl3.id);
+        assertArrayEquals(CLIENT1_ID_KEY, cl1.key);
+        assertArrayEquals(CLIENT2_ID_KEY, cl2.key);
+        assertArrayEquals(CLIENT3_ID_KEY, cl3.key);
     }
 }
