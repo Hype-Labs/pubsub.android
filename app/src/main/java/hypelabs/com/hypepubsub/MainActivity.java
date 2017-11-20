@@ -1,8 +1,8 @@
 package hypelabs.com.hypepubsub;
 
-import android.app.Dialog;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +15,6 @@ import android.text.InputType;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ListIterator;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -25,8 +24,8 @@ public class MainActivity extends AppCompatActivity
     Button publishButton;
     Button getOwnIdButton;
     Button getHypeDevicesButton;
-    Button getOwnSubscriptions;
-    Button getManagedServices;
+    Button getOwnSubscriptionsButton;
+    Button getManagedServicesButton;
 
 
     TextView serviceToSubscribe;
@@ -45,14 +44,15 @@ public class MainActivity extends AppCompatActivity
         addListenerSubscribeButton();
         addListenerUnsubscribeButton();
         addListenerPublishButton();
+
         try {
             addListenerOwnIdButton();
+            addListenerHypeDevicesButton();
+            addListenerOwnSubscriptionsButton();
+            addListenerManagedServicesButton();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        addListenerHypeDevicesButton();
-        addListenerOwnSubscriptionsButton();
-        addListenerManagedServicesButton();
     }
 
     public void addListenerSubscribeButton() {
@@ -229,63 +229,46 @@ public class MainActivity extends AppCompatActivity
 
     public void addListenerHypeDevicesButton() throws NoSuchAlgorithmException
     {
-        Network hpbNetwork = Network.getInstance();
+        getHypeDevicesButton = (Button) findViewById(R.id.getHypeDevicesButton);
+        final Intent intent = new Intent(this, HypeDevicesListActivity.class);
 
-        ListIterator<Client> it = hpbNetwork.networkClients.listIterator();
-        while(it.hasNext())
-        {
-            Client client = it.next();
+        getHypeDevicesButton.setOnClickListener(new View.OnClickListener() {
 
-            byteArrayToHexString(client.id);
-            byteArrayToHexString(client.key);
-        }
+            @Override
+            public void onClick(View arg0)
+            {
+                startActivity(intent);
+            }
+        });
     }
 
     public void addListenerOwnSubscriptionsButton() throws NoSuchAlgorithmException
     {
-        HypePubSub hpb = HypePubSub.getInstance();
+        getOwnSubscriptionsButton = (Button) findViewById(R.id.getOwnSubscriptionsButton);
+        final Intent intent = new Intent(this, SubscriptionsListActivity.class);
 
-        ListIterator<Subscription> it = hpb.ownSubscriptions.listIterator();
-        while(it.hasNext())
-        {
-            Subscription subscription = it.next();
+        getOwnSubscriptionsButton.setOnClickListener(new View.OnClickListener() {
 
-            byteArrayToHexString(subscription.managerId);
-            byteArrayToHexString(subscription.serviceKey);
-            //subscription.serviceName;
-
-        }
+            @Override
+            public void onClick(View arg0)
+            {
+                startActivity(intent);
+            }
+        });
     }
 
     public void addListenerManagedServicesButton() throws NoSuchAlgorithmException
     {
-        HypePubSub hpb = HypePubSub.getInstance();
+        getManagedServicesButton = (Button) findViewById(R.id.getManagedServicesButton);
+        final Intent intent = new Intent(this, ServiceManagersListActivity.class);
 
-        ListIterator<ServiceManager> itManServices = hpb.managedServices.listIterator();
-        while(itManServices.hasNext())
-        {
-            ServiceManager servMan = itManServices.next();
+        getManagedServicesButton.setOnClickListener(new View.OnClickListener() {
 
-            byteArrayToHexString(servMan.serviceKey);
-
-            ListIterator<Client> itSubscribers = servMan.subscribers.listIterator();
-            while(itSubscribers.hasNext())
+            @Override
+            public void onClick(View arg0)
             {
-                Client client = itSubscribers.next();
-
-                byteArrayToHexString(client.id);
-                byteArrayToHexString(client.key);
+                startActivity(intent);
             }
-        }
-    }
-
-    public String byteArrayToHexString(byte array[])
-    {
-        StringBuilder builder = new StringBuilder();
-        for(byte b : array) {
-            builder.append(String.format("%02x", b));
-        }
-
-        return builder.toString();
+        });
     }
 }

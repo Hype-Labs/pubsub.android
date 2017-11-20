@@ -42,6 +42,16 @@ public class BinaryUtils {
         return  0;
     }
 
+    public static String byteArrayToHexString(byte array[])
+    {
+        StringBuilder builder = new StringBuilder();
+        for(byte b : array) {
+            builder.append(String.format("%02x", b));
+        }
+
+        return builder.toString();
+    }
+
     public static int byteToUnsignedInt(byte b)
     {
         return ((int) b & 0xFF);

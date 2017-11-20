@@ -16,6 +16,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".SubscriptionsListActivity">
+                  android:parentActivityName=".MainActivity" >
+                  android:label="Own Subscriptions"
+        </activity>
+        <activity android:name=".HypeDevicesListActivity">
+            android:parentActivityName=".MainActivity" >
+            android:label="Hype Devices Found"
+        </activity>
+        <activity android:name=".ServiceManagersListActivity">
+            android:parentActivityName=".MainActivity" >
+            android:label="Managed Services"
+        </activity>
     </application>
 
 </manifest>

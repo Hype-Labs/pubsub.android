@@ -125,7 +125,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/getOwnSubscriptions"
+            android:id="@+id/getOwnSubscriptionsButton"
             android:layout_width="140dp"
             android:layout_height="match_parent"
             android:text="Get Subscriptions"
@@ -141,7 +141,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/getManagedServices"
+            android:id="@+id/getManagedServicesButton"
             android:layout_width="140dp"
             android:layout_height="match_parent"
             android:text="Get Managed Services"
