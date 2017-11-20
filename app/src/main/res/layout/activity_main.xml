@@ -1,72 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.widget.LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="hypelabs.com.hypepubsub.MainActivity">
 
-    <Button
-        android:id="@+id/subscribeButton"
-        android:layout_width="120dp"
-        android:layout_height="49dp"
-        android:text="Subscribe"
-        tools:layout_editor_absoluteX="224dp"
-        tools:layout_editor_absoluteY="55dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="15dp"
+        android:orientation="horizontal">
 
-    <Button
+        <EditText
+            android:id="@+id/subscribeText"
+            android:layout_width="190dp"
+            android:layout_height="match_parent"
+            android:ems="10"
+            android:inputType="textPersonName"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="55dp" />
+        <Button
+            android:id="@+id/subscribeButton"
+            android:layout_width="140dp"
+            android:layout_height="match_parent"
+            android:text="Subscribe"
+            tools:layout_editor_absoluteX="224dp"
+            tools:layout_editor_absoluteY="55dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="15dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/unsubscribeText"
+            android:layout_width="190dp"
+            android:layout_height="match_parent"
+            android:ems="10"
+            android:inputType="textPersonName"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="124dp" />
+
+        <Button
         android:id="@+id/unsubscribeButton"
-        android:layout_width="120dp"
-        android:layout_height="47dp"
+        android:layout_width="140dp"
+        android:layout_height="match_parent"
         android:text="Unsubscribe"
         tools:layout_editor_absoluteX="224dp"
         tools:layout_editor_absoluteY="124dp" />
 
-    <Button
-        android:id="@+id/publishButton"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:text="Publish"
-        tools:layout_editor_absoluteX="224dp"
-        tools:layout_editor_absoluteY="242dp" />
+    </LinearLayout>
 
-    <EditText
-        android:id="@+id/subscribeText"
-        android:layout_width="190dp"
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="43dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="ServiceToSubscribe"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="55dp" />
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="15dp"
+        android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/unsubscribeText"
-        android:layout_width="190dp"
-        android:layout_height="45dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="ServiceToUnsubscribe"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="124dp" />
+        <EditText
+            android:id="@+id/publishServiceText"
+            android:layout_width="190dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="215dp" />
 
-    <EditText
-        android:id="@+id/publishServiceText"
-        android:layout_width="190dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="ServiceToPublish"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="215dp" />
+        <Button
+            android:id="@+id/publishButton"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:text="Publish"
+            tools:layout_editor_absoluteX="224dp"
+            tools:layout_editor_absoluteY="242dp" />
+    </LinearLayout>
 
-    <EditText
-        android:id="@+id/publishMsgText"
-        android:layout_width="190dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="MessageToPublish"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="275dp" />
-</android.support.constraint.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:layout_marginLeft="210dp"
+        android:layout_marginBottom="15dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/getOwnIdButton"
+            android:layout_width="140dp"
+            android:layout_height="match_parent"
+            android:text="Print Own ID"
+            android:layout_centerInParent="true"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginLeft="210dp"
+        android:layout_marginBottom="15dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/getHypeDevicesButton"
+            android:layout_width="140dp"
+            android:layout_height="match_parent"
+            android:text="Print Hype Devices"
+            android:layout_centerInParent="true"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginLeft="210dp"
+        android:layout_marginBottom="15dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/getOwnSubscriptions"
+            android:layout_width="140dp"
+            android:layout_height="match_parent"
+            android:text="Get Subscriptions"
+            android:layout_centerInParent="true"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginLeft="210dp"
+        android:layout_marginBottom="15dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/getManagedServices"
+            android:layout_width="140dp"
+            android:layout_height="match_parent"
+            android:text="Get Managed Services"
+            android:layout_centerInParent="true"/>
+
+    </LinearLayout>
+
+</android.widget.LinearLayout>
