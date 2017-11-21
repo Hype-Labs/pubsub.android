@@ -16,7 +16,7 @@ public class Client
     public Client(byte[] id) throws NoSuchAlgorithmException
     {
         this.id = id;
-        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        MessageDigest md = MessageDigest.getInstance(Constants.HPB_HASH_ALGORITHM);
         this.key = md.digest(this.id);
     }
 }

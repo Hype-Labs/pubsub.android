@@ -18,7 +18,7 @@ public class Subscription {
     public Subscription(String serviceName, byte managerId[]) throws NoSuchAlgorithmException
     {
         this.serviceName = serviceName;
-        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        MessageDigest md = MessageDigest.getInstance(Constants.HPB_HASH_ALGORITHM);
         this.serviceKey = md.digest(serviceName.getBytes());
         this.managerId = managerId;
     }

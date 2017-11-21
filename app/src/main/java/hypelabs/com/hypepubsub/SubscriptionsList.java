@@ -15,7 +15,7 @@ public class SubscriptionsList
 
     public int add(String serviceName, byte managerId[]) throws NoSuchAlgorithmException
     {
-        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        MessageDigest md = MessageDigest.getInstance(Constants.HPB_HASH_ALGORITHM);
         byte serviceKey[] = md.digest(serviceName.getBytes());
 
         if(find(serviceKey) != null)
@@ -27,7 +27,7 @@ public class SubscriptionsList
 
     public int remove(String serviceName) throws NoSuchAlgorithmException
     {
-        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        MessageDigest md = MessageDigest.getInstance(Constants.HPB_HASH_ALGORITHM);
         byte serviceKey[] = md.digest(serviceName.getBytes());
 
         Subscription subscription = find(serviceKey);

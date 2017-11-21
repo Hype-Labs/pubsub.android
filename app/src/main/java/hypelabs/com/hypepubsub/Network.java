@@ -1,10 +1,16 @@
 package hypelabs.com.hypepubsub;
 
+import com.hypelabs.hype.Error;
+import com.hypelabs.hype.Hype;
+import com.hypelabs.hype.Instance;
+import com.hypelabs.hype.NetworkObserver;
+import com.hypelabs.hype.State;
+
 import java.security.NoSuchAlgorithmException;
 import java.util.ListIterator;
 
 
-public class Network
+public class Network implements NetworkObserver
 {
 
     static Network network = null; // Singleton
@@ -49,9 +55,39 @@ public class Network
         return managerId;
     }
 
-    private byte[] getOwnId()
+    private byte[] getOwnId() throws NoSuchAlgorithmException
     {
-        // Dummy ID before integrating HypeSDK
-        return new byte[]{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12};
+        return Hype.getHostInstance().getIdentifier();
     }
+
+
+    //////////////////////////////////////////////////
+    // Methods from NetworkObserver
+    //////////////////////////////////////////////////
+
+    @Override
+    public void onHypeInstanceFound(Instance var1)
+    {
+        try {
+            this.networkClients.add(var1.getIdentifier());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onHypeInstanceLost(Instance var1, Error var2)
+    {
+        try {
+            this.networkClients.remove(var1.getIdentifier());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onHypeInstanceResolved(Instance var1, byte[] var2){}
+
+    @Override
+    public void onHypeInstanceFailResolving(Instance var1, Error var2){}
 }

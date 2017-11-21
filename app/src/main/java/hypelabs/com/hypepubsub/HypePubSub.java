@@ -1,6 +1,9 @@
 package hypelabs.com.hypepubsub;
 
+import android.app.Application;
+import android.content.Context;
 import android.util.Log;
+import android.app.Activity;
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -8,12 +11,22 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.ListIterator;
 
-public class HypePubSub
+import com.hypelabs.hype.Error;
+import com.hypelabs.hype.Hype;
+import com.hypelabs.hype.Instance;
+import com.hypelabs.hype.Message;
+import com.hypelabs.hype.MessageInfo;
+import com.hypelabs.hype.MessageObserver;
+import com.hypelabs.hype.StateObserver;
+
+public class HypePubSub implements StateObserver, MessageObserver
 {
     static HypePubSub hpb = null; // Singleton
 
     SubscriptionsList ownSubscriptions;
     ServiceManagersList managedServices;
+    private static Context context;
+    private static MainActivity mainActivity;
 
     public static HypePubSub getInstance() throws NoSuchAlgorithmException
     {
@@ -21,7 +34,6 @@ public class HypePubSub
         {
             hpb = new HypePubSub();
         }
-
         return hpb;
     }
 
@@ -29,13 +41,91 @@ public class HypePubSub
     {
         this.ownSubscriptions = new SubscriptionsList();
         this.managedServices = new ServiceManagersList();
+        requestHypeToStart();
+    }
+
+    //////////////////////////////////////////////////
+    // Methods from StateObserver
+    //////////////////////////////////////////////////
+
+    @Override
+    public void onHypeStart()
+    {
+        try
+        {
+            Hype.addNetworkObserver(Network.getInstance());
+            Log.i("HypePubSub", "Hype started!");
+            mainActivity.addButtonListeners();
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onHypeStop(Error var1) {
+        requestHypeToStop();
+    }
+
+    @Override
+    public void onHypeFailedStarting(Error var1){
+        Log.e("HypePubSub", "Hype Start Failed. Error description: " + var1.getDescription());
+    }
+
+    @Override
+    public void onHypeReady(){}
+
+    @Override
+    public void onHypeStateChange(){}
+
+    //////////////////////////////////////////////////
+    // Methods from MessageObserver
+    //////////////////////////////////////////////////
+
+    @Override
+    public void onHypeMessageReceived(Message var1, Instance var2){}
+
+    @Override
+    public void onHypeMessageFailedSending(MessageInfo var1, Instance var2, Error var3){}
+
+    @Override
+    public void onHypeMessageSent(MessageInfo var1, Instance var2, float var3, boolean var4){}
+
+    @Override
+    public void onHypeMessageDelivered(MessageInfo var1, Instance var2, float var3, boolean var4){}
+
+    //////////////////////////////////////////////////
+
+    protected void requestHypeToStart()
+    {
+        Hype.setUserIdentifier(0l);
+        Hype.setAppIdentifier("00000000");
+        Hype.setContext(this.context);
+        Hype.addStateObserver(this);
+        Hype.start();
+
+        Log.i("HypePubSub", "Invoked Hype start.");
+    }
+
+    protected void requestHypeToStop()
+    {
+        Hype.stop();
+    }
+
+    static public void setContext(Context c){
+        context = c;
+    }
+
+    static public void setMainActivity(MainActivity mainAct){
+        mainActivity = mainAct;
     }
 
     int issueSubscribeReq(String serviceName) throws NoSuchAlgorithmException, IOException
     {
         Network network = Network.getInstance();
         Protocol protocol = Protocol.getInstance();
-        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        MessageDigest md = MessageDigest.getInstance(Constants.HPB_HASH_ALGORITHM);
 
         byte serviceKey[] = md.digest(serviceName.getBytes());
         byte managerId[] = network.getServiceManagerId(serviceKey);
@@ -56,14 +146,13 @@ public class HypePubSub
     int issueUnsubscribeReq(String serviceName) throws NoSuchAlgorithmException, IOException {
         Network network = Network.getInstance();
         Protocol protocol = Protocol.getInstance();
-        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        MessageDigest md = MessageDigest.getInstance(Constants.HPB_HASH_ALGORITHM);
 
         byte serviceKey[] = md.digest(serviceName.getBytes());
         byte managerId[] = network.getServiceManagerId(serviceKey);
 
         if(ownSubscriptions.find(serviceKey) == null)
         {
-            //printf("Trying to unsubscribe a service that was not previously subscribed: %s.\n", service_name);
             return -2;
         }
 
@@ -83,7 +172,7 @@ public class HypePubSub
     int issuePublishReq(String serviceName, String msg) throws NoSuchAlgorithmException, IOException {
         Network network = Network.getInstance();
         Protocol protocol = Protocol.getInstance();
-        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        MessageDigest md = MessageDigest.getInstance(Constants.HPB_HASH_ALGORITHM);
 
         byte serviceKey[] = md.digest(serviceName.getBytes());
         byte managerId[] = network.getServiceManagerId(serviceKey);

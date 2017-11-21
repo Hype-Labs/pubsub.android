@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/HypePubSub.android.iml" filepath="$PROJECT_DIR$/HypePubSub.android.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hype-debug/hype-debug.iml" filepath="$PROJECT_DIR$/hype-debug/hype-debug.iml" />
     </modules>
   </component>
 </project>
