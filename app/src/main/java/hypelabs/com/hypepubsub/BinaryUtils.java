@@ -1,8 +1,7 @@
 package hypelabs.com.hypepubsub;
 
-
-
-public class BinaryUtils {
+public class BinaryUtils
+{
 
     public static byte[] xor(byte array1[], byte array2[])
     {

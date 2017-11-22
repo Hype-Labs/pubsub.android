@@ -1,5 +1,7 @@
 package hypelabs.com.hypepubsub;
 
+import com.hypelabs.hype.Instance;
+
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -9,22 +11,22 @@ import java.util.ListIterator;
 public class ClientsList
 {
     // Used composition instead of inheritance to hide the methods that shouldn't be called in
-    // a ServiceManagersList.
+    // a ClientsList.
 
     private LinkedList<Client> clients = new LinkedList<>();
 
-    public int add(byte clientId[]) throws NoSuchAlgorithmException
+    public int add(Instance instance) throws NoSuchAlgorithmException
     {
-        if(find(clientId) != null) // do not add the client if it is already present
+        if(find(instance) != null) // do not add the client if it is already present
             return -1;
 
-        clients.add(new Client(clientId));
+        clients.add(new Client(instance));
         return 0;
     }
 
-    public int remove(byte clientId[]) throws NoSuchAlgorithmException
+    public int remove(Instance instance) throws NoSuchAlgorithmException
     {
-        Client client = find(clientId);
+        Client client = find(instance);
         if(client == null)
             return -1;
 
@@ -32,13 +34,13 @@ public class ClientsList
         return 0;
     }
 
-    public Client find(byte clientId[])
+    public Client find(Instance instance)
     {
         ListIterator<Client> it = listIterator();
         while(it.hasNext())
         {
             Client currentClient = it.next();
-            if(Arrays.equals(currentClient.id, clientId)) {
+            if(GenericUtils.areInstancesEqual(currentClient.instance, instance)) {
                 return currentClient;
             }
         }

@@ -4,7 +4,6 @@ import com.hypelabs.hype.Error;
 import com.hypelabs.hype.Hype;
 import com.hypelabs.hype.Instance;
 import com.hypelabs.hype.NetworkObserver;
-import com.hypelabs.hype.State;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ListIterator;
@@ -20,7 +19,7 @@ public class Network implements NetworkObserver
 
     private Network() throws NoSuchAlgorithmException
     {
-        this.ownClient = new Client(this.getOwnId());
+        this.ownClient = null; // Must be set after HypeStart
         this.networkClients = new ClientsList();
     }
 
@@ -33,11 +32,11 @@ public class Network implements NetworkObserver
         return network;
     }
 
-    public byte[] getServiceManagerId(byte serviceKey[])
+    public Instance getServiceManagerInstance(byte serviceKey[])
     {
         // Compare the service key with the hash of the Hype clients id and return
         // the id of the closest client. Consider own ID also!!!!
-        byte managerId[] = this.ownClient.id;
+        Instance managerInstance = this.ownClient.instance;
         byte lowestDist[] = BinaryUtils.xor(serviceKey, this.ownClient.key);
 
         ListIterator<Client> it = this.networkClients.listIterator();
@@ -49,17 +48,19 @@ public class Network implements NetworkObserver
             if(BinaryUtils.getHigherByteArray(lowestDist, dist) == 1)
             {
                 lowestDist = dist;
-                managerId = client.id;
+                managerInstance = client.instance;
             }
         }
-        return managerId;
+        return managerInstance;
     }
 
-    private byte[] getOwnId() throws NoSuchAlgorithmException
-    {
-        return Hype.getHostInstance().getIdentifier();
+    protected void setOwnClient() throws NoSuchAlgorithmException {
+        try {
+            this.ownClient = new Client(Hype.getHostInstance());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
-
 
     //////////////////////////////////////////////////
     // Methods from NetworkObserver
@@ -69,7 +70,7 @@ public class Network implements NetworkObserver
     public void onHypeInstanceFound(Instance var1)
     {
         try {
-            this.networkClients.add(var1.getIdentifier());
+            this.networkClients.add(var1);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -79,7 +80,7 @@ public class Network implements NetworkObserver
     public void onHypeInstanceLost(Instance var1, Error var2)
     {
         try {
-            this.networkClients.remove(var1.getIdentifier());
+            this.networkClients.remove(var1);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }

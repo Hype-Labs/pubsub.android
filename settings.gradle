@@ -1,1 +1,1 @@
-include ':app', ':hype-debug'
+include ':app', ':hype-debug', ':mockito-all-1.10.19'

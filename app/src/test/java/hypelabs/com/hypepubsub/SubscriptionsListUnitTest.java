@@ -1,5 +1,7 @@
 package hypelabs.com.hypepubsub;
 
+import com.hypelabs.hype.Instance;
+
 import org.junit.Test;
 
 import java.security.NoSuchAlgorithmException;
@@ -9,8 +11,7 @@ import static org.junit.Assert.*;
 public class SubscriptionsListUnitTest
 {
     @Test
-    public void testSubscriptionsList() throws NoSuchAlgorithmException
-    {
+    public void testSubscriptionsList() throws NoSuchAlgorithmException, NoSuchFieldException, IllegalAccessException {
         String SERVICE1_NAME = "HypeCoffe";
         String SERVICE2_NAME = "HypeTea";
         String SERVICE3_NAME = "HypeBeer";
@@ -21,6 +22,10 @@ public class SubscriptionsListUnitTest
         byte MANAGER_ID2[] = new byte[] {(byte) 0x12, (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05, (byte) 0x06, (byte) 0x07, (byte) 0x08, (byte) 0x09, (byte) 0x10, (byte) 0x11};
         byte MANAGER_ID3[] = new byte[] {(byte) 0x11, (byte) 0x12, (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05, (byte) 0x06, (byte) 0x07, (byte) 0x08, (byte) 0x09, (byte) 0x10};
 
+        FakeHypeInstance instance1 = new FakeHypeInstance(MANAGER_ID1, null, false);
+        FakeHypeInstance instance2 = new FakeHypeInstance(MANAGER_ID2, null, false);
+        FakeHypeInstance instance3 = new FakeHypeInstance(MANAGER_ID3, null, false);
+
         // Test the creation of the subscriptions list
         Subscription auxSubscr;
         SubscriptionsList subscriptions = new SubscriptionsList();
@@ -28,16 +33,16 @@ public class SubscriptionsListUnitTest
         assertEquals(0, subscriptions.size());
 
         // Add 3 subscriptions to the list
-        subscriptions.add(SERVICE3_NAME, MANAGER_ID3);
-        subscriptions.add(SERVICE1_NAME, MANAGER_ID1);
-        subscriptions.add(SERVICE2_NAME, MANAGER_ID2);
+        subscriptions.add(SERVICE3_NAME, instance3);
+        subscriptions.add(SERVICE1_NAME, instance1);
+        subscriptions.add(SERVICE2_NAME, instance2);
 
         // Validate that the subscriptions are inserted in the right order
-        assertArrayEquals(MANAGER_ID3, subscriptions.get(0).managerId);
+        assertArrayEquals(MANAGER_ID3, subscriptions.get(0).manager.getIdentifier());
         assertEquals(SERVICE3_NAME, subscriptions.get(0).serviceName);
-        assertArrayEquals(MANAGER_ID1, subscriptions.get(1).managerId);
+        assertArrayEquals(MANAGER_ID1, subscriptions.get(1).manager.getIdentifier());
         assertEquals(SERVICE1_NAME, subscriptions.get(1).serviceName);
-        assertArrayEquals(MANAGER_ID2, subscriptions.get(2).managerId);
+        assertArrayEquals(MANAGER_ID2, subscriptions.get(2).manager.getIdentifier());
         assertEquals(SERVICE2_NAME, subscriptions.get(2).serviceName);
         assertEquals(3, subscriptions.size());
 
@@ -50,9 +55,9 @@ public class SubscriptionsListUnitTest
 
         // Test element removal
         subscriptions.remove(SERVICE3_NAME);
-        assertArrayEquals(MANAGER_ID1, subscriptions.get(0).managerId);
+        assertArrayEquals(MANAGER_ID1, subscriptions.get(0).manager.getIdentifier());
         assertEquals(SERVICE1_NAME, subscriptions.get(0).serviceName);
-        assertArrayEquals(MANAGER_ID2, subscriptions.get(1).managerId);
+        assertArrayEquals(MANAGER_ID2, subscriptions.get(1).manager.getIdentifier());
         assertEquals(SERVICE2_NAME, subscriptions.get(1).serviceName);
         assertEquals(2, subscriptions.size());
 
@@ -62,7 +67,7 @@ public class SubscriptionsListUnitTest
 
         // Test element removal
         subscriptions.remove(SERVICE2_NAME);
-        assertArrayEquals(MANAGER_ID1, subscriptions.get(0).managerId);
+        assertArrayEquals(MANAGER_ID1, subscriptions.get(0).manager.getIdentifier());
         assertEquals(SERVICE1_NAME, subscriptions.get(0).serviceName);
         assertEquals(1, subscriptions.size());
 

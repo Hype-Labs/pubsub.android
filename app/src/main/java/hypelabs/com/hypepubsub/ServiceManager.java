@@ -1,5 +1,7 @@
 package hypelabs.com.hypepubsub;
 
+import com.hypelabs.hype.Instance;
+
 import java.security.NoSuchAlgorithmException;
 
 public class ServiceManager
@@ -13,13 +15,13 @@ public class ServiceManager
         this.subscribers = new ClientsList();
     }
 
-    public void addSubscriber(byte subscriberId[]) throws NoSuchAlgorithmException
+    public void addSubscriber(Instance subscriberInstance) throws NoSuchAlgorithmException
     {
-        this.subscribers.add(subscriberId);
+        this.subscribers.add(subscriberInstance);
     }
 
-    public void removeSubscriber(byte clientId[]) throws NoSuchAlgorithmException
+    public void removeSubscriber(Instance subscriberInstance) throws NoSuchAlgorithmException
     {
-        this.subscribers.remove(clientId);
+        this.subscribers.remove(subscriberInstance);
     }
 }

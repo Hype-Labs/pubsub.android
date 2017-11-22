@@ -44,10 +44,10 @@ public class HypeDevicesListActivity extends AppCompatActivity
         {
             Client client = it.next();
 
-            String clientId = BinaryUtils.byteArrayToHexString(client.id);
+            String clientId = BinaryUtils.byteArrayToHexString(client.instance.getIdentifier());
             String clientKey = BinaryUtils.byteArrayToHexString(client.key);
             hypeDevices.add("ClientID: 0x" + clientId + "\n"
-                    + "ClientKey: 0x" + clientKey + "\n");
+                            + "ClientKey: 0x" + clientKey + "\n");
         }
 
         return hypeDevices;

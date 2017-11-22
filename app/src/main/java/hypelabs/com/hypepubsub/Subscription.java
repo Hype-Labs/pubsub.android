@@ -1,5 +1,7 @@
 package hypelabs.com.hypepubsub;
 
+import com.hypelabs.hype.Instance;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -13,13 +15,12 @@ public class Subscription {
 
     String serviceName;
     byte serviceKey[];
-    byte managerId[];
+    Instance manager;
 
-    public Subscription(String serviceName, byte managerId[]) throws NoSuchAlgorithmException
+    public Subscription(String serviceName, Instance manager) throws NoSuchAlgorithmException
     {
         this.serviceName = serviceName;
-        MessageDigest md = MessageDigest.getInstance(Constants.HPB_HASH_ALGORITHM);
-        this.serviceKey = md.digest(serviceName.getBytes());
-        this.managerId = managerId;
+        this.serviceKey = GenericUtils.getStrHash(serviceName);
+        this.manager = manager;
     }
 }

@@ -33,7 +33,8 @@ public class SubscriptionsListActivity extends AppCompatActivity
         }
     }
 
-    private ArrayList<String> getSubscriptionsStrings() throws NoSuchAlgorithmException {
+    private ArrayList<String> getSubscriptionsStrings() throws NoSuchAlgorithmException
+    {
         HypePubSub hpb = HypePubSub.getInstance();
 
         ArrayList<String> subs = new ArrayList<String>();
@@ -43,7 +44,7 @@ public class SubscriptionsListActivity extends AppCompatActivity
         {
             Subscription subscription = it.next();
 
-            String manIdStr = BinaryUtils.byteArrayToHexString(subscription.managerId);
+            String manIdStr = BinaryUtils.byteArrayToHexString(subscription.manager.getIdentifier());
             String servKeyStr = BinaryUtils.byteArrayToHexString(subscription.serviceKey);
             subs.add("ServiceName: " + subscription.serviceName + "\n"
                      + "ServiceKey: 0x" + servKeyStr + "\n"

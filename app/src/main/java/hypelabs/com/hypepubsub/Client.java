@@ -3,20 +3,20 @@ package hypelabs.com.hypepubsub;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import com.hypelabs.hype.Instance;
 
 /**
- * This class represents an Hype client. Each object of this class contains an Hype ID and a key.
+ * This class represents an Hype client. Each object of this class contains an Hype Instance and a key.
  * The key is generating by hashing the Hype ID using the SHA-1 hashing algorithm.
  */
 public class Client
 {
-    byte id[];
+    Instance instance;
     byte key[];
 
-    public Client(byte[] id) throws NoSuchAlgorithmException
+    public Client(Instance instance) throws NoSuchAlgorithmException
     {
-        this.id = id;
-        MessageDigest md = MessageDigest.getInstance(Constants.HPB_HASH_ALGORITHM);
-        this.key = md.digest(this.id);
+        this.instance = instance;
+        this.key = GenericUtils.getByteArrayHash(instance.getIdentifier());
     }
 }

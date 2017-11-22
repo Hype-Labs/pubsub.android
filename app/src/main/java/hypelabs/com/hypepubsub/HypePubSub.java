@@ -1,9 +1,7 @@
 package hypelabs.com.hypepubsub;
 
-import android.app.Application;
 import android.content.Context;
 import android.util.Log;
-import android.app.Activity;
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -14,12 +12,10 @@ import java.util.ListIterator;
 import com.hypelabs.hype.Error;
 import com.hypelabs.hype.Hype;
 import com.hypelabs.hype.Instance;
-import com.hypelabs.hype.Message;
-import com.hypelabs.hype.MessageInfo;
-import com.hypelabs.hype.MessageObserver;
 import com.hypelabs.hype.StateObserver;
 
-public class HypePubSub implements StateObserver, MessageObserver
+
+public class HypePubSub implements StateObserver
 {
     static HypePubSub hpb = null; // Singleton
 
@@ -41,7 +37,6 @@ public class HypePubSub implements StateObserver, MessageObserver
     {
         this.ownSubscriptions = new SubscriptionsList();
         this.managedServices = new ServiceManagersList();
-        requestHypeToStart();
     }
 
     //////////////////////////////////////////////////
@@ -56,6 +51,7 @@ public class HypePubSub implements StateObserver, MessageObserver
             Hype.addNetworkObserver(Network.getInstance());
             Log.i("HypePubSub", "Hype started!");
             mainActivity.addButtonListeners();
+            Network.getInstance().setOwnClient();
         }
         catch (NoSuchAlgorithmException e)
         {
@@ -79,21 +75,6 @@ public class HypePubSub implements StateObserver, MessageObserver
     @Override
     public void onHypeStateChange(){}
 
-    //////////////////////////////////////////////////
-    // Methods from MessageObserver
-    //////////////////////////////////////////////////
-
-    @Override
-    public void onHypeMessageReceived(Message var1, Instance var2){}
-
-    @Override
-    public void onHypeMessageFailedSending(MessageInfo var1, Instance var2, Error var3){}
-
-    @Override
-    public void onHypeMessageSent(MessageInfo var1, Instance var2, float var3, boolean var4){}
-
-    @Override
-    public void onHypeMessageDelivered(MessageInfo var1, Instance var2, float var3, boolean var4){}
 
     //////////////////////////////////////////////////
 
@@ -125,20 +106,19 @@ public class HypePubSub implements StateObserver, MessageObserver
     {
         Network network = Network.getInstance();
         Protocol protocol = Protocol.getInstance();
-        MessageDigest md = MessageDigest.getInstance(Constants.HPB_HASH_ALGORITHM);
 
-        byte serviceKey[] = md.digest(serviceName.getBytes());
-        byte managerId[] = network.getServiceManagerId(serviceKey);
+        byte serviceKey[] = GenericUtils.getStrHash(serviceName);
+        Instance managerInstance = network.getServiceManagerInstance(serviceKey);
 
         // Add subscription to the list of own subscriptions. Only adds if it doesn't exist yet.
-        ownSubscriptions.add(serviceName, managerId);
+        ownSubscriptions.add(serviceName, managerInstance);
 
         // if this client is the manager of the service we don't need to send the subscribe message to
         // the protocol manager
-        if(Arrays.equals(network.ownClient.id, managerId))
-            this.processSubscribeReq(serviceKey, network.ownClient.id);
+        if(GenericUtils.areInstancesEqual(network.ownClient.instance, managerInstance))
+            this.processSubscribeReq(serviceKey, network.ownClient.instance);
         else
-            protocol.sendSubscribeMsg(serviceKey, managerId);
+            protocol.sendSubscribeMsg(serviceKey, managerInstance);
 
         return 0;
     }
@@ -146,10 +126,9 @@ public class HypePubSub implements StateObserver, MessageObserver
     int issueUnsubscribeReq(String serviceName) throws NoSuchAlgorithmException, IOException {
         Network network = Network.getInstance();
         Protocol protocol = Protocol.getInstance();
-        MessageDigest md = MessageDigest.getInstance(Constants.HPB_HASH_ALGORITHM);
 
-        byte serviceKey[] = md.digest(serviceName.getBytes());
-        byte managerId[] = network.getServiceManagerId(serviceKey);
+        byte serviceKey[] = GenericUtils.getStrHash(serviceName);
+        Instance managerInstance = network.getServiceManagerInstance(serviceKey);
 
         if(ownSubscriptions.find(serviceKey) == null)
         {
@@ -161,10 +140,10 @@ public class HypePubSub implements StateObserver, MessageObserver
 
         // if this client is the manager of the service we don't need to send the unsubscribe message
         // to the protocol manager
-        if(Arrays.equals(network.ownClient.id, managerId))
-            this.processUnsubscribeReq(serviceKey, network.ownClient.id);
+        if(GenericUtils.areInstancesEqual(network.ownClient.instance, managerInstance))
+            this.processUnsubscribeReq(serviceKey, network.ownClient.instance);
         else
-            protocol.sendUnsubscribeMsg(serviceKey, managerId);
+            protocol.sendUnsubscribeMsg(serviceKey, managerInstance);
 
         return 0;
     }
@@ -172,22 +151,21 @@ public class HypePubSub implements StateObserver, MessageObserver
     int issuePublishReq(String serviceName, String msg) throws NoSuchAlgorithmException, IOException {
         Network network = Network.getInstance();
         Protocol protocol = Protocol.getInstance();
-        MessageDigest md = MessageDigest.getInstance(Constants.HPB_HASH_ALGORITHM);
 
-        byte serviceKey[] = md.digest(serviceName.getBytes());
-        byte managerId[] = network.getServiceManagerId(serviceKey);
+        byte serviceKey[] = GenericUtils.getStrHash(serviceName);
+        Instance managerInstance = network.getServiceManagerInstance(serviceKey);
 
         // if this client is the manager of the service we don't need to send the publish message
         // to the protocol manager
-        if(Arrays.equals(network.ownClient.id, managerId))
+        if(GenericUtils.areInstancesEqual(network.ownClient.instance, managerInstance))
             this.processPublishReq(serviceKey, msg);
         else
-            protocol.sendPublishMsg(serviceKey, managerId, msg);
+            protocol.sendPublishMsg(serviceKey, managerInstance, msg);
 
         return 0;
     }
 
-    int processSubscribeReq(byte serviceKey[], byte requesterClientId[]) throws NoSuchAlgorithmException
+    int processSubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException
     {
         ServiceManager serviceManager = this.managedServices.find(serviceKey);
         if(serviceManager == null) // If the service does not exist we create it.
@@ -195,16 +173,16 @@ public class HypePubSub implements StateObserver, MessageObserver
             this.managedServices.add(serviceKey);
             serviceManager = this.managedServices.getLast();
         }
-        serviceManager.subscribers.add(requesterClientId);
+        serviceManager.subscribers.add(requesterInstance);
         return 0;
     }
 
-    int processUnsubscribeReq(byte serviceKey[], byte requesterClientId[]) throws NoSuchAlgorithmException {
+    int processUnsubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException {
         ServiceManager serviceManager = this.managedServices.find(serviceKey);
         if(serviceManager == null) { // If the service does not exist nothing is done
             return -1;
         }
-        serviceManager.subscribers.remove(requesterClientId);
+        serviceManager.subscribers.remove(requesterInstance);
 
         if(serviceManager.subscribers.size() == 0) // Remove the service if there is no subscribers
             this.managedServices.remove(serviceKey);
@@ -226,10 +204,10 @@ public class HypePubSub implements StateObserver, MessageObserver
             if(client == null)
                 continue;
 
-            if(Arrays.equals(network.ownClient.id, client.id))
+            if(GenericUtils.areInstancesEqual(network.ownClient.instance, client.instance))
                 this.processInfoMsg(serviceKey, msg);
             else
-                protocol.sendInfoMsg(serviceKey, client.id, msg);
+                protocol.sendInfoMsg(serviceKey, client.instance, msg);
         }
 
         return 0;
@@ -259,8 +237,8 @@ public class HypePubSub implements StateObserver, MessageObserver
             ServiceManager servMan = it.next();
             // Check if a new Hype client with a closer key to this service key has appeared. If this happens
             // we remove the service from the list of managed services of this Hype client.
-            byte newManagerId[] = network.getServiceManagerId(servMan.serviceKey);
-            if(Arrays.equals(newManagerId, network.ownClient.id) == false)
+            Instance newManagerInstance = network.getServiceManagerInstance(servMan.serviceKey);
+            if( ! GenericUtils.areInstancesEqual(newManagerInstance, network.ownClient.instance))
                 this.managedServices.remove(servMan.serviceKey);
         };
         return 0;
@@ -276,12 +254,12 @@ public class HypePubSub implements StateObserver, MessageObserver
         {
             Subscription subscription = it.next();
 
-            byte newManagerId[] = network.getServiceManagerId(subscription.serviceKey);
+            Instance newManagerInstance = network.getServiceManagerInstance(subscription.serviceKey);
 
             // If there is a node with a closer key to the service key we change the manager
-            if (Arrays.equals(newManagerId, subscription.managerId) == false)
+            if( ! GenericUtils.areInstancesEqual(newManagerInstance, subscription.manager))
             {
-                subscription.managerId = newManagerId;
+                subscription.manager = newManagerInstance;
                 this.issueSubscribeReq(subscription.serviceName); // re-send the subscribe request to the new manager
             }
         }

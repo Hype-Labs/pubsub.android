@@ -53,7 +53,7 @@ public class ServiceManagersListActivity extends AppCompatActivity
             {
                 Client client = itSubscribers.next();
 
-                String clientId = BinaryUtils.byteArrayToHexString(client.id);
+                String clientId = BinaryUtils.byteArrayToHexString(client.instance.getIdentifier());
                 String clientKey = BinaryUtils.byteArrayToHexString(client.key);
 
                 subscribersStr += ("Client ID: 0x" + clientId + "\n"

@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity
             HypePubSub.setContext(getApplicationContext());
             HypePubSub.setMainActivity(this);
             hpb = HypePubSub.getInstance();
+            hpb.requestHypeToStart();
         }
         catch (NoSuchAlgorithmException e)
         {
@@ -211,7 +212,7 @@ public class MainActivity extends AppCompatActivity
                 } catch (NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 }
-                displayAlertDialog("Own Device", "Id: 0x" + BinaryUtils.byteArrayToHexString(hpbNetwork.ownClient.id) + "\n"
+                displayAlertDialog("Own Device", "Id: 0x" + BinaryUtils.byteArrayToHexString(hpbNetwork.ownClient.instance.getIdentifier()) + "\n"
                                                             + "Key: 0x" + BinaryUtils.byteArrayToHexString(hpbNetwork.ownClient.key));
             }
         });

@@ -5,11 +5,8 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-import static hypelabs.com.hypepubsub.Protocol.MessageType.SUBSCRIBE_SERVICE;
-
-/**
- * Created by xavier on 15/11/2017.
- */
+import com.hypelabs.hype.Hype;
+import com.hypelabs.hype.Instance;
 
 public class Protocol {
 
@@ -34,45 +31,49 @@ public class Protocol {
         INVALID /**< Represents a invalid packet */
     }
 
-    public byte[] sendSubscribeMsg(byte serviceKey[], byte destNetworkId[]) throws IOException
-    {
+    public byte[] sendSubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException, NoSuchAlgorithmException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
-        outputStream.write((byte) SUBSCRIBE_SERVICE.ordinal());
+        outputStream.write((byte) MessageType.SUBSCRIBE_SERVICE.ordinal());
         outputStream.write(serviceKey);
         byte packet[] = outputStream.toByteArray();
+
+        Hype.send(packet, destInstance);
         return packet;
     }
 
-    public byte[] sendUnsubscribeMsg(byte serviceKey[], byte destNetworkId[]) throws IOException
-    {
+    public byte[] sendUnsubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException, NoSuchAlgorithmException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         outputStream.write((byte) MessageType.UNSUBSCRIBE_SERVICE.ordinal());
         outputStream.write(serviceKey);
         byte packet[] = outputStream.toByteArray();
+
+        Hype.send(packet, destInstance);
         return packet;
     }
 
-    public byte[] sendPublishMsg(byte serviceKey[], byte destNetworkId[], String msg) throws IOException
-    {
+    public byte[] sendPublishMsg(byte serviceKey[], Instance destInstance, String msg) throws IOException, NoSuchAlgorithmException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         outputStream.write((byte) MessageType.PUBLISH.ordinal());
         outputStream.write(serviceKey);
         outputStream.write(msg.getBytes());
         byte packet[] = outputStream.toByteArray();
+
+        Hype.send(packet, destInstance);
         return packet;
     }
 
-    public byte[] sendInfoMsg(byte serviceKey[], byte destNetworkId[], String msg) throws IOException
-    {
+    public byte[] sendInfoMsg(byte serviceKey[], Instance destInstance, String msg) throws IOException, NoSuchAlgorithmException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         outputStream.write((byte) MessageType.INFO.ordinal());
         outputStream.write(serviceKey);
         outputStream.write(msg.getBytes());
         byte packet[] = outputStream.toByteArray();
+
+        Hype.send(packet, destInstance);
         return packet;
     }
 
-    public int receiveMsg(byte originNetworkId[], byte msg[]) throws IOException, NoSuchAlgorithmException {
+    public int receiveMsg(Instance originInstance, byte msg[]) throws IOException, NoSuchAlgorithmException {
         if(msg.length <= 0)
             return -1;
 
@@ -81,13 +82,13 @@ public class Protocol {
         switch (m_type)
         {
             case SUBSCRIBE_SERVICE:
-                receiveSubscribeMsg(originNetworkId, msg);
+                receiveSubscribeMsg(originInstance, msg);
                 break;
             case UNSUBSCRIBE_SERVICE:
-                receiveUnsubscribeMsg(originNetworkId, msg);
+                receiveUnsubscribeMsg(originInstance, msg);
                 break;
             case PUBLISH:
-                receivePublishMsg(originNetworkId, msg);
+                receivePublishMsg(originInstance, msg);
                 break;
             case INFO:
                 receiveInfoMsg(msg);
@@ -99,27 +100,27 @@ public class Protocol {
         return 0;
     }
 
-    public int receiveSubscribeMsg(byte originNetworkId[], byte msg[]) throws NoSuchAlgorithmException {
+    public int receiveSubscribeMsg(Instance originInstance, byte msg[]) throws NoSuchAlgorithmException {
         if(msg.length != (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
             return -1;
 
         byte serviceKey[] = Arrays.copyOfRange(msg,MESSAGE_TYPE_BYTE_SIZE,msg.length-1);
         HypePubSub hpb = HypePubSub.getInstance();
-        hpb.processSubscribeReq(serviceKey, originNetworkId);
+        hpb.processSubscribeReq(serviceKey, originInstance);
         return 0;
     }
 
-    public int receiveUnsubscribeMsg(byte originNetworkId[], byte msg[]) throws NoSuchAlgorithmException {
+    public int receiveUnsubscribeMsg(Instance originInstance, byte msg[]) throws NoSuchAlgorithmException {
         if(msg.length != (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
             return -1;
 
         byte serviceKey[] = Arrays.copyOfRange(msg,MESSAGE_TYPE_BYTE_SIZE,msg.length-1);
         HypePubSub hpb = HypePubSub.getInstance();
-        hpb.processUnsubscribeReq(serviceKey, originNetworkId);
+        hpb.processUnsubscribeReq(serviceKey, originInstance);
         return 0;
     }
 
-    public int receivePublishMsg(byte originNetworkId[], byte msg[]) throws IOException, NoSuchAlgorithmException {
+    public int receivePublishMsg(Instance originInstance, byte msg[]) throws IOException, NoSuchAlgorithmException {
         if(msg.length <= (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
             return -1;
 
@@ -147,8 +148,8 @@ public class Protocol {
         if(msg.length <= 0)
             return MessageType.INVALID;
 
-        if(msg[0] == ((byte) SUBSCRIBE_SERVICE.ordinal()))
-            return SUBSCRIBE_SERVICE;
+        if(msg[0] == ((byte) MessageType.SUBSCRIBE_SERVICE.ordinal()))
+            return MessageType.SUBSCRIBE_SERVICE;
         else if(msg[0] == ((byte) MessageType.UNSUBSCRIBE_SERVICE.ordinal()))
             return MessageType.UNSUBSCRIBE_SERVICE;
         else if(msg[0] == ((byte) MessageType.PUBLISH.ordinal()))

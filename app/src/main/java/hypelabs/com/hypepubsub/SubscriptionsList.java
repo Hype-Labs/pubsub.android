@@ -1,5 +1,7 @@
 package hypelabs.com.hypepubsub;
 
+import com.hypelabs.hype.Instance;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -13,15 +15,16 @@ public class SubscriptionsList
     // a SubscriptionsList.
     private LinkedList<Subscription> subscriptions = new LinkedList<>();
 
-    public int add(String serviceName, byte managerId[]) throws NoSuchAlgorithmException
+    public int add(String serviceName, Instance managerInstance) throws NoSuchAlgorithmException
     {
         MessageDigest md = MessageDigest.getInstance(Constants.HPB_HASH_ALGORITHM);
         byte serviceKey[] = md.digest(serviceName.getBytes());
 
-        if(find(serviceKey) != null)
+        if(find(serviceKey) != null) {
             return -1;
+        }
 
-        subscriptions.add(new Subscription(serviceName, managerId));
+        subscriptions.add(new Subscription(serviceName, managerInstance));
         return 0;
     }
 
@@ -31,8 +34,9 @@ public class SubscriptionsList
         byte serviceKey[] = md.digest(serviceName.getBytes());
 
         Subscription subscription = find(serviceKey);
-        if(subscription == null)
+        if(subscription == null) {
             return -1;
+        }
 
         subscriptions.remove(subscription);
         return 0;
