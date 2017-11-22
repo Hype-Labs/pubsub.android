@@ -24,8 +24,7 @@ public class HypePubSub
 
     public static HypePubSub getInstance() throws NoSuchAlgorithmException
     {
-        if (hpb == null)
-        {
+        if (hpb == null) {
             hpb = new HypePubSub();
         }
         return hpb;

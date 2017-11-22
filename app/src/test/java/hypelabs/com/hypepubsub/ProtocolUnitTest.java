@@ -1,7 +1,5 @@
 package hypelabs.com.hypepubsub;
 
-import com.hypelabs.hype.Instance;
-
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
