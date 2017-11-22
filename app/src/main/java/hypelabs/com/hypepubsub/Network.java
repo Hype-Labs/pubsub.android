@@ -1,45 +1,40 @@
 package hypelabs.com.hypepubsub;
 
-import com.hypelabs.hype.Error;
-import com.hypelabs.hype.Hype;
 import com.hypelabs.hype.Instance;
-import com.hypelabs.hype.NetworkObserver;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ListIterator;
 
 
-public class Network implements NetworkObserver
+public class Network
 {
+    private static Network network = null;
 
-    static Network network = null; // Singleton
+    protected Client ownClient;
+    protected ClientsList networkClients;
 
-    Client ownClient;
-    ClientsList networkClients;
-
-    private Network() throws NoSuchAlgorithmException
+    private Network()
     {
-        this.ownClient = null; // Must be set after HypeStart
-        this.networkClients = new ClientsList();
+        // The own client can only be initialized after the Hype start when we already
+        // have an host instance.
+        ownClient = null;
+        networkClients = new ClientsList();
     }
 
-    public static Network getInstance() throws NoSuchAlgorithmException
+    public static Network getInstance()
     {
-        if (network == null) {
+        if(network == null){
             network = new Network();
         }
-
         return network;
     }
 
-    public Instance getServiceManagerInstance(byte serviceKey[])
+    protected Instance getServiceManagerInstance(byte serviceKey[]) throws NoSuchAlgorithmException
     {
-        // Compare the service key with the hash of the Hype clients id and return
-        // the id of the closest client. Consider own ID also!!!!
-        Instance managerInstance = this.ownClient.instance;
-        byte lowestDist[] = BinaryUtils.xor(serviceKey, this.ownClient.key);
+        Instance managerInstance = ownClient.instance;
+        byte lowestDist[] = BinaryUtils.xor(serviceKey, ownClient.key);
 
-        ListIterator<Client> it = this.networkClients.listIterator();
+        ListIterator<Client> it = networkClients.listIterator();
         while(it.hasNext())
         {
             Client client = it.next();
@@ -54,41 +49,7 @@ public class Network implements NetworkObserver
         return managerInstance;
     }
 
-    protected void setOwnClient() throws NoSuchAlgorithmException {
-        try {
-            this.ownClient = new Client(Hype.getHostInstance());
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+    protected void setOwnClient(Instance ownInstance) throws NoSuchAlgorithmException {
+        ownClient = new Client(ownInstance);
     }
-
-    //////////////////////////////////////////////////
-    // Methods from NetworkObserver
-    //////////////////////////////////////////////////
-
-    @Override
-    public void onHypeInstanceFound(Instance var1)
-    {
-        try {
-            this.networkClients.add(var1);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onHypeInstanceLost(Instance var1, Error var2)
-    {
-        try {
-            this.networkClients.remove(var1);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onHypeInstanceResolved(Instance var1, byte[] var2){}
-
-    @Override
-    public void onHypeInstanceFailResolving(Instance var1, Error var2){}
 }

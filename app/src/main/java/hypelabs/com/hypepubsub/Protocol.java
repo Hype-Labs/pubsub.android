@@ -5,23 +5,16 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
+import com.hypelabs.hype.Error;
 import com.hypelabs.hype.Hype;
 import com.hypelabs.hype.Instance;
+import com.hypelabs.hype.Message;
+import com.hypelabs.hype.MessageInfo;
+import com.hypelabs.hype.MessageObserver;
 
-public class Protocol {
-
+public class Protocol
+{
     public static final int MESSAGE_TYPE_BYTE_SIZE = 1;
-
-    static Protocol protocol = null; // Singleton
-
-    public static Protocol getInstance()
-    {
-        if (protocol == null) {
-            protocol = new Protocol();
-        }
-
-        return protocol;
-    }
 
     public enum MessageType {
         SUBSCRIBE_SERVICE, /**< Represents a packet which contains a subscribe message */
@@ -31,7 +24,7 @@ public class Protocol {
         INVALID /**< Represents a invalid packet */
     }
 
-    public byte[] sendSubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException, NoSuchAlgorithmException {
+    static byte[] sendSubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException, NoSuchAlgorithmException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         outputStream.write((byte) MessageType.SUBSCRIBE_SERVICE.ordinal());
         outputStream.write(serviceKey);
@@ -41,7 +34,7 @@ public class Protocol {
         return packet;
     }
 
-    public byte[] sendUnsubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException, NoSuchAlgorithmException {
+    static byte[] sendUnsubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException, NoSuchAlgorithmException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         outputStream.write((byte) MessageType.UNSUBSCRIBE_SERVICE.ordinal());
         outputStream.write(serviceKey);
@@ -51,7 +44,7 @@ public class Protocol {
         return packet;
     }
 
-    public byte[] sendPublishMsg(byte serviceKey[], Instance destInstance, String msg) throws IOException, NoSuchAlgorithmException {
+    static byte[] sendPublishMsg(byte serviceKey[], Instance destInstance, String msg) throws IOException, NoSuchAlgorithmException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         outputStream.write((byte) MessageType.PUBLISH.ordinal());
         outputStream.write(serviceKey);
@@ -62,7 +55,7 @@ public class Protocol {
         return packet;
     }
 
-    public byte[] sendInfoMsg(byte serviceKey[], Instance destInstance, String msg) throws IOException, NoSuchAlgorithmException {
+    static byte[] sendInfoMsg(byte serviceKey[], Instance destInstance, String msg) throws IOException, NoSuchAlgorithmException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         outputStream.write((byte) MessageType.INFO.ordinal());
         outputStream.write(serviceKey);
@@ -73,7 +66,7 @@ public class Protocol {
         return packet;
     }
 
-    public int receiveMsg(Instance originInstance, byte msg[]) throws IOException, NoSuchAlgorithmException {
+    static int receiveMsg(Instance originInstance, byte msg[]) throws IOException, NoSuchAlgorithmException {
         if(msg.length <= 0)
             return -1;
 
@@ -100,7 +93,7 @@ public class Protocol {
         return 0;
     }
 
-    public int receiveSubscribeMsg(Instance originInstance, byte msg[]) throws NoSuchAlgorithmException {
+    static int receiveSubscribeMsg(Instance originInstance, byte msg[]) throws NoSuchAlgorithmException {
         if(msg.length != (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
             return -1;
 
@@ -110,7 +103,7 @@ public class Protocol {
         return 0;
     }
 
-    public int receiveUnsubscribeMsg(Instance originInstance, byte msg[]) throws NoSuchAlgorithmException {
+    static int receiveUnsubscribeMsg(Instance originInstance, byte msg[]) throws NoSuchAlgorithmException {
         if(msg.length != (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
             return -1;
 
@@ -120,7 +113,7 @@ public class Protocol {
         return 0;
     }
 
-    public int receivePublishMsg(Instance originInstance, byte msg[]) throws IOException, NoSuchAlgorithmException {
+    static int receivePublishMsg(Instance originInstance, byte msg[]) throws IOException, NoSuchAlgorithmException {
         if(msg.length <= (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
             return -1;
 
@@ -131,7 +124,7 @@ public class Protocol {
         return 0;
     }
 
-    int receiveInfoMsg(byte msg[]) throws NoSuchAlgorithmException
+    static int receiveInfoMsg(byte msg[]) throws NoSuchAlgorithmException
     {
         if(msg.length <= (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
             return -1;
@@ -143,7 +136,7 @@ public class Protocol {
         return 0;
     }
 
-    public MessageType getMessageType(byte msg[])
+    static MessageType getMessageType(byte msg[])
     {
         if(msg.length <= 0)
             return MessageType.INVALID;
@@ -159,5 +152,4 @@ public class Protocol {
 
         return MessageType.INVALID;
     }
-
 }

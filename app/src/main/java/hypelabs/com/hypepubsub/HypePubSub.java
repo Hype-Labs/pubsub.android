@@ -15,14 +15,12 @@ import com.hypelabs.hype.Instance;
 import com.hypelabs.hype.StateObserver;
 
 
-public class HypePubSub implements StateObserver
+public class HypePubSub
 {
     static HypePubSub hpb = null; // Singleton
 
     SubscriptionsList ownSubscriptions;
     ServiceManagersList managedServices;
-    private static Context context;
-    private static MainActivity mainActivity;
 
     public static HypePubSub getInstance() throws NoSuchAlgorithmException
     {
@@ -39,73 +37,9 @@ public class HypePubSub implements StateObserver
         this.managedServices = new ServiceManagersList();
     }
 
-    //////////////////////////////////////////////////
-    // Methods from StateObserver
-    //////////////////////////////////////////////////
-
-    @Override
-    public void onHypeStart()
-    {
-        try
-        {
-            Hype.addNetworkObserver(Network.getInstance());
-            Log.i("HypePubSub", "Hype started!");
-            mainActivity.addButtonListeners();
-            Network.getInstance().setOwnClient();
-        }
-        catch (NoSuchAlgorithmException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onHypeStop(Error var1) {
-        requestHypeToStop();
-    }
-
-    @Override
-    public void onHypeFailedStarting(Error var1){
-        Log.e("HypePubSub", "Hype Start Failed. Error description: " + var1.getDescription());
-    }
-
-    @Override
-    public void onHypeReady(){}
-
-    @Override
-    public void onHypeStateChange(){}
-
-
-    //////////////////////////////////////////////////
-
-    protected void requestHypeToStart()
-    {
-        Hype.setUserIdentifier(0l);
-        Hype.setAppIdentifier("00000000");
-        Hype.setContext(this.context);
-        Hype.addStateObserver(this);
-        Hype.start();
-
-        Log.i("HypePubSub", "Invoked Hype start.");
-    }
-
-    protected void requestHypeToStop()
-    {
-        Hype.stop();
-    }
-
-    static public void setContext(Context c){
-        context = c;
-    }
-
-    static public void setMainActivity(MainActivity mainAct){
-        mainActivity = mainAct;
-    }
-
     int issueSubscribeReq(String serviceName) throws NoSuchAlgorithmException, IOException
     {
         Network network = Network.getInstance();
-        Protocol protocol = Protocol.getInstance();
 
         byte serviceKey[] = GenericUtils.getStrHash(serviceName);
         Instance managerInstance = network.getServiceManagerInstance(serviceKey);
@@ -118,14 +52,14 @@ public class HypePubSub implements StateObserver
         if(GenericUtils.areInstancesEqual(network.ownClient.instance, managerInstance))
             this.processSubscribeReq(serviceKey, network.ownClient.instance);
         else
-            protocol.sendSubscribeMsg(serviceKey, managerInstance);
+            Protocol.sendSubscribeMsg(serviceKey, managerInstance);
 
         return 0;
     }
 
-    int issueUnsubscribeReq(String serviceName) throws NoSuchAlgorithmException, IOException {
+    int issueUnsubscribeReq(String serviceName) throws NoSuchAlgorithmException, IOException
+    {
         Network network = Network.getInstance();
-        Protocol protocol = Protocol.getInstance();
 
         byte serviceKey[] = GenericUtils.getStrHash(serviceName);
         Instance managerInstance = network.getServiceManagerInstance(serviceKey);
@@ -143,14 +77,14 @@ public class HypePubSub implements StateObserver
         if(GenericUtils.areInstancesEqual(network.ownClient.instance, managerInstance))
             this.processUnsubscribeReq(serviceKey, network.ownClient.instance);
         else
-            protocol.sendUnsubscribeMsg(serviceKey, managerInstance);
+            Protocol.sendUnsubscribeMsg(serviceKey, managerInstance);
 
         return 0;
     }
 
-    int issuePublishReq(String serviceName, String msg) throws NoSuchAlgorithmException, IOException {
+    int issuePublishReq(String serviceName, String msg) throws NoSuchAlgorithmException, IOException
+    {
         Network network = Network.getInstance();
-        Protocol protocol = Protocol.getInstance();
 
         byte serviceKey[] = GenericUtils.getStrHash(serviceName);
         Instance managerInstance = network.getServiceManagerInstance(serviceKey);
@@ -160,7 +94,7 @@ public class HypePubSub implements StateObserver
         if(GenericUtils.areInstancesEqual(network.ownClient.instance, managerInstance))
             this.processPublishReq(serviceKey, msg);
         else
-            protocol.sendPublishMsg(serviceKey, managerInstance, msg);
+            Protocol.sendPublishMsg(serviceKey, managerInstance, msg);
 
         return 0;
     }
@@ -190,13 +124,14 @@ public class HypePubSub implements StateObserver
         return 0;
     }
 
-    int processPublishReq(byte serviceKey[], String msg) throws NoSuchAlgorithmException, IOException {
+    int processPublishReq(byte serviceKey[], String msg) throws NoSuchAlgorithmException, IOException
+    {
+        Network network = Network.getInstance();
+
         ServiceManager serviceManager = this.managedServices.find(serviceKey);
         if(serviceManager == null)
             return -2;
 
-        Network network = Network.getInstance();
-        Protocol protocol = Protocol.getInstance();
         ListIterator<Client> it = serviceManager.subscribers.listIterator();
         while(it.hasNext())
         {
@@ -207,7 +142,7 @@ public class HypePubSub implements StateObserver
             if(GenericUtils.areInstancesEqual(network.ownClient.instance, client.instance))
                 this.processInfoMsg(serviceKey, msg);
             else
-                protocol.sendInfoMsg(serviceKey, client.instance, msg);
+                Protocol.sendInfoMsg(serviceKey, client.instance, msg);
         }
 
         return 0;
@@ -247,7 +182,6 @@ public class HypePubSub implements StateObserver
     int updateOwnSubscriptions() throws IOException, NoSuchAlgorithmException
     {
         Network network = Network.getInstance();
-        Protocol protocol = Protocol.getInstance();
 
         ListIterator<Subscription> it = this.ownSubscriptions.listIterator();
         while(it.hasNext())

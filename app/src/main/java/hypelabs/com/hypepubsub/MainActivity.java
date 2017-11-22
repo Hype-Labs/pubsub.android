@@ -1,10 +1,8 @@
 package hypelabs.com.hypepubsub;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +22,7 @@ import java.security.NoSuchAlgorithmException;
 public class MainActivity extends AppCompatActivity
 {
     HypePubSub hpb = null;
+    Network network = null;
 
     Button subscribeButton;
     Button unsubscribeButton;
@@ -45,31 +44,34 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        HypeSdkInterface hypeSdkInterface = HypeSdkInterface.getInstance();
+        hypeSdkInterface.requestHypeToStart(getApplicationContext());
+
         try
         {
-            HypePubSub.setContext(getApplicationContext());
-            HypePubSub.setMainActivity(this);
+            // Get Singletons
             hpb = HypePubSub.getInstance();
-            hpb.requestHypeToStart();
+            network = Network.getInstance();
         }
-        catch (NoSuchAlgorithmException e)
-        {
+        catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+
+        setButtonListeners();
     }
 
-    public void addButtonListeners()
+    private void setButtonListeners()
     {
-        addListenerSubscribeButton();
-        addListenerUnsubscribeButton();
-        addListenerPublishButton();
+        setListenerSubscribeButton();
+        setListenerUnsubscribeButton();
+        setListenerPublishButton();
 
         try
         {
-            addListenerOwnIdButton();
-            addListenerHypeDevicesButton();
-            addListenerOwnSubscriptionsButton();
-            addListenerManagedServicesButton();
+            setListenerOwnIdButton();
+            setListenerHypeDevicesButton();
+            setListenerOwnSubscriptionsButton();
+            setListenerManagedServicesButton();
         }
         catch (NoSuchAlgorithmException e)
         {
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void addListenerSubscribeButton() {
+    private void setListenerSubscribeButton() {
 
         subscribeButton = (Button) findViewById(R.id.subscribeButton);
         serviceToSubscribe = (TextView) findViewById(R.id.subscribeText);
@@ -86,6 +88,10 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View arg0)
             {
+                if( ! isHypeSdkReady()){
+                    return;
+                }
+
                 if(serviceToSubscribe.getText().length() > 0 )
                 {
                     try
@@ -108,7 +114,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    public void addListenerUnsubscribeButton() {
+    private void setListenerUnsubscribeButton() {
 
         unsubscribeButton = (Button) findViewById(R.id.unsubscribeButton);
         serviceToUnsubscribe = (TextView) findViewById(R.id.unsubscribeText);
@@ -118,6 +124,10 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View arg0)
             {
+                if( ! isHypeSdkReady()){
+                    return;
+                }
+
                 if(serviceToUnsubscribe.getText().length() > 0 )
                 {
                     try {
@@ -139,7 +149,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    public void addListenerPublishButton() {
+    private void setListenerPublishButton() {
 
         final EditText input = new EditText(this);
 
@@ -150,6 +160,10 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View arg0)
             {
+                if( ! isHypeSdkReady()){
+                    return;
+                }
+
                 if(serviceToPublish.getText().length() > 0){
                     input.setInputType(InputType.TYPE_CLASS_TEXT);
                     runOnUiThread(new Runnable() {
@@ -195,7 +209,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    public void addListenerOwnIdButton() throws NoSuchAlgorithmException
+    private void setListenerOwnIdButton() throws NoSuchAlgorithmException
     {
         getOwnIdButton = (Button) findViewById(R.id.getOwnIdButton);
         getOwnIdButton.setOnClickListener(new View.OnClickListener() {
@@ -203,22 +217,17 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View arg0)
             {
-                if(Hype.getState() == State.Idle || Hype.getState() == State.Stopping)
+                if( ! isHypeSdkReady()){
                     return;
-
-                Network hpbNetwork = null;
-                try {
-                    hpbNetwork = Network.getInstance();
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
                 }
-                displayAlertDialog("Own Device", "Id: 0x" + BinaryUtils.byteArrayToHexString(hpbNetwork.ownClient.instance.getIdentifier()) + "\n"
-                                                            + "Key: 0x" + BinaryUtils.byteArrayToHexString(hpbNetwork.ownClient.key));
+
+                displayAlertDialog("Own Device", "Id: 0x" + BinaryUtils.byteArrayToHexString(network.ownClient.instance.getIdentifier()) + "\n"
+                                                            + "Key: 0x" + BinaryUtils.byteArrayToHexString(network.ownClient.key));
             }
         });
     }
 
-    public void addListenerHypeDevicesButton() throws NoSuchAlgorithmException
+    private void setListenerHypeDevicesButton() throws NoSuchAlgorithmException
     {
         getHypeDevicesButton = (Button) findViewById(R.id.getHypeDevicesButton);
         final Intent intent = new Intent(this, HypeDevicesListActivity.class);
@@ -228,12 +237,16 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View arg0)
             {
+                if( ! isHypeSdkReady()){
+                    return;
+                }
+
                 startActivity(intent);
             }
         });
     }
 
-    public void addListenerOwnSubscriptionsButton() throws NoSuchAlgorithmException
+    private void setListenerOwnSubscriptionsButton() throws NoSuchAlgorithmException
     {
         getOwnSubscriptionsButton = (Button) findViewById(R.id.getOwnSubscriptionsButton);
         final Intent intent = new Intent(this, SubscriptionsListActivity.class);
@@ -243,12 +256,16 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View arg0)
             {
+                if( ! isHypeSdkReady()){
+                    return;
+                }
+
                 startActivity(intent);
             }
         });
     }
 
-    public void addListenerManagedServicesButton() throws NoSuchAlgorithmException
+    private void setListenerManagedServicesButton() throws NoSuchAlgorithmException
     {
         getManagedServicesButton = (Button) findViewById(R.id.getManagedServicesButton);
         final Intent intent = new Intent(this, ServiceManagersListActivity.class);
@@ -258,6 +275,10 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View arg0)
             {
+                if( ! isHypeSdkReady()){
+                    return;
+                }
+
                 startActivity(intent);
             }
         });
@@ -283,5 +304,19 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+    }
+
+    public boolean isHypeSdkReady()
+    {
+        if(HypeSdkInterface.isHypeFail){
+            displayAlertDialog("Warning", "Hype SDK could not be started");
+            return false;
+        }
+        else if( ! HypeSdkInterface.isHypeReady){
+            displayAlertDialog("Warning", "Hype SDK is not ready yet");
+            return false;
+        }
+
+        return true;
     }
 }

@@ -14,9 +14,8 @@ import static org.junit.Assert.*;
 public class ProtocolUnitTest
 {
     @Test
-    public void testSendingSubscribe() throws IOException, NoSuchFieldException, IllegalAccessException, NoSuchAlgorithmException {
-        Protocol protocol = Protocol.getInstance();
-
+    public void testSendingSubscribe() throws IOException, NoSuchFieldException, IllegalAccessException, NoSuchAlgorithmException
+    {
         int offset;
         byte DEST_ID1[] = new byte[] {(byte) 0x10, (byte) 0x11, (byte) 0x12, (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05, (byte) 0x06, (byte) 0x07, (byte) 0x08, (byte) 0x09};
         byte SERVICE_KEY1[] = new byte[] {(byte) 0x9a, (byte) 0xc1, (byte) 0xb0, (byte) 0x41, (byte) 0x5e, (byte) 0x0a, (byte) 0x97, (byte) 0x73, (byte) 0x8c, (byte) 0x57, (byte) 0xe7, (byte) 0xe6, (byte) 0x3f, (byte) 0x68, (byte) 0x50, (byte) 0xab, (byte) 0x21, (byte) 0xe4, (byte) 0x7e, (byte) 0xb4};
@@ -28,11 +27,11 @@ public class ProtocolUnitTest
 
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
 
-        byte packet[] = protocol.sendSubscribeMsg(SERVICE_KEY1, instance1);
+        byte packet[] = Protocol.sendSubscribeMsg(SERVICE_KEY1, instance1);
         assertEquals((byte) Protocol.MessageType.SUBSCRIBE_SERVICE.ordinal(), packet[0]);
         assertArrayEquals(SERVICE_KEY1, Arrays.copyOfRange(packet, offset, packet.length));
 
-        packet = protocol.sendSubscribeMsg(SERVICE_KEY2, instance2);
+        packet = Protocol.sendSubscribeMsg(SERVICE_KEY2, instance2);
         assertEquals((byte) Protocol.MessageType.SUBSCRIBE_SERVICE.ordinal(), packet[0]);
         assertArrayEquals(SERVICE_KEY2, Arrays.copyOfRange(packet, offset, packet.length));
     }
@@ -40,8 +39,6 @@ public class ProtocolUnitTest
     @Test
     public void testSendingUnsubscribe() throws IOException, NoSuchFieldException, IllegalAccessException, NoSuchAlgorithmException
     {
-        Protocol protocol = Protocol.getInstance();
-
         int offset;
         byte packet[];
         byte DEST_ID1[] = new byte[] {(byte) 0x85, (byte) 0xa9, (byte) 0xd4, (byte) 0xc4, (byte) 0xde, (byte) 0xd2, (byte) 0x87, (byte) 0x75, (byte) 0x0f, (byte) 0xc0, (byte) 0xed, (byte) 0x32};
@@ -54,11 +51,11 @@ public class ProtocolUnitTest
 
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
 
-        packet = protocol.sendUnsubscribeMsg(SERVICE_KEY1, instance1);
+        packet = Protocol.sendUnsubscribeMsg(SERVICE_KEY1, instance1);
         assertEquals((byte) Protocol.MessageType.UNSUBSCRIBE_SERVICE.ordinal(), packet[0]);
         assertArrayEquals(SERVICE_KEY1, Arrays.copyOfRange(packet, offset, packet.length));
 
-        packet = protocol.sendUnsubscribeMsg(SERVICE_KEY2, instance2);
+        packet = Protocol.sendUnsubscribeMsg(SERVICE_KEY2, instance2);
         assertEquals((byte) Protocol.MessageType.UNSUBSCRIBE_SERVICE.ordinal(), packet[0]);
         assertArrayEquals(SERVICE_KEY2, Arrays.copyOfRange(packet, offset, packet.length));
     }
@@ -66,8 +63,6 @@ public class ProtocolUnitTest
     @Test
     public void testSendingPublish() throws IOException, NoSuchFieldException, IllegalAccessException, NoSuchAlgorithmException
     {
-        Protocol protocol = Protocol.getInstance();
-
         byte packet[];
         int offset;
         byte DEST_ID1[] = new byte[] {(byte) 0x85, (byte) 0xa9, (byte) 0xd4, (byte) 0xc4, (byte) 0xde, (byte) 0xd2, (byte) 0x87, (byte) 0x75, (byte) 0x0f, (byte) 0xc0, (byte) 0xed, (byte) 0x32};
@@ -80,14 +75,14 @@ public class ProtocolUnitTest
         FakeHypeInstance instance1 = new FakeHypeInstance(DEST_ID1, null, false);
         FakeHypeInstance instance2 = new FakeHypeInstance(DEST_ID2, null, false);
 
-        packet = protocol.sendPublishMsg(SERVICE_KEY1, instance1, MSG1);
+        packet = Protocol.sendPublishMsg(SERVICE_KEY1, instance1, MSG1);
         assertEquals((byte) Protocol.MessageType.PUBLISH.ordinal(), packet[0]);
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
         assertArrayEquals(SERVICE_KEY1, Arrays.copyOfRange(packet, offset, offset+Constants.SHA1_BYTE_SIZE));
         offset += Constants.SHA1_BYTE_SIZE;
         assertArrayEquals(MSG1.getBytes(), Arrays.copyOfRange(packet, offset, packet.length));
 
-        packet = protocol.sendPublishMsg(SERVICE_KEY2, instance2, MSG2);
+        packet = Protocol.sendPublishMsg(SERVICE_KEY2, instance2, MSG2);
         assertEquals((byte) Protocol.MessageType.PUBLISH.ordinal(), packet[0]);
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
         assertArrayEquals(SERVICE_KEY2, Arrays.copyOfRange(packet, offset, offset+Constants.SHA1_BYTE_SIZE));
@@ -98,8 +93,6 @@ public class ProtocolUnitTest
     @Test
     public void testSendingInfo() throws IOException, NoSuchFieldException, IllegalAccessException, NoSuchAlgorithmException
     {
-        Protocol protocol = Protocol.getInstance();
-
         byte packet[];
         int offset;
         byte DEST_ID1[] = new byte[] {(byte) 0x85, (byte) 0xa9, (byte) 0xd4, (byte) 0xc4, (byte) 0xde, (byte) 0xd2, (byte) 0x87, (byte) 0x75, (byte) 0x0f, (byte) 0xc0, (byte) 0xed, (byte) 0x32};
@@ -112,14 +105,14 @@ public class ProtocolUnitTest
         FakeHypeInstance instance1 = new FakeHypeInstance(DEST_ID1, null, false);
         FakeHypeInstance instance2 = new FakeHypeInstance(DEST_ID2, null, false);
 
-        packet = protocol.sendInfoMsg(SERVICE_KEY1, instance1, MSG1);
+        packet = Protocol.sendInfoMsg(SERVICE_KEY1, instance1, MSG1);
         assertEquals((byte) Protocol.MessageType.INFO.ordinal(), packet[0]);
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
         assertArrayEquals(SERVICE_KEY1, Arrays.copyOfRange(packet, offset, offset+Constants.SHA1_BYTE_SIZE));
         offset += Constants.SHA1_BYTE_SIZE;
         assertArrayEquals(MSG1.getBytes(), Arrays.copyOfRange(packet, offset, packet.length));
 
-        packet = protocol.sendInfoMsg(SERVICE_KEY2, instance2, MSG2);
+        packet = Protocol.sendInfoMsg(SERVICE_KEY2, instance2, MSG2);
         assertEquals((byte) Protocol.MessageType.INFO.ordinal(), packet[0]);
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
         assertArrayEquals(SERVICE_KEY2, Arrays.copyOfRange(packet, offset, offset+Constants.SHA1_BYTE_SIZE));
@@ -130,8 +123,6 @@ public class ProtocolUnitTest
     @Test
     public void testGetMessageType() throws IOException
     {
-        Protocol protocol = Protocol.getInstance();
-
         byte packet[];
         byte SERVICE_KEY[] = new byte[] {(byte) 0x9a, (byte) 0xc1, (byte) 0xb0, (byte) 0x41, (byte) 0x5e, (byte) 0x0a, (byte) 0x97, (byte) 0x73, (byte) 0x8c, (byte) 0x57, (byte) 0xe7, (byte) 0xe6, (byte) 0x3f, (byte) 0x68, (byte) 0x50, (byte) 0xab, (byte) 0x21, (byte) 0xe4, (byte) 0x7e, (byte) 0xb4};
         String MSG = "HelloHypeWorld";
@@ -140,32 +131,32 @@ public class ProtocolUnitTest
         outputStream.write((byte) Protocol.MessageType.SUBSCRIBE_SERVICE.ordinal());
         outputStream.write(SERVICE_KEY);
         packet = outputStream.toByteArray();
-        assertEquals(Protocol.MessageType.SUBSCRIBE_SERVICE, protocol.getMessageType(packet));
+        assertEquals(Protocol.MessageType.SUBSCRIBE_SERVICE, Protocol.getMessageType(packet));
 
         outputStream.reset();
         outputStream.write((byte) Protocol.MessageType.UNSUBSCRIBE_SERVICE.ordinal());
         outputStream.write(SERVICE_KEY);
         packet = outputStream.toByteArray();
-        assertEquals(Protocol.MessageType.UNSUBSCRIBE_SERVICE, protocol.getMessageType(packet));
+        assertEquals(Protocol.MessageType.UNSUBSCRIBE_SERVICE, Protocol.getMessageType(packet));
 
         outputStream.reset();
         outputStream.write((byte) Protocol.MessageType.PUBLISH.ordinal());
         outputStream.write(SERVICE_KEY);
         outputStream.write(MSG.getBytes());
         packet = outputStream.toByteArray();
-        assertEquals(Protocol.MessageType.PUBLISH, protocol.getMessageType(packet));
+        assertEquals(Protocol.MessageType.PUBLISH, Protocol.getMessageType(packet));
 
         outputStream.reset();
         outputStream.write((byte) Protocol.MessageType.INFO.ordinal());
         outputStream.write(SERVICE_KEY);
         outputStream.write(MSG.getBytes());
         packet = outputStream.toByteArray();
-        assertEquals(Protocol.MessageType.INFO, protocol.getMessageType(packet));
+        assertEquals(Protocol.MessageType.INFO, Protocol.getMessageType(packet));
 
         outputStream.reset();
         outputStream.write((byte) 0xFF);
         outputStream.write(SERVICE_KEY);
         packet = outputStream.toByteArray();
-        assertEquals(Protocol.MessageType.INVALID, protocol.getMessageType(packet));
+        assertEquals(Protocol.MessageType.INVALID, Protocol.getMessageType(packet));
     }
 }

@@ -35,11 +35,10 @@ public class HypeDevicesListActivity extends AppCompatActivity
 
     private ArrayList<String> getHypeDevicesStrings() throws NoSuchAlgorithmException
     {
-        Network hpbNetwork = Network.getInstance();
-
         ArrayList<String> hypeDevices = new ArrayList<String>();
 
-        ListIterator<Client> it = hpbNetwork.networkClients.listIterator();
+        Network network = Network.getInstance();
+        ListIterator<Client> it = network.networkClients.listIterator();
         while(it.hasNext())
         {
             Client client = it.next();

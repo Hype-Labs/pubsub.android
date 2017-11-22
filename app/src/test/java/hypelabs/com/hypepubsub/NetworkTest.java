@@ -14,7 +14,8 @@ import static org.junit.Assert.*;
 public class NetworkTest
 {
     @Test
-    public void testGetServiceManager() throws NoSuchAlgorithmException, NoSuchFieldException, IllegalAccessException {
+    public void testGetServiceManager() throws NoSuchAlgorithmException, NoSuchFieldException, IllegalAccessException
+    {
         Network network = Network.getInstance();
 
         byte ID1[] = new byte[] {(byte) 0x85, (byte) 0xa9, (byte) 0xd4, (byte) 0xc4, (byte) 0xde, (byte) 0xd2, (byte) 0x87, (byte) 0x75, (byte) 0x0f, (byte) 0xc0, (byte) 0xed, (byte) 0x32};
@@ -36,8 +37,7 @@ public class NetworkTest
         network.networkClients.add(instance4);
 
         // Reset own client id
-        Client fakeOwnClient = new Client(instance1);
-        network.ownClient = fakeOwnClient;
+        network.setOwnClient(instance1);
 
         assertArrayEquals(ID4, network.getServiceManagerInstance(SERVICE_KEY1).getIdentifier());
         assertArrayEquals(ID1, network.getServiceManagerInstance(SERVICE_KEY2).getIdentifier());

@@ -1,6 +1,8 @@
 package hypelabs.com.hypepubsub;
 
+import com.hypelabs.hype.Hype;
 import com.hypelabs.hype.Instance;
+import com.hypelabs.hype.State;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
