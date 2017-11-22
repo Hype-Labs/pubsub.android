@@ -13,6 +13,7 @@ import com.hypelabs.hype.NetworkObserver;
 import com.hypelabs.hype.StateObserver;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
 public class HypeSdkInterface implements NetworkObserver, StateObserver, MessageObserver
@@ -39,11 +40,11 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
         return hypeSdkInterface;
     }
 
-    protected void requestHypeToStart(Context context)
-    {
+    protected void requestHypeToStart(Context context) throws UnsupportedEncodingException {
         Hype.setUserIdentifier(0l);
         Hype.setAppIdentifier(Constants.HPB_APP_IDENTIFIER);
         Hype.setContext(context);
+        Hype.setAnnouncement((android.os.Build.MODEL).getBytes(Constants.HPB_ENCODING_STANDARD));
 
         Hype.addStateObserver(this);
         Hype.addNetworkObserver(this);

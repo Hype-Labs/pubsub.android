@@ -5,6 +5,7 @@ import android.widget.ListView;
 import android.widget.ArrayAdapter;
 import android.support.v7.app.AppCompatActivity;
 
+import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ListIterator;
 import java.util.ArrayList;
@@ -30,11 +31,12 @@ public class SubscriptionsListActivity extends AppCompatActivity
 
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
     }
 
-    private ArrayList<String> getSubscriptionsStrings() throws NoSuchAlgorithmException
-    {
+    private ArrayList<String> getSubscriptionsStrings() throws NoSuchAlgorithmException, UnsupportedEncodingException {
         HypePubSub hpb = HypePubSub.getInstance();
 
         ArrayList<String> subs = new ArrayList<String>();
@@ -44,11 +46,13 @@ public class SubscriptionsListActivity extends AppCompatActivity
         {
             Subscription subscription = it.next();
 
-            String manIdStr = BinaryUtils.byteArrayToHexString(subscription.manager.getIdentifier());
-            String servKeyStr = BinaryUtils.byteArrayToHexString(subscription.serviceKey);
+            String manId = BinaryUtils.byteArrayToHexString(subscription.manager.getIdentifier());
+            String manName = new String(subscription.manager.getAnnouncement(), Constants.HPB_ENCODING_STANDARD);
+            String servKey = BinaryUtils.byteArrayToHexString(subscription.serviceKey);
             subs.add("ServiceName: " + subscription.serviceName + "\n"
-                     + "ServiceKey: 0x" + servKeyStr + "\n"
-                     + "ManagerId: 0x" + manIdStr + "\n");
+                     + "ServiceKey: 0x" + servKey + "\n"
+                     + "ManagerId: 0x" + manId + "\n"
+                     + "ManagerName: " + manName + "\n");
         }
         return subs;
     }

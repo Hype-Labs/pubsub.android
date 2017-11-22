@@ -4,6 +4,7 @@ import com.hypelabs.hype.Instance;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 
 /**
@@ -16,11 +17,13 @@ public class Subscription {
     String serviceName;
     byte serviceKey[];
     Instance manager;
+    ArrayList<String> receivedMsg;
 
     public Subscription(String serviceName, Instance manager) throws NoSuchAlgorithmException
     {
         this.serviceName = serviceName;
         this.serviceKey = GenericUtils.getStrHash(serviceName);
         this.manager = manager;
+        this.receivedMsg = new ArrayList<String>();
     }
 }

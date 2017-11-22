@@ -5,6 +5,7 @@ import android.widget.ListView;
 import android.widget.ArrayAdapter;
 import android.support.v7.app.AppCompatActivity;
 
+import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ListIterator;
 import java.util.ArrayList;
@@ -30,10 +31,12 @@ public class ServiceManagersListActivity extends AppCompatActivity
 
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
     }
 
-    private ArrayList<String> getServiceManagersStrings() throws NoSuchAlgorithmException {
+    private ArrayList<String> getServiceManagersStrings() throws NoSuchAlgorithmException, UnsupportedEncodingException {
         HypePubSub hpb = HypePubSub.getInstance();
 
         ArrayList<String> servManagers = new ArrayList<String>();
@@ -55,9 +58,11 @@ public class ServiceManagersListActivity extends AppCompatActivity
 
                 String clientId = BinaryUtils.byteArrayToHexString(client.instance.getIdentifier());
                 String clientKey = BinaryUtils.byteArrayToHexString(client.key);
+                String clientName = new String(client.instance.getAnnouncement(), Constants.HPB_ENCODING_STANDARD);
 
                 subscribersStr += ("Client ID: 0x" + clientId + "\n"
-                        + "Client Key: 0x" + clientKey + "\n");
+                                   + "Client Key: 0x" + clientKey + "\n"
+                                   + "Client Name: " + clientName + "\n");
             }
 
             servManagers.add("ServiceKey: 0x" + servKeyStr + "\n"

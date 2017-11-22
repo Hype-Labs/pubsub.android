@@ -5,6 +5,7 @@ import android.widget.ListView;
 import android.widget.ArrayAdapter;
 import android.support.v7.app.AppCompatActivity;
 
+import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ListIterator;
 import java.util.ArrayList;
@@ -30,11 +31,12 @@ public class HypeDevicesListActivity extends AppCompatActivity
 
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
     }
 
-    private ArrayList<String> getHypeDevicesStrings() throws NoSuchAlgorithmException
-    {
+    private ArrayList<String> getHypeDevicesStrings() throws NoSuchAlgorithmException, UnsupportedEncodingException {
         ArrayList<String> hypeDevices = new ArrayList<String>();
 
         Network network = Network.getInstance();
@@ -45,8 +47,11 @@ public class HypeDevicesListActivity extends AppCompatActivity
 
             String clientId = BinaryUtils.byteArrayToHexString(client.instance.getIdentifier());
             String clientKey = BinaryUtils.byteArrayToHexString(client.key);
+            String clientName = new String(client.instance.getAnnouncement(), Constants.HPB_ENCODING_STANDARD);
+
             hypeDevices.add("ClientID: 0x" + clientId + "\n"
-                            + "ClientKey: 0x" + clientKey + "\n");
+                            + "ClientKey: 0x" + clientKey + "\n"
+                            + "ClientName: " + clientName + "\n");
         }
 
         return hypeDevices;

@@ -1,5 +1,7 @@
 package hypelabs.com.hypepubsub;
 
+import android.util.Log;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -14,6 +16,8 @@ import com.hypelabs.hype.MessageObserver;
 
 public class Protocol
 {
+    //public final static String TAG = this.getClass().getName();
+
     public static final int MESSAGE_TYPE_BYTE_SIZE = 1;
 
     public enum MessageType {
@@ -67,8 +71,10 @@ public class Protocol
     }
 
     static int receiveMsg(Instance originInstance, byte msg[]) throws IOException, NoSuchAlgorithmException {
-        if(msg.length <= 0)
+        if(msg.length <= 0) {
+            //Log.e(TAG, "Received message has invalid length");
             return -1;
+        }
 
         MessageType m_type = getMessageType(msg);
 

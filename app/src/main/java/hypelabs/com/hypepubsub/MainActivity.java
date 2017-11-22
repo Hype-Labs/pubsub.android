@@ -17,6 +17,7 @@ import com.hypelabs.hype.Hype;
 import com.hypelabs.hype.State;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends AppCompatActivity
@@ -45,7 +46,11 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         HypeSdkInterface hypeSdkInterface = HypeSdkInterface.getInstance();
-        hypeSdkInterface.requestHypeToStart(getApplicationContext());
+        try {
+            hypeSdkInterface.requestHypeToStart(getApplicationContext());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
         try
         {
