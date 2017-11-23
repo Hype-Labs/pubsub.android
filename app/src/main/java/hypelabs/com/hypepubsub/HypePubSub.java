@@ -1,22 +1,18 @@
 package hypelabs.com.hypepubsub;
 
-import android.content.Context;
 import android.util.Log;
 
 import java.io.IOException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.ListIterator;
 
-import com.hypelabs.hype.Error;
-import com.hypelabs.hype.Hype;
 import com.hypelabs.hype.Instance;
-import com.hypelabs.hype.StateObserver;
 
 
 public class HypePubSub
 {
+    private static final String TAG = HypePubSub.class.getName();
+
     static HypePubSub hpb = null; // Singleton
 
     SubscriptionsList ownSubscriptions;
@@ -152,12 +148,14 @@ public class HypePubSub
         Subscription subscription = ownSubscriptions.find(serviceKey);
 
         if(subscription == null){
-            Log.d("HypePubSub", "Message received from unknown service: " + msg);
+            Log.e(TAG, "Message received from unsubscribed service: " + msg);
             return -1;
         }
 
-        Log.d("HypePubSub", "Message received from service " + subscription.serviceName);
-        Log.d("HypePubSub", "Message: " + msg);
+        subscription.receivedMsg.add(msg);
+
+        Log.i(TAG, "Received message from service " + subscription.serviceName
+                                        + ": " + msg);
         return 0;
     }
 
