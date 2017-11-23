@@ -108,17 +108,18 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
+            Log.i(TAG, "Instance Found " + GenericUtils.getInstanceAnnouncementStr(var1)
+                    + " (0x" + BinaryUtils.byteArrayToHexString(var1.getIdentifier()) + ")");
+
             HypePubSub hpb = HypePubSub.getInstance();
             Network network = Network.getInstance();
             network.networkClients.add(var1);
             hpb.updateManagedServices();
         }
-        catch (NoSuchAlgorithmException e)
-        {
+        catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        catch (UnsupportedEncodingException e)
-        {
+        catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
@@ -128,6 +129,9 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
+            Log.i(TAG, "Instance Lost " + GenericUtils.getInstanceAnnouncementStr(var1)
+                    + " (0x" + BinaryUtils.byteArrayToHexString(var1.getIdentifier()) + ")");
+
             HypePubSub hpb = HypePubSub.getInstance();
             Network network = Network.getInstance();
             network.networkClients.remove(var1);
@@ -142,10 +146,30 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     }
 
     @Override
-    public void onHypeInstanceResolved(Instance var1, byte[] var2){}
+    public void onHypeInstanceResolved(Instance var1, byte[] var2)
+    {
+        try
+        {
+            Log.i(TAG, "Instance Resolved " + GenericUtils.getInstanceAnnouncementStr(var1)
+                    + " (0x" + BinaryUtils.byteArrayToHexString(var1.getIdentifier()) + ")");
+        } catch (UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+        }
+    }
 
     @Override
-    public void onHypeInstanceFailResolving(Instance var1, Error var2){}
+    public void onHypeInstanceFailResolving(Instance var1, Error var2)
+    {
+        try
+        {
+            Log.i(TAG, "Instance Fail Resolving " + GenericUtils.getInstanceAnnouncementStr(var1)
+                    + " (0x" + BinaryUtils.byteArrayToHexString(var1.getIdentifier()) + ")");
+        } catch (UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+        }
+    }
 
     //////////////////////////////////////////////////////////////////////////////
     // Message Observer Methods

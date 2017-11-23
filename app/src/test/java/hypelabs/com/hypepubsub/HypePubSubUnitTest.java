@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
@@ -29,7 +30,7 @@ public class HypePubSubUnitTest
     byte HPB_TEST_SERVICE2[] = new byte[] {(byte) 0xf2, (byte) 0x95, (byte) 0xa7, (byte) 0x85, (byte) 0x27, (byte) 0x72, (byte) 0xfd, (byte) 0x6c, (byte) 0x88, (byte) 0xb5, (byte) 0x14, (byte) 0x37, (byte) 0xf3, (byte) 0x5e, (byte) 0x5e, (byte) 0x73, (byte) 0x08, (byte) 0x9f, (byte) 0xad, (byte) 0x3e};
     
     @Test
-    public void testProcessSubscribeAndUnsubscribe() throws NoSuchAlgorithmException, NoSuchFieldException, IllegalAccessException
+    public void testProcessSubscribeAndUnsubscribe() throws NoSuchAlgorithmException, NoSuchFieldException, IllegalAccessException, UnsupportedEncodingException
     {
         FakeHypeInstance instance1 = new FakeHypeInstance(HPB_TEST_CLIENT1, null, false);
         FakeHypeInstance instance2 = new FakeHypeInstance(HPB_TEST_CLIENT2, null, false);

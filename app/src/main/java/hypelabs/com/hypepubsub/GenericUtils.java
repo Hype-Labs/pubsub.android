@@ -19,6 +19,8 @@ public class GenericUtils
 
     public static String getInstanceAnnouncementStr(Instance instance) throws UnsupportedEncodingException
     {
+        if(instance.getAnnouncement() == null)
+            return "---";
         return new String(instance.getAnnouncement(), Constants.HPB_ENCODING_STANDARD);
     }
 

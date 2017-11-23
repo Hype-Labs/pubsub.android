@@ -27,8 +27,8 @@ public class Protocol
 
     static byte[] sendSubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException, NoSuchAlgorithmException
     {
-        Log.i(TAG, "Sending Subscribe message to 0x"
-                         + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier())
+        Log.i(TAG, "Sending Subscribe message to " + GenericUtils.getInstanceAnnouncementStr(destInstance)
+                         + " (0x" + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier()) + ")"
                          + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
 
         byte packet[] = buildPacket(MessageType.SUBSCRIBE_SERVICE, serviceKey, null);
@@ -38,8 +38,8 @@ public class Protocol
 
     static byte[] sendUnsubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException, NoSuchAlgorithmException
     {
-        Log.i(TAG, "Sending Unsubscribe message to 0x"
-                + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier())
+        Log.i(TAG, "Sending Unsubscribe message to " + GenericUtils.getInstanceAnnouncementStr(destInstance)
+                + " (0x" + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier()) + ")"
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
 
         byte packet[] = buildPacket(MessageType.UNSUBSCRIBE_SERVICE, serviceKey, null);
@@ -49,8 +49,8 @@ public class Protocol
 
     static byte[] sendPublishMsg(byte serviceKey[], Instance destInstance, String msg) throws IOException, NoSuchAlgorithmException
     {
-        Log.i(TAG, "Sending Publish message to 0x"
-                + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier())
+        Log.i(TAG, "Sending Publish message to " + GenericUtils.getInstanceAnnouncementStr(destInstance)
+                + " (0x" + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier()) + ")"
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey)
                 + ". Message: " + msg);
 
@@ -61,8 +61,8 @@ public class Protocol
 
     static byte[] sendInfoMsg(byte serviceKey[], Instance destInstance, String msg) throws IOException, NoSuchAlgorithmException
     {
-        Log.i(TAG, "Sending Info message to 0x"
-                + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier())
+        Log.i(TAG, "Sending Info message to " + GenericUtils.getInstanceAnnouncementStr(destInstance)
+                + " (0x" + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier()) + ")"
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey)
                 + ". Message: " + msg);
 
@@ -124,8 +124,8 @@ public class Protocol
 
         byte serviceKey[] = getServiceKey(msg);
 
-        Log.i(TAG, "Received Subscribe message from 0x"
-                + BinaryUtils.byteArrayToHexString(originInstance.getIdentifier())
+        Log.i(TAG, "Received Subscribe message from " + GenericUtils.getInstanceAnnouncementStr(originInstance)
+                + " (0x" + BinaryUtils.byteArrayToHexString(originInstance.getIdentifier()) + ")"
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
 
         HypePubSub hpb = HypePubSub.getInstance();
@@ -143,8 +143,8 @@ public class Protocol
 
         byte serviceKey[] = getServiceKey(msg);
 
-        Log.i(TAG, "Received Unsubscribe message from 0x"
-                + BinaryUtils.byteArrayToHexString(originInstance.getIdentifier())
+        Log.i(TAG, "Received Unsubscribe message from " + GenericUtils.getInstanceAnnouncementStr(originInstance)
+                + " (0x" + BinaryUtils.byteArrayToHexString(originInstance.getIdentifier()) + ")"
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
 
         HypePubSub hpb = HypePubSub.getInstance();
@@ -164,8 +164,8 @@ public class Protocol
         byte publishedData[] = getInfo(msg);
         String publishedStr = new String(publishedData, Constants.HPB_ENCODING_STANDARD);
 
-        Log.i(TAG, "Received Publish message from 0x"
-                + BinaryUtils.byteArrayToHexString(originInstance.getIdentifier())
+        Log.i(TAG, "Received Publish message from " + GenericUtils.getInstanceAnnouncementStr(originInstance)
+                + " (0x" + BinaryUtils.byteArrayToHexString(originInstance.getIdentifier()) + ")"
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey)
                 + ". Message: " + publishedStr);
 
@@ -186,8 +186,8 @@ public class Protocol
         byte infoData[] = getInfo(msg);
         String infoStr = new String(infoData, Constants.HPB_ENCODING_STANDARD);
 
-        Log.i(TAG, "Received Info message from 0x"
-                + BinaryUtils.byteArrayToHexString(originInstance.getIdentifier())
+        Log.i(TAG, "Received Info message from " + GenericUtils.getInstanceAnnouncementStr(originInstance)
+                + " (0x" + BinaryUtils.byteArrayToHexString(originInstance.getIdentifier()) + ")"
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey)
                 + ". Message: " + infoStr);
 

@@ -114,6 +114,7 @@ public class HypePubSub
             Log.i(TAG, "Processing Subscribe request for non-existent managed service 0x"
                     + BinaryUtils.byteArrayToHexString(serviceKey)
                     + " by " + GenericUtils.getInstanceAnnouncementStr(requesterInstance)
+                    + " (0x" + BinaryUtils.byteArrayToHexString(requesterInstance.getIdentifier()) + ")"
                     + ". Managed service will be created.");
 
             this.managedServices.add(serviceKey);
@@ -132,6 +133,7 @@ public class HypePubSub
             Log.e(TAG, "Processing Unsubscribe request for non-existent managed service 0x"
                     + BinaryUtils.byteArrayToHexString(serviceKey)
                     + " by " + GenericUtils.getInstanceAnnouncementStr(requesterInstance)
+                    + " (0x" + BinaryUtils.byteArrayToHexString(requesterInstance.getIdentifier()) + ")"
                     + ". Nothing will be done.");
             return -1;
         }
@@ -200,7 +202,8 @@ public class HypePubSub
             {
                 Log.i(TAG, "Passing the service management for the service 0x "
                                 + BinaryUtils.byteArrayToHexString(servMan.serviceKey)
-                                + " to " + GenericUtils.getInstanceAnnouncementStr(newManagerInstance));
+                                + " to " + GenericUtils.getInstanceAnnouncementStr(newManagerInstance)
+                                + " (0x" + BinaryUtils.byteArrayToHexString(newManagerInstance.getIdentifier()) + ")");
                 this.managedServices.remove(servMan.serviceKey);
             }
         };
@@ -223,7 +226,8 @@ public class HypePubSub
             {
                 Log.i(TAG, "Update the subscription manager for the service 0x "
                         + BinaryUtils.byteArrayToHexString(subscription.serviceKey)
-                        + " to " + GenericUtils.getInstanceAnnouncementStr(newManagerInstance));
+                        + " to " + GenericUtils.getInstanceAnnouncementStr(newManagerInstance)
+                        + " (0x" + BinaryUtils.byteArrayToHexString(newManagerInstance.getIdentifier()) + ")");
 
                 subscription.manager = newManagerInstance;
                 this.issueSubscribeReq(subscription.serviceName); // re-send the subscribe request to the new manager
