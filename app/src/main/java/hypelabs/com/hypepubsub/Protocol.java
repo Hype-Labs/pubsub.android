@@ -13,7 +13,7 @@ import com.hypelabs.hype.Instance;
 
 public class Protocol
 {
-    private static final String TAG = Protocol.class.getName();
+    private static final String TAG = Constants.GLOBAL_TAG_PREFIX + Protocol.class.getName();
 
     public static final int MESSAGE_TYPE_BYTE_SIZE = 1;
 
@@ -114,7 +114,7 @@ public class Protocol
         return 0;
     }
 
-    static int receiveSubscribeMsg(Instance originInstance, byte msg[]) throws NoSuchAlgorithmException
+    static int receiveSubscribeMsg(Instance originInstance, byte msg[]) throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
         if(msg.length != (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
         {
@@ -123,17 +123,17 @@ public class Protocol
         }
 
         byte serviceKey[] = getServiceKey(msg);
-        HypePubSub hpb = HypePubSub.getInstance();
-        hpb.processSubscribeReq(serviceKey, originInstance);
 
-        Log.i(TAG, "Receive Subscribe message from 0x"
+        Log.i(TAG, "Received Subscribe message from 0x"
                 + BinaryUtils.byteArrayToHexString(originInstance.getIdentifier())
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
 
+        HypePubSub hpb = HypePubSub.getInstance();
+        hpb.processSubscribeReq(serviceKey, originInstance);
         return 0;
     }
 
-    static int receiveUnsubscribeMsg(Instance originInstance, byte msg[]) throws NoSuchAlgorithmException
+    static int receiveUnsubscribeMsg(Instance originInstance, byte msg[]) throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
         if(msg.length != (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
         {
@@ -142,13 +142,13 @@ public class Protocol
         }
 
         byte serviceKey[] = getServiceKey(msg);
-        HypePubSub hpb = HypePubSub.getInstance();
-        hpb.processUnsubscribeReq(serviceKey, originInstance);
 
-        Log.i(TAG, "Receive Unsubscribe message from 0x"
+        Log.i(TAG, "Received Unsubscribe message from 0x"
                 + BinaryUtils.byteArrayToHexString(originInstance.getIdentifier())
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
 
+        HypePubSub hpb = HypePubSub.getInstance();
+        hpb.processUnsubscribeReq(serviceKey, originInstance);
         return 0;
     }
 
@@ -164,14 +164,13 @@ public class Protocol
         byte publishedData[] = getInfo(msg);
         String publishedStr = new String(publishedData, Constants.HPB_ENCODING_STANDARD);
 
-        HypePubSub hpb = HypePubSub.getInstance();
-        hpb.processPublishReq(serviceKey, publishedStr);
-
         Log.i(TAG, "Received Publish message from 0x"
                 + BinaryUtils.byteArrayToHexString(originInstance.getIdentifier())
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey)
                 + ". Message: " + publishedStr);
 
+        HypePubSub hpb = HypePubSub.getInstance();
+        hpb.processPublishReq(serviceKey, publishedStr);
         return 0;
     }
 
@@ -187,14 +186,13 @@ public class Protocol
         byte infoData[] = getInfo(msg);
         String infoStr = new String(infoData, Constants.HPB_ENCODING_STANDARD);
 
-        HypePubSub hpb = HypePubSub.getInstance();
-        hpb.processInfoMsg(serviceKey, infoStr);
-
         Log.i(TAG, "Received Info message from 0x"
                 + BinaryUtils.byteArrayToHexString(originInstance.getIdentifier())
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey)
                 + ". Message: " + infoStr);
 
+        HypePubSub hpb = HypePubSub.getInstance();
+        hpb.processInfoMsg(serviceKey, infoStr);
         return 0;
     }
 
@@ -223,12 +221,12 @@ public class Protocol
     static byte[] getServiceKey(byte msg[])
     {
         return Arrays.copyOfRange(msg, MESSAGE_TYPE_BYTE_SIZE,
-                                    MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE-1);
+                                    MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE);
     }
 
     static byte[] getInfo(byte msg[])
     {
         return Arrays.copyOfRange(msg,MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE,
-                                    msg.length-1);
+                                    msg.length);
     }
 }

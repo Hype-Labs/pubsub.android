@@ -47,7 +47,7 @@ public class HypeDevicesListActivity extends AppCompatActivity
 
             String clientId = BinaryUtils.byteArrayToHexString(client.instance.getIdentifier());
             String clientKey = BinaryUtils.byteArrayToHexString(client.key);
-            String clientName = new String(client.instance.getAnnouncement(), Constants.HPB_ENCODING_STANDARD);
+            String clientName = GenericUtils.getInstanceAnnouncementStr(client.instance);
 
             hypeDevices.add("ClientID: 0x" + clientId + "\n"
                             + "ClientKey: 0x" + clientKey + "\n"

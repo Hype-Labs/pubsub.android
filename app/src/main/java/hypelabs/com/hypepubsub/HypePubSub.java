@@ -3,20 +3,21 @@ package hypelabs.com.hypepubsub;
 import android.util.Log;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ListIterator;
 
 import com.hypelabs.hype.Instance;
 
-
 public class HypePubSub
 {
-    private static final String TAG = HypePubSub.class.getName();
+    private static final String TAG = Constants.GLOBAL_TAG_PREFIX + HypePubSub.class.getName();
 
     static HypePubSub hpb = null; // Singleton
 
     SubscriptionsList ownSubscriptions;
     ServiceManagersList managedServices;
+    Network network = Network.getInstance(); // Singleton
 
     public static HypePubSub getInstance() throws NoSuchAlgorithmException
     {
@@ -34,8 +35,6 @@ public class HypePubSub
 
     int issueSubscribeReq(String serviceName) throws NoSuchAlgorithmException, IOException
     {
-        Network network = Network.getInstance();
-
         byte serviceKey[] = GenericUtils.getStrHash(serviceName);
         Instance managerInstance = network.getServiceManagerInstance(serviceKey);
 
@@ -45,17 +44,21 @@ public class HypePubSub
         // if this client is the manager of the service we don't need to send the subscribe message to
         // the protocol manager
         if(GenericUtils.areInstancesEqual(network.ownClient.instance, managerInstance))
+        {
+            Log.i(TAG, "Issuing Subscribe message for service "
+                    + serviceName + " to Host instance");
+
             this.processSubscribeReq(serviceKey, network.ownClient.instance);
-        else
+        }
+        else {
             Protocol.sendSubscribeMsg(serviceKey, managerInstance);
+        }
 
         return 0;
     }
 
     int issueUnsubscribeReq(String serviceName) throws NoSuchAlgorithmException, IOException
     {
-        Network network = Network.getInstance();
-
         byte serviceKey[] = GenericUtils.getStrHash(serviceName);
         Instance managerInstance = network.getServiceManagerInstance(serviceKey);
 
@@ -70,35 +73,49 @@ public class HypePubSub
         // if this client is the manager of the service we don't need to send the unsubscribe message
         // to the protocol manager
         if(GenericUtils.areInstancesEqual(network.ownClient.instance, managerInstance))
+        {
+            Log.i(TAG, "Issuing Unsubscribe message for service "
+                    + serviceName + " to Host instance");
+
             this.processUnsubscribeReq(serviceKey, network.ownClient.instance);
-        else
+        }
+        else {
             Protocol.sendUnsubscribeMsg(serviceKey, managerInstance);
+        }
 
         return 0;
     }
 
     int issuePublishReq(String serviceName, String msg) throws NoSuchAlgorithmException, IOException
     {
-        Network network = Network.getInstance();
-
         byte serviceKey[] = GenericUtils.getStrHash(serviceName);
         Instance managerInstance = network.getServiceManagerInstance(serviceKey);
 
         // if this client is the manager of the service we don't need to send the publish message
         // to the protocol manager
         if(GenericUtils.areInstancesEqual(network.ownClient.instance, managerInstance))
+        {
+            Log.i(TAG, "Issuing Publish message for service "
+                    + serviceName + " to Host instance. Msg: " + msg);
+
             this.processPublishReq(serviceKey, msg);
-        else
+        }
+        else {
             Protocol.sendPublishMsg(serviceKey, managerInstance, msg);
+        }
 
         return 0;
     }
 
-    int processSubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException
-    {
+    int processSubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         ServiceManager serviceManager = this.managedServices.find(serviceKey);
         if(serviceManager == null) // If the service does not exist we create it.
         {
+            Log.i(TAG, "Processing Subscribe request for non-existent managed service 0x"
+                    + BinaryUtils.byteArrayToHexString(serviceKey)
+                    + " by " + GenericUtils.getInstanceAnnouncementStr(requesterInstance)
+                    + ". Managed service will be created.");
+
             this.managedServices.add(serviceKey);
             serviceManager = this.managedServices.getLast();
         }
@@ -106,9 +123,16 @@ public class HypePubSub
         return 0;
     }
 
-    int processUnsubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException {
+    int processUnsubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException, UnsupportedEncodingException
+    {
         ServiceManager serviceManager = this.managedServices.find(serviceKey);
-        if(serviceManager == null) { // If the service does not exist nothing is done
+
+        if(serviceManager == null) // If the service does not exist nothing is done
+        {
+            Log.e(TAG, "Processing Unsubscribe request for non-existent managed service 0x"
+                    + BinaryUtils.byteArrayToHexString(serviceKey)
+                    + " by " + GenericUtils.getInstanceAnnouncementStr(requesterInstance)
+                    + ". Nothing will be done.");
             return -1;
         }
         serviceManager.subscribers.remove(requesterInstance);
@@ -121,8 +145,6 @@ public class HypePubSub
 
     int processPublishReq(byte serviceKey[], String msg) throws NoSuchAlgorithmException, IOException
     {
-        Network network = Network.getInstance();
-
         ServiceManager serviceManager = this.managedServices.find(serviceKey);
         if(serviceManager == null)
             return -2;
@@ -135,9 +157,13 @@ public class HypePubSub
                 continue;
 
             if(GenericUtils.areInstancesEqual(network.ownClient.instance, client.instance))
+            {
+                Log.i(TAG, "Processing Info message from Host instance. Msg: " + msg);
                 this.processInfoMsg(serviceKey, msg);
-            else
+            }
+            else{
                 Protocol.sendInfoMsg(serviceKey, client.instance, msg);
+            }
         }
 
         return 0;
@@ -159,9 +185,9 @@ public class HypePubSub
         return 0;
     }
 
-    int updateManagedServices() throws NoSuchAlgorithmException
+    int updateManagedServices() throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
-        Network network = Network.getInstance();
+        Log.i(TAG, "Executing updateManagedServices");
 
         ListIterator<ServiceManager> it = this.managedServices.listIterator();
         while(it.hasNext())
@@ -171,14 +197,19 @@ public class HypePubSub
             // we remove the service from the list of managed services of this Hype client.
             Instance newManagerInstance = network.getServiceManagerInstance(servMan.serviceKey);
             if( ! GenericUtils.areInstancesEqual(newManagerInstance, network.ownClient.instance))
+            {
+                Log.i(TAG, "Passing the service management for the service 0x "
+                                + BinaryUtils.byteArrayToHexString(servMan.serviceKey)
+                                + " to " + GenericUtils.getInstanceAnnouncementStr(newManagerInstance));
                 this.managedServices.remove(servMan.serviceKey);
+            }
         };
         return 0;
     }
 
     int updateOwnSubscriptions() throws IOException, NoSuchAlgorithmException
     {
-        Network network = Network.getInstance();
+        Log.i(TAG, "Executing updateOwnSubscriptions");
 
         ListIterator<Subscription> it = this.ownSubscriptions.listIterator();
         while(it.hasNext())
@@ -190,6 +221,10 @@ public class HypePubSub
             // If there is a node with a closer key to the service key we change the manager
             if( ! GenericUtils.areInstancesEqual(newManagerInstance, subscription.manager))
             {
+                Log.i(TAG, "Update the subscription manager for the service 0x "
+                        + BinaryUtils.byteArrayToHexString(subscription.serviceKey)
+                        + " to " + GenericUtils.getInstanceAnnouncementStr(newManagerInstance));
+
                 subscription.manager = newManagerInstance;
                 this.issueSubscribeReq(subscription.serviceName); // re-send the subscribe request to the new manager
             }

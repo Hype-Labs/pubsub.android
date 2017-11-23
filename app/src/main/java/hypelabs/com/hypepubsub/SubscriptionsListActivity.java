@@ -47,7 +47,7 @@ public class SubscriptionsListActivity extends AppCompatActivity
             Subscription subscription = it.next();
 
             String manId = BinaryUtils.byteArrayToHexString(subscription.manager.getIdentifier());
-            String manName = new String(subscription.manager.getAnnouncement(), Constants.HPB_ENCODING_STANDARD);
+            String manName = GenericUtils.getInstanceAnnouncementStr(subscription.manager);
             String servKey = BinaryUtils.byteArrayToHexString(subscription.serviceKey);
             subs.add("ServiceName: " + subscription.serviceName + "\n"
                      + "ServiceKey: 0x" + servKey + "\n"

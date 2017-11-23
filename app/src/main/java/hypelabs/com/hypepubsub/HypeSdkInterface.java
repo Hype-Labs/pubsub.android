@@ -18,7 +18,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class HypeSdkInterface implements NetworkObserver, StateObserver, MessageObserver
 {
-    private static final String TAG = HypeSdkInterface.class.getName();
+    private static final String TAG = Constants.GLOBAL_TAG_PREFIX + HypeSdkInterface.class.getName();
 
     //////////////////////////////////////////////////////////////////////////////
     // Members
@@ -113,7 +113,12 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
             network.networkClients.add(var1);
             hpb.updateManagedServices();
         }
-        catch (NoSuchAlgorithmException e) {
+        catch (NoSuchAlgorithmException e)
+        {
+            e.printStackTrace();
+        }
+        catch (UnsupportedEncodingException e)
+        {
             e.printStackTrace();
         }
     }
