@@ -11,23 +11,16 @@
         android:layout_width="match_parent"
         android:layout_height="43dp"
         android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="15dp"
         android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/subscribeText"
-            android:layout_width="190dp"
-            android:layout_height="match_parent"
-            android:ems="10"
-            android:inputType="textPersonName"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="55dp" />
         <Button
             android:id="@+id/subscribeButton"
-            android:layout_width="140dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Subscribe"
+            android:text="Subscribe Service"
             tools:layout_editor_absoluteX="224dp"
             tools:layout_editor_absoluteY="55dp" />
 
@@ -64,21 +57,13 @@
         android:layout_width="match_parent"
         android:layout_height="43dp"
         android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_marginBottom="15dp"
         android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/publishServiceText"
-            android:layout_width="190dp"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="215dp" />
-
         <Button
             android:id="@+id/publishButton"
-            android:layout_width="140dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Publish"
             tools:layout_editor_absoluteX="224dp"
