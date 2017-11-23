@@ -79,8 +79,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void setListenerSubscribeButton() {
-
+    private void setListenerSubscribeButton()
+    {
         subscribeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0)
@@ -123,7 +123,6 @@ public class MainActivity extends AppCompatActivity
 
     private void setListenerUnsubscribeButton()
     {
-
         unsubscribeButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -144,7 +143,13 @@ public class MainActivity extends AppCompatActivity
                     public void onItemClick(Object listItem, Dialog dialog) throws IOException, NoSuchAlgorithmException
                     {
                         Subscription subscription = (Subscription) listItem;
-                        hpb.issueUnsubscribeReq(subscription.serviceName);
+                        String serviceName = subscription.serviceName;
+                        hpb.issueUnsubscribeReq(serviceName);
+
+                        AlertDialogUtils.showOkDialog(MainActivity.this,
+                                "INFO",
+                                "Service " + serviceName + " unsubscribed");
+
                         dialog.dismiss();
                     }
                 };
@@ -159,8 +164,8 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void setListenerPublishButton() {
-
+    private void setListenerPublishButton()
+    {
         publishButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -253,6 +258,11 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View arg0)
             {
                 if( ! isHypeSdkReady()){
+                    return;
+                }
+
+                if(hpb.ownSubscriptions.size() == 0){
+                    AlertDialogUtils.showOkDialog(MainActivity.this, "INFO", "No services subscribed");
                     return;
                 }
 
