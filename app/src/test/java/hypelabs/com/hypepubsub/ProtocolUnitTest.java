@@ -61,6 +61,7 @@ public class ProtocolUnitTest
     @Test
     public void testSendingPublish() throws IOException, NoSuchFieldException, IllegalAccessException, NoSuchAlgorithmException
     {
+        String expectedInfoStr;
         byte packet[];
         int offset;
         byte DEST_ID1[] = new byte[] {(byte) 0x85, (byte) 0xa9, (byte) 0xd4, (byte) 0xc4, (byte) 0xde, (byte) 0xd2, (byte) 0x87, (byte) 0x75, (byte) 0x0f, (byte) 0xc0, (byte) 0xed, (byte) 0x32};
@@ -78,19 +79,22 @@ public class ProtocolUnitTest
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
         assertArrayEquals(SERVICE_KEY1, Arrays.copyOfRange(packet, offset, offset+Constants.SHA1_BYTE_SIZE));
         offset += Constants.SHA1_BYTE_SIZE;
-        assertArrayEquals(MSG1.getBytes(), Arrays.copyOfRange(packet, offset, packet.length));
+        expectedInfoStr = new String(Arrays.copyOfRange(packet, offset, packet.length), Constants.HPB_ENCODING_STANDARD);
+        assertEquals(MSG1, expectedInfoStr);
 
         packet = Protocol.sendPublishMsg(SERVICE_KEY2, instance2, MSG2);
         assertEquals((byte) Protocol.MessageType.PUBLISH.ordinal(), packet[0]);
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
         assertArrayEquals(SERVICE_KEY2, Arrays.copyOfRange(packet, offset, offset+Constants.SHA1_BYTE_SIZE));
         offset += Constants.SHA1_BYTE_SIZE;
-        assertArrayEquals(MSG2.getBytes(), Arrays.copyOfRange(packet, offset, packet.length));
+        expectedInfoStr = new String(Arrays.copyOfRange(packet, offset, packet.length), Constants.HPB_ENCODING_STANDARD);
+        assertEquals(MSG2, expectedInfoStr);
     }
 
     @Test
     public void testSendingInfo() throws IOException, NoSuchFieldException, IllegalAccessException, NoSuchAlgorithmException
     {
+        String expectedInfoStr;
         byte packet[];
         int offset;
         byte DEST_ID1[] = new byte[] {(byte) 0x85, (byte) 0xa9, (byte) 0xd4, (byte) 0xc4, (byte) 0xde, (byte) 0xd2, (byte) 0x87, (byte) 0x75, (byte) 0x0f, (byte) 0xc0, (byte) 0xed, (byte) 0x32};
@@ -108,14 +112,16 @@ public class ProtocolUnitTest
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
         assertArrayEquals(SERVICE_KEY1, Arrays.copyOfRange(packet, offset, offset+Constants.SHA1_BYTE_SIZE));
         offset += Constants.SHA1_BYTE_SIZE;
-        assertArrayEquals(MSG1.getBytes(), Arrays.copyOfRange(packet, offset, packet.length));
+        expectedInfoStr = new String(Arrays.copyOfRange(packet, offset, packet.length), Constants.HPB_ENCODING_STANDARD);
+        assertEquals(MSG1, expectedInfoStr);
 
         packet = Protocol.sendInfoMsg(SERVICE_KEY2, instance2, MSG2);
         assertEquals((byte) Protocol.MessageType.INFO.ordinal(), packet[0]);
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
         assertArrayEquals(SERVICE_KEY2, Arrays.copyOfRange(packet, offset, offset+Constants.SHA1_BYTE_SIZE));
         offset += Constants.SHA1_BYTE_SIZE;
-        assertArrayEquals(MSG2.getBytes(), Arrays.copyOfRange(packet, offset, packet.length));
+        expectedInfoStr = new String(Arrays.copyOfRange(packet, offset, packet.length), Constants.HPB_ENCODING_STANDARD);
+        assertEquals(MSG2, expectedInfoStr);
     }
 
     @Test

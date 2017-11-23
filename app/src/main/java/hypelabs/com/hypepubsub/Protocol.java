@@ -27,10 +27,7 @@ public class Protocol
 
     static byte[] sendSubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException, NoSuchAlgorithmException
     {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
-        outputStream.write((byte) MessageType.SUBSCRIBE_SERVICE.ordinal());
-        outputStream.write(serviceKey);
-        byte packet[] = outputStream.toByteArray();
+        byte packet[] = buildPacket(MessageType.SUBSCRIBE_SERVICE, serviceKey, null);
 
         Log.i(TAG, "Sending Subscribe message to 0x"
                          + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier())
@@ -42,10 +39,7 @@ public class Protocol
 
     static byte[] sendUnsubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException, NoSuchAlgorithmException
     {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
-        outputStream.write((byte) MessageType.UNSUBSCRIBE_SERVICE.ordinal());
-        outputStream.write(serviceKey);
-        byte packet[] = outputStream.toByteArray();
+        byte packet[] = buildPacket(MessageType.UNSUBSCRIBE_SERVICE, serviceKey, null);
 
         Log.i(TAG, "Sending Unsubscribe message to 0x"
                 + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier())
@@ -56,11 +50,7 @@ public class Protocol
 
     static byte[] sendPublishMsg(byte serviceKey[], Instance destInstance, String msg) throws IOException, NoSuchAlgorithmException
     {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
-        outputStream.write((byte) MessageType.PUBLISH.ordinal());
-        outputStream.write(serviceKey);
-        outputStream.write(msg.getBytes(Constants.HPB_ENCODING_STANDARD));
-        byte packet[] = outputStream.toByteArray();
+        byte packet[] = buildPacket(MessageType.PUBLISH, serviceKey, msg);
 
         Log.i(TAG, "Sending Publish message to 0x"
                 + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier())
@@ -73,11 +63,7 @@ public class Protocol
 
     static byte[] sendInfoMsg(byte serviceKey[], Instance destInstance, String msg) throws IOException, NoSuchAlgorithmException
     {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
-        outputStream.write((byte) MessageType.INFO.ordinal());
-        outputStream.write(serviceKey);
-        outputStream.write(msg.getBytes(Constants.HPB_ENCODING_STANDARD));
-        byte packet[] = outputStream.toByteArray();
+        byte packet[] = buildPacket(MessageType.INFO, serviceKey, msg);
 
         Log.i(TAG, "Sending Info message to 0x"
                 + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier())
@@ -86,6 +72,17 @@ public class Protocol
 
         Hype.send(packet, destInstance);
         return packet;// TODO: Remove return in the future;
+    }
+
+    static byte[] buildPacket(MessageType type, byte[] serviceKey, String infoMsg) throws IOException
+    {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
+        outputStream.write((byte) type.ordinal());
+        outputStream.write(serviceKey);
+        if(infoMsg != null) {
+            outputStream.write(infoMsg.getBytes(Constants.HPB_ENCODING_STANDARD));
+        }
+        return outputStream.toByteArray();
     }
 
     static int receiveMsg(Instance originInstance, byte msg[]) throws IOException, NoSuchAlgorithmException
@@ -128,7 +125,7 @@ public class Protocol
             return -1;
         }
 
-        byte serviceKey[] = Arrays.copyOfRange(msg,MESSAGE_TYPE_BYTE_SIZE,msg.length-1);
+        byte serviceKey[] = getServiceKey(msg);
         HypePubSub hpb = HypePubSub.getInstance();
         hpb.processSubscribeReq(serviceKey, originInstance);
 
@@ -147,7 +144,7 @@ public class Protocol
             return -1;
         }
 
-        byte serviceKey[] = Arrays.copyOfRange(msg,MESSAGE_TYPE_BYTE_SIZE,msg.length-1);
+        byte serviceKey[] = getServiceKey(msg);
         HypePubSub hpb = HypePubSub.getInstance();
         hpb.processUnsubscribeReq(serviceKey, originInstance);
 
@@ -166,8 +163,8 @@ public class Protocol
             return -1;
         }
 
-        byte serviceKey[] = Arrays.copyOfRange(msg,MESSAGE_TYPE_BYTE_SIZE, MESSAGE_TYPE_BYTE_SIZE+Constants.SHA1_BYTE_SIZE-1);
-        byte publishedData[] = Arrays.copyOfRange(msg,MESSAGE_TYPE_BYTE_SIZE+Constants.SHA1_BYTE_SIZE, msg.length-1);
+        byte serviceKey[] = getServiceKey(msg);
+        byte publishedData[] = getInfo(msg);
         String publishedStr = new String(publishedData, Constants.HPB_ENCODING_STANDARD);
 
         HypePubSub hpb = HypePubSub.getInstance();
@@ -189,8 +186,8 @@ public class Protocol
             return -1;
         }
 
-        byte serviceKey[] = Arrays.copyOfRange(msg, MESSAGE_TYPE_BYTE_SIZE, MESSAGE_TYPE_BYTE_SIZE+Constants.SHA1_BYTE_SIZE-1);
-        byte infoData[] = Arrays.copyOfRange(msg,MESSAGE_TYPE_BYTE_SIZE+Constants.SHA1_BYTE_SIZE, msg.length-1);
+        byte serviceKey[] = getServiceKey(msg);
+        byte infoData[] = getInfo(msg);
         String infoStr = new String(infoData, Constants.HPB_ENCODING_STANDARD);
 
         HypePubSub hpb = HypePubSub.getInstance();
@@ -224,5 +221,17 @@ public class Protocol
         }
 
         return MessageType.INVALID;
+    }
+
+    static byte[] getServiceKey(byte msg[])
+    {
+        return Arrays.copyOfRange(msg, MESSAGE_TYPE_BYTE_SIZE,
+                                    MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE-1);
+    }
+
+    static byte[] getInfo(byte msg[])
+    {
+        return Arrays.copyOfRange(msg,MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE,
+                                    msg.length-1);
     }
 }
