@@ -1,21 +1,11 @@
 package hypelabs.com.hypepubsub;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
+import android.app.Dialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.text.InputType;
-
-import com.hypelabs.hype.Hype;
-import com.hypelabs.hype.State;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -29,13 +19,10 @@ public class MainActivity extends AppCompatActivity
     Button subscribeButton;
     Button unsubscribeButton;
     Button publishButton;
-    Button getOwnIdButton;
-    Button getHypeDevicesButton;
-    Button getOwnSubscriptionsButton;
-    Button getManagedServicesButton;
-
-    TextView serviceToUnsubscribe;
-    TextView serviceToPublish;
+    Button checkOwnIdButton;
+    Button checkHypeDevicesButton;
+    Button checkOwnSubscriptionsButton;
+    Button checkManagedServicesButton;
 
     public MainActivity() throws NoSuchAlgorithmException {}
 
@@ -70,10 +57,10 @@ public class MainActivity extends AppCompatActivity
         subscribeButton = (Button) findViewById(R.id.subscribeButton);
         unsubscribeButton = (Button) findViewById(R.id.unsubscribeButton);
         publishButton = (Button) findViewById(R.id.publishButton);
-        getOwnIdButton = (Button) findViewById(R.id.getOwnIdButton);
-        getHypeDevicesButton = (Button) findViewById(R.id.getHypeDevicesButton);
-        getOwnSubscriptionsButton = (Button) findViewById(R.id.getOwnSubscriptionsButton);
-        getManagedServicesButton = (Button) findViewById(R.id.getManagedServicesButton);
+        checkOwnIdButton = (Button) findViewById(R.id.checkOwnIdButton);
+        checkHypeDevicesButton = (Button) findViewById(R.id.checkHypeDevicesButton);
+        checkOwnSubscriptionsButton = (Button) findViewById(R.id.checkOwnSubscriptionsButton);
+        checkManagedServicesButton = (Button) findViewById(R.id.checkManagedServicesButton);
 
         setListenerSubscribeButton();
         setListenerUnsubscribeButton();
@@ -109,7 +96,14 @@ public class MainActivity extends AppCompatActivity
                     {
                         service = service.toLowerCase().trim();
                         if(service.length() > 0)
-                            hpb.issueSubscribeReq(service);
+                        {
+                            if(hpb.ownSubscriptions.find(GenericUtils.getStrHash(service)) == null)
+                                hpb.issueSubscribeReq(service);
+                            else{
+                                AlertDialogUtils.showOkDialog(MainActivity.this, "INFO", "Service already subscribed");
+                                return;
+                            }
+                        }
                     }
 
                     @Override
@@ -127,9 +121,8 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void setListenerUnsubscribeButton() {
-
-        serviceToUnsubscribe = (TextView) findViewById(R.id.unsubscribeText);
+    private void setListenerUnsubscribeButton()
+    {
 
         unsubscribeButton.setOnClickListener(new View.OnClickListener() {
 
@@ -140,23 +133,28 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
 
-                if(serviceToUnsubscribe.getText().length() > 0 )
-                {
-                    try {
-                        String service = serviceToUnsubscribe.getText().toString().toLowerCase();
-                        hpb.issueUnsubscribeReq(service);
-                        serviceToUnsubscribe.setText("");
-                        Log.d(this.toString(), "Unsubscribe service " + service);
-                    } catch (NoSuchAlgorithmException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                if(hpb.ownSubscriptions.size() == 0){
+                    AlertDialogUtils.showOkDialog(MainActivity.this, "INFO", "No services subscribed");
+                    return;
+                }
+
+                AlertDialogUtils.ListViewInputDialog unsubscribeList = new AlertDialogUtils.ListViewInputDialog() {
+
+                    @Override
+                    public void onItemClick(Object listItem, Dialog dialog) throws IOException, NoSuchAlgorithmException
+                    {
+                        Subscription subscription = (Subscription) listItem;
+                        hpb.issueUnsubscribeReq(subscription.serviceName);
+                        dialog.dismiss();
                     }
-                }
-                else {
-                    AlertDialogUtils.showOkDialog(MainActivity.this, "Warning", "A service to unsubscribe must be specified");
-                    Log.d(this.toString(), "A service to unsubscribe must be specified");
-                }
+                };
+
+                SubscriptionsAdapter adapter = new SubscriptionsAdapter(MainActivity.this, hpb.ownSubscriptions.getLinkedListClone());
+
+                AlertDialogUtils.showListViewInputDialog(MainActivity.this,
+                        "UNSUBSCRIBE SERVICE" ,
+                        adapter,
+                        unsubscribeList);
             }
         });
     }
@@ -194,7 +192,7 @@ public class MainActivity extends AppCompatActivity
                 };
 
                 AlertDialogUtils.showDoubleInputDialog(MainActivity.this,
-                        "PUBLISH" ,
+                        "PUBLISH IN SERVICE" ,
                         "service",
                         "message",
                         publishInput);
@@ -204,7 +202,7 @@ public class MainActivity extends AppCompatActivity
 
     private void setListenerOwnIdButton() throws NoSuchAlgorithmException
     {
-        getOwnIdButton.setOnClickListener(new View.OnClickListener() {
+        checkOwnIdButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0)
@@ -213,8 +211,16 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
 
-                AlertDialogUtils.showOkDialog(MainActivity.this,"Own Device", "Id: 0x" + BinaryUtils.byteArrayToHexString(network.ownClient.instance.getIdentifier()) + "\n"
-                                                            + "Key: 0x" + BinaryUtils.byteArrayToHexString(network.ownClient.key));
+                try
+                {
+                    AlertDialogUtils.showOkDialog(MainActivity.this,"Own Device",
+                                                GenericUtils.getInstanceAnnouncementStr (network.ownClient.instance) + "\n"
+                                                + "Id: 0x" + BinaryUtils.byteArrayToHexString(network.ownClient.instance.getIdentifier()) + "\n"
+                                                + "Key: 0x" + BinaryUtils.byteArrayToHexString(network.ownClient.key));
+                } catch (UnsupportedEncodingException e)
+                {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -223,7 +229,7 @@ public class MainActivity extends AppCompatActivity
     {
         final Intent intent = new Intent(this, HypeDevicesListActivity.class);
 
-        getHypeDevicesButton.setOnClickListener(new View.OnClickListener() {
+        checkHypeDevicesButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0)
@@ -241,7 +247,7 @@ public class MainActivity extends AppCompatActivity
     {
         final Intent intent = new Intent(this, SubscriptionsListActivity.class);
 
-        getOwnSubscriptionsButton.setOnClickListener(new View.OnClickListener() {
+        checkOwnSubscriptionsButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0)
@@ -259,7 +265,7 @@ public class MainActivity extends AppCompatActivity
     {
         final Intent intent = new Intent(this, ServiceManagersListActivity.class);
 
-        getManagedServicesButton.setOnClickListener(new View.OnClickListener() {
+        checkManagedServicesButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0)

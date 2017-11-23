@@ -2,14 +2,26 @@ package hypelabs.com.hypepubsub;
 
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class AlertDialogUtils
 {
@@ -62,6 +74,10 @@ public class AlertDialogUtils
                 });
 
         builder.show();
+
+        input.requestFocus();
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
     }
 
     public interface SingleInputDialog
@@ -122,4 +138,49 @@ public class AlertDialogUtils
         void actionCancel();
     }
 
+    public static void showListViewInputDialog(Context context, String title, ListAdapter adapter, final ListViewInputDialog listViewInputDialog)
+    {
+        final ListView listView = new ListView(context);
+        listView.setAdapter(adapter);
+
+        LinearLayout layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.addView(listView);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setCancelable(true);
+        builder.setView(layout);
+        builder.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) { }
+                });
+
+        final Dialog dialog = builder.create();
+        dialog.show();
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Object listItem = listView.getItemAtPosition(position);
+                try {
+                    listViewInputDialog.onItemClick(listItem, dialog);
+
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+                catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public interface ListViewInputDialog
+    {
+        void onItemClick(Object listItem, Dialog dialog) throws IOException, NoSuchAlgorithmException;
+    }
 }

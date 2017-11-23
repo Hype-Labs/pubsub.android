@@ -9,7 +9,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="43dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
@@ -28,25 +28,17 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="43dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_marginBottom="15dp"
         android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/unsubscribeText"
-            android:layout_width="190dp"
-            android:layout_height="match_parent"
-            android:ems="10"
-            android:inputType="textPersonName"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="124dp" />
-
         <Button
         android:id="@+id/unsubscribeButton"
-        android:layout_width="140dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Unsubscribe"
+        android:text="Unsubscribe Service"
         tools:layout_editor_absoluteX="224dp"
         tools:layout_editor_absoluteY="124dp" />
 
@@ -55,7 +47,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="43dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="15dp"
@@ -65,71 +57,75 @@
             android:id="@+id/publishButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Publish"
+            android:text="Publish in Service"
             tools:layout_editor_absoluteX="224dp"
             tools:layout_editor_absoluteY="242dp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="43dp"
-        android:layout_marginLeft="210dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_marginBottom="15dp"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/getOwnIdButton"
-            android:layout_width="140dp"
+            android:id="@+id/checkOwnIdButton"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Print Own ID"
+            android:text="Check Own ID"
             android:layout_centerInParent="true"/>
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginLeft="210dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_marginBottom="15dp"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/getHypeDevicesButton"
-            android:layout_width="140dp"
+            android:id="@+id/checkHypeDevicesButton"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Print Hype Devices"
+            android:text="Check Hype Devices"
             android:layout_centerInParent="true"/>
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginLeft="210dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_marginBottom="15dp"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/getOwnSubscriptionsButton"
-            android:layout_width="140dp"
+            android:id="@+id/checkOwnSubscriptionsButton"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Get Subscriptions"
+            android:text="Check Subscriptions"
             android:layout_centerInParent="true"/>
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginLeft="210dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_marginBottom="15dp"
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/getManagedServicesButton"
-            android:layout_width="140dp"
+            android:id="@+id/checkManagedServicesButton"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Get Managed Services"
+            android:text="Check Managed Services"
             android:layout_centerInParent="true"/>
 
     </LinearLayout>

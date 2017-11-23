@@ -67,4 +67,10 @@ public class SubscriptionsList
     public Subscription get(int index) {
         return subscriptions.get(index);
     }
+
+    public LinkedList<Subscription> getLinkedListClone()
+    {
+        return  (LinkedList) this.subscriptions.clone();
+    }
+
 }
