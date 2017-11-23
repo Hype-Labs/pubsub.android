@@ -3,7 +3,6 @@ package hypelabs.com.hypepubsub;
 import com.hypelabs.hype.Instance;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.ListIterator;
 

@@ -2,7 +2,6 @@ package hypelabs.com.hypepubsub;
 
 import com.hypelabs.hype.Instance;
 
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
