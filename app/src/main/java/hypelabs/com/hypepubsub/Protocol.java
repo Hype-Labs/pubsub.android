@@ -27,49 +27,46 @@ public class Protocol
 
     static byte[] sendSubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException, NoSuchAlgorithmException
     {
-        byte packet[] = buildPacket(MessageType.SUBSCRIBE_SERVICE, serviceKey, null);
-
         Log.i(TAG, "Sending Subscribe message to 0x"
                          + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier())
                          + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
 
+        byte packet[] = buildPacket(MessageType.SUBSCRIBE_SERVICE, serviceKey, null);
         Hype.send(packet, destInstance);
         return packet; // TODO: Remove return in the future;
     }
 
     static byte[] sendUnsubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException, NoSuchAlgorithmException
     {
-        byte packet[] = buildPacket(MessageType.UNSUBSCRIBE_SERVICE, serviceKey, null);
-
         Log.i(TAG, "Sending Unsubscribe message to 0x"
                 + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier())
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
+
+        byte packet[] = buildPacket(MessageType.UNSUBSCRIBE_SERVICE, serviceKey, null);
         Hype.send(packet, destInstance);
         return packet; // TODO: Remove return in the future;
     }
 
     static byte[] sendPublishMsg(byte serviceKey[], Instance destInstance, String msg) throws IOException, NoSuchAlgorithmException
     {
-        byte packet[] = buildPacket(MessageType.PUBLISH, serviceKey, msg);
-
         Log.i(TAG, "Sending Publish message to 0x"
                 + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier())
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey)
                 + ". Message: " + msg);
 
+        byte packet[] = buildPacket(MessageType.PUBLISH, serviceKey, msg);
         Hype.send(packet, destInstance);
         return packet; // TODO: Remove return in the future;
     }
 
     static byte[] sendInfoMsg(byte serviceKey[], Instance destInstance, String msg) throws IOException, NoSuchAlgorithmException
     {
-        byte packet[] = buildPacket(MessageType.INFO, serviceKey, msg);
-
         Log.i(TAG, "Sending Info message to 0x"
                 + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier())
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey)
                 + ". Message: " + msg);
 
+        byte packet[] = buildPacket(MessageType.INFO, serviceKey, msg);
         Hype.send(packet, destInstance);
         return packet;// TODO: Remove return in the future;
     }
