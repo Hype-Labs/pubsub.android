@@ -21,6 +21,7 @@ public class ServiceManagersListActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        this.setTitle("Managed Services");
         setContentView(R.layout.activity_service_managers_list);
 
         HypePubSub hpb = null;

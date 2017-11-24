@@ -16,6 +16,7 @@ public class ClientsListActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        this.setTitle("Hype Devices");
         setContentView(R.layout.activity_clients_list);
 
         Network network = Network.getInstance();
