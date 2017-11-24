@@ -176,4 +176,30 @@ public class AlertDialogUtils
     {
         void onItemClick(Object listItem, Dialog dialog) throws IOException, NoSuchAlgorithmException;
     }
+
+    public static void showListViewDialog(Context context, String title, ListAdapter adapter)
+    {
+        final ListView listView = new ListView(context);
+        listView.setAdapter(adapter);
+
+        LinearLayout layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.addView(listView);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setCancelable(true);
+        builder.setView(layout);
+        builder.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                    }
+                });
+
+        final Dialog dialog = builder.create();
+        dialog.show();
+    }
 }

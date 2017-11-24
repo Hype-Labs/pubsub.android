@@ -5,6 +5,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Calendar;
 import java.util.ListIterator;
 
 import com.hypelabs.hype.Instance;
@@ -184,7 +185,9 @@ public class HypePubSub
             return -1;
         }
 
-        subscription.receivedMsg.add(msg);
+        Calendar calendar = Calendar.getInstance();
+        String timeStamp = calendar.get(Calendar.HOUR_OF_DAY) + "h" + calendar.get(Calendar.MINUTE);
+        subscription.receivedMsg.add(timeStamp + ": " + msg);
 
         Log.i(TAG, "Received message from service " + subscription.serviceName
                                         + ": " + msg);
