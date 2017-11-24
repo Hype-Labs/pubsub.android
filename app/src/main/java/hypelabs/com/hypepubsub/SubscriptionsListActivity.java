@@ -1,18 +1,13 @@
 package hypelabs.com.hypepubsub;
 
-import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.ArrayAdapter;
 import android.support.v7.app.AppCompatActivity;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ListIterator;
-import java.util.ArrayList;
 
 
 public class SubscriptionsListActivity extends AppCompatActivity
@@ -43,13 +38,15 @@ public class SubscriptionsListActivity extends AppCompatActivity
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                Subscription subscription = (Subscription) subscriptionsListView.getItemAtPosition(position);;
+                Subscription subscription = (Subscription) subscriptionsListView.getItemAtPosition(position);
 
-                ArrayAdapter receivedMsgAdapter = new ArrayAdapter(SubscriptionsListActivity.this, android.R.layout.simple_list_item_1, subscription.receivedMsg);
+                Intent intent = new Intent(SubscriptionsListActivity.this, MessagesActivity.class);
 
-                AlertDialogUtils.showListViewDialog(SubscriptionsListActivity.this,
-                        subscription.serviceName + " service",
-                        receivedMsgAdapter);
+                intent.putExtra("service", subscription.serviceName);
+                intent.putExtra("messages", subscription.receivedMsg);
+
+                startActivity(intent);
+
             }
         });
     }
