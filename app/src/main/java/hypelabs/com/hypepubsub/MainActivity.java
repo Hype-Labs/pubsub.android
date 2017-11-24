@@ -237,7 +237,7 @@ public class MainActivity extends AppCompatActivity
 
     private void setListenerCheckHypeDevicesButton()
     {
-        final Intent intent = new Intent(this, HypeDevicesListActivity.class);
+        final Intent intent = new Intent(this, ClientsListActivity.class);
 
         checkHypeDevicesButton.setOnClickListener(new View.OnClickListener() {
 

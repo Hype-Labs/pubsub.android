@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="hypelabs.com.hypepubsub.HypeDevicesListActivity">
+    tools:context="hypelabs.com.hypepubsub.ClientsListActivity">
 
     <ListView
-        android:id="@+id/activity_hype_devices_list_view"
+        android:id="@+id/activity_clients_list_view"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
     </ListView>

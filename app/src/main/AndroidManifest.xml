@@ -34,7 +34,7 @@
                   android:parentActivityName=".MainActivity" >
                   android:label="Own Subscriptions"
         </activity>
-        <activity android:name=".HypeDevicesListActivity">
+        <activity android:name=".ClientsListActivity">
             android:parentActivityName=".MainActivity" >
             android:label="Hype Devices Found"
         </activity>
