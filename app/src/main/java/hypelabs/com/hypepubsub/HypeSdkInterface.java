@@ -114,12 +114,8 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
             HypePubSub hpb = HypePubSub.getInstance();
             Network network = Network.getInstance();
             network.networkClients.add(var1);
-            hpb.updateManagedServices(); // Updated UI after adding a new instance
-
-            ClientsListActivity hypeDeviceListActivity = ClientsListActivity.getDefaultInstance();
-            if (hypeDeviceListActivity != null) {
-                hypeDeviceListActivity.updateInterface();
-            }
+            hpb.updateManagedServices();
+            updateClientsUI(); // Updated UI after adding a new instanceg
         }
         catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
