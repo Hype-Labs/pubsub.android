@@ -34,16 +34,19 @@ public class Network
         Instance managerInstance = ownClient.instance;
         byte lowestDist[] = BinaryUtils.xor(serviceKey, ownClient.key);
 
-        ListIterator<Client> it = networkClients.listIterator();
-        while(it.hasNext())
+        synchronized (this) // Add thread safety to iteration procedure
         {
-            Client client = it.next();
-
-            byte dist[] = BinaryUtils.xor(serviceKey, client.key);
-            if(BinaryUtils.getHigherByteArray(lowestDist, dist) == 1)
+            ListIterator<Client> it = networkClients.listIterator();
+            while (it.hasNext())
             {
-                lowestDist = dist;
-                managerInstance = client.instance;
+                Client client = it.next();
+
+                byte dist[] = BinaryUtils.xor(serviceKey, client.key);
+                if (BinaryUtils.getHigherByteArray(lowestDist, dist) == 1)
+                {
+                    lowestDist = dist;
+                    managerInstance = client.instance;
+                }
             }
         }
         return managerInstance;

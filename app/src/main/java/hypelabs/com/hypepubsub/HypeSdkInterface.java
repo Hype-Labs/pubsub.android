@@ -113,9 +113,13 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
 
             HypePubSub hpb = HypePubSub.getInstance();
             Network network = Network.getInstance();
-            network.networkClients.add(var1);
-            hpb.updateManagedServices();
-            updateClientsUI(); // Updated UI after adding a new instanceg
+
+            synchronized (network) // Add thread safety to adding procedure
+            {
+                network.networkClients.add(var1);
+                hpb.updateManagedServices();
+                updateClientsUI(); // Updated UI after adding a new instance
+            }
         }
         catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -135,9 +139,13 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
 
             HypePubSub hpb = HypePubSub.getInstance();
             Network network = Network.getInstance();
-            network.networkClients.remove(var1);
-            hpb.updateOwnSubscriptions();
-            updateClientsUI(); // Updated UI after removing an instance
+
+            synchronized (network) // Add thread safety to removal procedure
+            {
+                network.networkClients.remove(var1);
+                hpb.updateOwnSubscriptions();
+                updateClientsUI(); // Updated UI after removing an instance
+            }
         }
         catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
