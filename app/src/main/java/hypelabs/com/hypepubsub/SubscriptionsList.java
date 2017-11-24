@@ -20,7 +20,7 @@ public class SubscriptionsList
 
     private SubscriptionsAdapter subscriptionsAdapter = null;
 
-    public int add(String serviceName, Instance managerInstance) throws NoSuchAlgorithmException
+    public synchronized int add(String serviceName, Instance managerInstance) throws NoSuchAlgorithmException
     {
         MessageDigest md = MessageDigest.getInstance(Constants.HPB_HASH_ALGORITHM);
         byte serviceKey[] = md.digest(serviceName.getBytes());
@@ -33,7 +33,7 @@ public class SubscriptionsList
         return 0;
     }
 
-    public int remove(String serviceName) throws NoSuchAlgorithmException
+    public synchronized int remove(String serviceName) throws NoSuchAlgorithmException
     {
         MessageDigest md = MessageDigest.getInstance(Constants.HPB_HASH_ALGORITHM);
         byte serviceKey[] = md.digest(serviceName.getBytes());
@@ -47,7 +47,7 @@ public class SubscriptionsList
         return 0;
     }
 
-    public Subscription find(byte serviceKey[])
+    public synchronized Subscription find(byte serviceKey[])
     {
         ListIterator<Subscription> it = listIterator();
         while(it.hasNext())
@@ -61,22 +61,22 @@ public class SubscriptionsList
     }
 
     // Methods from LinkedList that we want to enable.
-    public ListIterator<Subscription> listIterator()
+    public synchronized ListIterator<Subscription> listIterator()
     {
         return subscriptions.listIterator();
     }
 
-    public int size()
+    public synchronized int size()
     {
         return subscriptions.size();
     }
 
-    public Subscription get(int index)
+    public synchronized Subscription get(int index)
     {
         return subscriptions.get(index);
     }
 
-    public SubscriptionsAdapter getSubscriptionsAdapter(Context context)
+    public synchronized SubscriptionsAdapter getSubscriptionsAdapter(Context context)
     {
         if(subscriptionsAdapter == null){
             subscriptionsAdapter = new SubscriptionsAdapter(context, subscriptions);

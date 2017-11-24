@@ -112,7 +112,7 @@ public class HypePubSub
         return 0;
     }
 
-    void processSubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    synchronized void processSubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         ServiceManager serviceManager = this.managedServices.find(serviceKey);
         if(serviceManager == null) // If the service does not exist we create it.
         {
@@ -129,7 +129,7 @@ public class HypePubSub
         serviceManager.subscribers.add(requesterInstance);
     }
 
-    void processUnsubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException, UnsupportedEncodingException
+    synchronized void processUnsubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
         ServiceManager serviceManager = this.managedServices.find(serviceKey);
 
@@ -151,7 +151,7 @@ public class HypePubSub
         }
     }
 
-    void processPublishReq(byte serviceKey[], String msg) throws NoSuchAlgorithmException, IOException
+    synchronized void processPublishReq(byte serviceKey[], String msg) throws NoSuchAlgorithmException, IOException
     {
         ServiceManager serviceManager = this.managedServices.find(serviceKey);
         if(serviceManager == null)
@@ -191,7 +191,7 @@ public class HypePubSub
         return 0;
     }
 
-    void updateManagedServices() throws NoSuchAlgorithmException, UnsupportedEncodingException
+    synchronized void updateManagedServices() throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
         Log.i(TAG, "Executing updateManagedServices");
 
@@ -214,7 +214,7 @@ public class HypePubSub
         };
     }
 
-    void updateOwnSubscriptions() throws IOException, NoSuchAlgorithmException
+    synchronized void updateOwnSubscriptions() throws IOException, NoSuchAlgorithmException
     {
         Log.i(TAG, "Executing updateOwnSubscriptions");
 

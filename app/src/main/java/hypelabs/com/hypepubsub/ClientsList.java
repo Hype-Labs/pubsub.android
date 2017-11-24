@@ -18,7 +18,7 @@ public class ClientsList
 
     private ClientsAdapter clientsAdapter = null;
 
-    public int add(Instance instance) throws NoSuchAlgorithmException
+    public synchronized int add(Instance instance) throws NoSuchAlgorithmException
     {
         if(find(instance) != null) // do not add the client if it is already present
             return -1;
@@ -27,7 +27,7 @@ public class ClientsList
         return 0;
     }
 
-    public int remove(Instance instance) throws NoSuchAlgorithmException
+    public synchronized int remove(Instance instance) throws NoSuchAlgorithmException
     {
         Client client = find(instance);
         if(client == null)
@@ -37,7 +37,7 @@ public class ClientsList
         return 0;
     }
 
-    public Client find(Instance instance)
+    public synchronized Client find(Instance instance)
     {
         ListIterator<Client> it = listIterator();
         while(it.hasNext())
@@ -51,22 +51,22 @@ public class ClientsList
     }
 
     // Methods from LinkedList that we want to enable.
-    public ListIterator<Client> listIterator()
+    public synchronized ListIterator<Client> listIterator()
     {
         return clients.listIterator();
     }
 
-    public int size()
+    public synchronized int size()
     {
         return clients.size();
     }
 
-    public Client get(int index)
+    public synchronized Client get(int index)
     {
         return clients.get(index);
     }
 
-    public ClientsAdapter getClientsAdapter(Context context)
+    public synchronized ClientsAdapter getClientsAdapter(Context context)
     {
         if(clientsAdapter == null){
             clientsAdapter = new ClientsAdapter(context, clients);
