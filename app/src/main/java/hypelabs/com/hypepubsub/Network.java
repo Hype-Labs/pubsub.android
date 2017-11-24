@@ -29,7 +29,7 @@ public class Network
         return network;
     }
 
-    protected Instance getServiceManagerInstance(byte serviceKey[]) throws NoSuchAlgorithmException
+    protected Instance getServiceManagerInstance(byte serviceKey[])
     {
         Instance managerInstance = ownClient.instance;
         byte lowestDist[] = BinaryUtils.xor(serviceKey, ownClient.key);

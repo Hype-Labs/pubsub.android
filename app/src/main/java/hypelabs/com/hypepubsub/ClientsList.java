@@ -1,5 +1,7 @@
 package hypelabs.com.hypepubsub;
 
+import android.content.Context;
+
 import com.hypelabs.hype.Instance;
 
 import java.security.NoSuchAlgorithmException;
@@ -13,6 +15,8 @@ public class ClientsList
     // a ClientsList.
 
     private LinkedList<Client> clients = new LinkedList<>();
+
+    private ClientsAdapter clientsAdapter = null;
 
     public int add(Instance instance) throws NoSuchAlgorithmException
     {
@@ -47,15 +51,26 @@ public class ClientsList
     }
 
     // Methods from LinkedList that we want to enable.
-    public ListIterator<Client> listIterator() {
+    public ListIterator<Client> listIterator()
+    {
         return clients.listIterator();
     }
 
-    public int size() {
+    public int size()
+    {
         return clients.size();
     }
 
-    public Client get(int index) {
+    public Client get(int index)
+    {
         return clients.get(index);
+    }
+
+    public ClientsAdapter getClientsAdapter(Context context)
+    {
+        if(clientsAdapter == null){
+            clientsAdapter = new ClientsAdapter(context, clients);
+        }
+        return clientsAdapter;
     }
 }

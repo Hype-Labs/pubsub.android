@@ -13,18 +13,16 @@ import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends AppCompatActivity
 {
-    HypePubSub hpb = null;
-    Network network = null;
+    private HypePubSub hpb = null;
+    private Network network = null;
 
-    Button subscribeButton;
-    Button unsubscribeButton;
-    Button publishButton;
-    Button checkOwnIdButton;
-    Button checkHypeDevicesButton;
-    Button checkOwnSubscriptionsButton;
-    Button checkManagedServicesButton;
-
-    public MainActivity() throws NoSuchAlgorithmException {}
+    private Button subscribeButton;
+    private Button unsubscribeButton;
+    private Button publishButton;
+    private Button checkOwnIdButton;
+    private Button checkHypeDevicesButton;
+    private Button checkOwnSubscriptionsButton;
+    private Button checkManagedServicesButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -32,51 +30,58 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        HypeSdkInterface hypeSdkInterface = HypeSdkInterface.getInstance();
-        try {
-            hypeSdkInterface.requestHypeToStart(getApplicationContext());
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        initHypeSdk();
+        getSingletonInstances();
+        setButtonListeners();
+    }
 
+    private void initHypeSdk()
+    {
+        HypeSdkInterface hypeSdkInterface = HypeSdkInterface.getInstance();
         try
         {
-            // Get Singletons
+            hypeSdkInterface.requestHypeToStart(getApplicationContext());
+        }
+        catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getSingletonInstances()
+    {
+        try
+        {
+            // Get required singletons
             hpb = HypePubSub.getInstance();
             network = Network.getInstance();
         }
         catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-
-        setButtonListeners();
     }
 
     private void setButtonListeners()
     {
-        subscribeButton = (Button) findViewById(R.id.subscribeButton);
-        unsubscribeButton = (Button) findViewById(R.id.unsubscribeButton);
-        publishButton = (Button) findViewById(R.id.publishButton);
-        checkOwnIdButton = (Button) findViewById(R.id.checkOwnIdButton);
-        checkHypeDevicesButton = (Button) findViewById(R.id.checkHypeDevicesButton);
-        checkOwnSubscriptionsButton = (Button) findViewById(R.id.checkOwnSubscriptionsButton);
-        checkManagedServicesButton = (Button) findViewById(R.id.checkManagedServicesButton);
+        initButtonsFromResourceIDs();
 
         setListenerSubscribeButton();
         setListenerUnsubscribeButton();
         setListenerPublishButton();
+        setListenerCheckOwnIdButton();
+        setListenerCheckHypeDevicesButton();
+        setListenerCheckOwnSubscriptionsButton();
+        setListenerCheckManagedServicesButton();
+    }
 
-        try
-        {
-            setListenerOwnIdButton();
-            setListenerHypeDevicesButton();
-            setListenerOwnSubscriptionsButton();
-            setListenerManagedServicesButton();
-        }
-        catch (NoSuchAlgorithmException e)
-        {
-            e.printStackTrace();
-        }
+    private void initButtonsFromResourceIDs()
+    {
+        subscribeButton = findViewById(R.id.activity_main_subscribe_button);
+        unsubscribeButton = findViewById(R.id.activity_main_unsubscribe_button);
+        publishButton = findViewById(R.id.activity_main_publish_button);
+        checkOwnIdButton = findViewById(R.id.activity_main_check_own_id_button);
+        checkHypeDevicesButton = findViewById(R.id.activity_main_check_hype_devices_button);
+        checkOwnSubscriptionsButton = findViewById(R.id.activity_main_check_own_subscriptions_button);
+        checkManagedServicesButton = findViewById(R.id.activity_main_check_managed_services_button);
     }
 
     private void setListenerSubscribeButton()
@@ -98,10 +103,12 @@ public class MainActivity extends AppCompatActivity
                         if(service.length() > 0)
                         {
                             if(hpb.ownSubscriptions.find(GenericUtils.getStrHash(service)) == null)
+                            {
                                 hpb.issueSubscribeReq(service);
-                            else{
+                            }
+                            else
+                            {
                                 AlertDialogUtils.showOkDialog(MainActivity.this, "INFO", "Service already subscribed");
-                                return;
                             }
                         }
                     }
@@ -154,11 +161,9 @@ public class MainActivity extends AppCompatActivity
                     }
                 };
 
-                SubscriptionsAdapter adapter = new SubscriptionsAdapter(MainActivity.this, hpb.ownSubscriptions.getLinkedListClone());
-
                 AlertDialogUtils.showListViewInputDialog(MainActivity.this,
                         "UNSUBSCRIBE SERVICE" ,
-                        adapter,
+                        hpb.ownSubscriptions.getSubscriptionsAdapter(MainActivity.this),
                         unsubscribeList);
             }
         });
@@ -205,7 +210,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void setListenerOwnIdButton() throws NoSuchAlgorithmException
+    private void setListenerCheckOwnIdButton()
     {
         checkOwnIdButton.setOnClickListener(new View.OnClickListener() {
 
@@ -230,7 +235,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void setListenerHypeDevicesButton() throws NoSuchAlgorithmException
+    private void setListenerCheckHypeDevicesButton()
     {
         final Intent intent = new Intent(this, HypeDevicesListActivity.class);
 
@@ -248,7 +253,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void setListenerOwnSubscriptionsButton() throws NoSuchAlgorithmException
+    private void setListenerCheckOwnSubscriptionsButton()
     {
         final Intent intent = new Intent(this, SubscriptionsListActivity.class);
 
@@ -271,7 +276,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void setListenerManagedServicesButton() throws NoSuchAlgorithmException
+    private void setListenerCheckManagedServicesButton()
     {
         final Intent intent = new Intent(this, ServiceManagersListActivity.class);
 
@@ -289,7 +294,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    public boolean isHypeSdkReady()
+    private boolean isHypeSdkReady()
     {
         if(HypeSdkInterface.isHypeFail){
             AlertDialogUtils.showOkDialog(MainActivity.this, "Warning", "Hype SDK could not be started");

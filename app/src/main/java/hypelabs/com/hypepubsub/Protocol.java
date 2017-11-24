@@ -18,14 +18,14 @@ public class Protocol
     public static final int MESSAGE_TYPE_BYTE_SIZE = 1;
 
     public enum MessageType {
-        SUBSCRIBE_SERVICE, /**< Represents a packet which contains a subscribe message */
-        UNSUBSCRIBE_SERVICE, /**< Represents a packet which contains a unsubscribe message */
-        PUBLISH, /**< Represents a packet which contains a publish message */
-        INFO, /**< Represents a packet which contains a info message */
-        INVALID /**< Represents a invalid packet */
+        SUBSCRIBE_SERVICE,
+        UNSUBSCRIBE_SERVICE,
+        PUBLISH,
+        INFO,
+        INVALID
     }
 
-    static byte[] sendSubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException, NoSuchAlgorithmException
+    static byte[] sendSubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException
     {
         Log.i(TAG, "Sending Subscribe message to " + GenericUtils.getInstanceAnnouncementStr(destInstance)
                          + " (0x" + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier()) + ")"
@@ -36,7 +36,7 @@ public class Protocol
         return packet; // TODO: Remove return in the future;
     }
 
-    static byte[] sendUnsubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException, NoSuchAlgorithmException
+    static byte[] sendUnsubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException
     {
         Log.i(TAG, "Sending Unsubscribe message to " + GenericUtils.getInstanceAnnouncementStr(destInstance)
                 + " (0x" + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier()) + ")"
@@ -47,7 +47,7 @@ public class Protocol
         return packet; // TODO: Remove return in the future;
     }
 
-    static byte[] sendPublishMsg(byte serviceKey[], Instance destInstance, String msg) throws IOException, NoSuchAlgorithmException
+    static byte[] sendPublishMsg(byte serviceKey[], Instance destInstance, String msg) throws IOException
     {
         Log.i(TAG, "Sending Publish message to " + GenericUtils.getInstanceAnnouncementStr(destInstance)
                 + " (0x" + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier()) + ")"
@@ -59,7 +59,7 @@ public class Protocol
         return packet; // TODO: Remove return in the future;
     }
 
-    static byte[] sendInfoMsg(byte serviceKey[], Instance destInstance, String msg) throws IOException, NoSuchAlgorithmException
+    static byte[] sendInfoMsg(byte serviceKey[], Instance destInstance, String msg) throws IOException
     {
         Log.i(TAG, "Sending Info message to " + GenericUtils.getInstanceAnnouncementStr(destInstance)
                 + " (0x" + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier()) + ")"
@@ -71,7 +71,7 @@ public class Protocol
         return packet;// TODO: Remove return in the future;
     }
 
-    static byte[] buildPacket(MessageType type, byte[] serviceKey, String infoMsg) throws IOException
+    private static byte[] buildPacket(MessageType type, byte[] serviceKey, String infoMsg) throws IOException
     {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         outputStream.write((byte) type.ordinal());
@@ -114,7 +114,7 @@ public class Protocol
         return 0;
     }
 
-    static int receiveSubscribeMsg(Instance originInstance, byte msg[]) throws NoSuchAlgorithmException, UnsupportedEncodingException
+    private static int receiveSubscribeMsg(Instance originInstance, byte msg[]) throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
         if(msg.length != (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
         {
@@ -133,7 +133,7 @@ public class Protocol
         return 0;
     }
 
-    static int receiveUnsubscribeMsg(Instance originInstance, byte msg[]) throws NoSuchAlgorithmException, UnsupportedEncodingException
+    private static int receiveUnsubscribeMsg(Instance originInstance, byte msg[]) throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
         if(msg.length != (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
         {
@@ -152,7 +152,7 @@ public class Protocol
         return 0;
     }
 
-    static int receivePublishMsg(Instance originInstance, byte msg[]) throws IOException, NoSuchAlgorithmException
+    private static int receivePublishMsg(Instance originInstance, byte msg[]) throws IOException, NoSuchAlgorithmException
     {
         if(msg.length <= (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
         {
@@ -174,7 +174,7 @@ public class Protocol
         return 0;
     }
 
-    static int receiveInfoMsg(Instance originInstance, byte msg[]) throws NoSuchAlgorithmException, UnsupportedEncodingException
+    private static int receiveInfoMsg(Instance originInstance, byte msg[]) throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
         if(msg.length <= (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
         {
@@ -196,7 +196,7 @@ public class Protocol
         return 0;
     }
 
-    static MessageType getMessageType(byte msg[])
+    public static MessageType getMessageType(byte msg[])
     {
         if(msg.length <= 0) {
             return MessageType.INVALID;
@@ -218,13 +218,13 @@ public class Protocol
         return MessageType.INVALID;
     }
 
-    static byte[] getServiceKey(byte msg[])
+    private static byte[] getServiceKey(byte msg[])
     {
         return Arrays.copyOfRange(msg, MESSAGE_TYPE_BYTE_SIZE,
                                     MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE);
     }
 
-    static byte[] getInfo(byte msg[])
+    private static byte[] getInfo(byte msg[])
     {
         return Arrays.copyOfRange(msg,MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE,
                                     msg.length);

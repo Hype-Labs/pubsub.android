@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class SubscriptionsListActivity extends AppCompatActivity
 {
-    ListView subscriptionsListView;
+    private ListView subscriptionsListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -22,10 +22,10 @@ public class SubscriptionsListActivity extends AppCompatActivity
         setContentView(R.layout.activity_subscriptions_list);
 
         // Get ListView object from xml
-        subscriptionsListView = (ListView) findViewById(R.id.subscriptionsList);
+        subscriptionsListView = findViewById(R.id.activity_subscriptions_list_view);
 
         try {
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                     android.R.layout.simple_list_item_1, android.R.id.text1, getSubscriptionsStrings());
             subscriptionsListView.setAdapter(adapter);
 
@@ -39,7 +39,7 @@ public class SubscriptionsListActivity extends AppCompatActivity
     private ArrayList<String> getSubscriptionsStrings() throws NoSuchAlgorithmException, UnsupportedEncodingException {
         HypePubSub hpb = HypePubSub.getInstance();
 
-        ArrayList<String> subs = new ArrayList<String>();
+        ArrayList<String> subs = new ArrayList<>();
 
         ListIterator<Subscription> it = hpb.ownSubscriptions.listIterator();
         while(it.hasNext())
@@ -48,9 +48,9 @@ public class SubscriptionsListActivity extends AppCompatActivity
 
             String manId = BinaryUtils.byteArrayToHexString(subscription.manager.getIdentifier());
             String manName = GenericUtils.getInstanceAnnouncementStr(subscription.manager);
-            String servKey = BinaryUtils.byteArrayToHexString(subscription.serviceKey);
+            String serviceKey = BinaryUtils.byteArrayToHexString(subscription.serviceKey);
             subs.add("ServiceName: " + subscription.serviceName + "\n"
-                     + "ServiceKey: 0x" + servKey + "\n"
+                     + "ServiceKey: 0x" + serviceKey + "\n"
                      + "ManagerId: 0x" + manId + "\n"
                      + "ManagerName: " + manName + "\n");
         }

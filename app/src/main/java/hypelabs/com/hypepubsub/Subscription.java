@@ -23,6 +23,6 @@ public class Subscription {
         this.serviceName = serviceName;
         this.serviceKey = GenericUtils.getStrHash(serviceName);
         this.manager = manager;
-        this.receivedMsg = new ArrayList<String>();
+        this.receivedMsg = new ArrayList<>();
     }
 }

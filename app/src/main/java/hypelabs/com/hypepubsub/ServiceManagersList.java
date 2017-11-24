@@ -1,6 +1,7 @@
 package hypelabs.com.hypepubsub;
 
-import java.security.NoSuchAlgorithmException;
+import android.content.Context;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -13,7 +14,9 @@ public class ServiceManagersList
 
     private LinkedList<ServiceManager> serviceManagers = new LinkedList<>();
 
-    public int add(byte serviceKey[]) throws NoSuchAlgorithmException
+    private ServiceManagersAdapter serviceManagersAdapter = null;
+
+    public int add(byte serviceKey[])
     {
         if(find(serviceKey) != null)
             return -1;
@@ -22,13 +25,13 @@ public class ServiceManagersList
         return 0;
     }
 
-    public int remove(byte serviceKey[]) throws NoSuchAlgorithmException
+    public int remove(byte serviceKey[])
     {
-        ServiceManager servMan = find(serviceKey);
-        if(servMan == null)
+        ServiceManager serviceMan = find(serviceKey);
+        if(serviceMan == null)
             return -1;
 
-        serviceManagers.remove(servMan);
+        serviceManagers.remove(serviceMan);
         return 0;
     }
 
@@ -37,9 +40,9 @@ public class ServiceManagersList
         ListIterator<ServiceManager> it = listIterator();
         while(it.hasNext())
         {
-            ServiceManager currentServMan = it.next();
-            if(Arrays.equals(currentServMan.serviceKey, serviceKey)) {
-                return currentServMan;
+            ServiceManager currentServiceMan = it.next();
+            if(Arrays.equals(currentServiceMan.serviceKey, serviceKey)) {
+                return currentServiceMan;
             }
         }
         return null;
@@ -60,6 +63,14 @@ public class ServiceManagersList
 
     public ServiceManager getLast() {
         return serviceManagers.getLast();
+    }
+
+    public ServiceManagersAdapter getServiceManagersAdapter(Context context)
+    {
+        if(serviceManagersAdapter == null){
+            serviceManagersAdapter = new ServiceManagersAdapter(context, serviceManagers);
+        }
+        return serviceManagersAdapter;
     }
 
 }

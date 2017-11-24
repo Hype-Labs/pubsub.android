@@ -6,6 +6,7 @@ import android.widget.ArrayAdapter;
 import android.support.v7.app.AppCompatActivity;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
 import java.security.NoSuchAlgorithmException;
 import java.util.ListIterator;
 import java.util.ArrayList;
@@ -13,7 +14,8 @@ import java.util.ArrayList;
 
 public class HypeDevicesListActivity extends AppCompatActivity
 {
-    ListView hypeDevicesListView;
+    private ListView hypeDevicesListView;
+    private static WeakReference<HypeDevicesListActivity> defaultInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -21,39 +23,30 @@ public class HypeDevicesListActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hype_devices_list);
 
-        // Get ListView object from xml
-        hypeDevicesListView = (ListView) findViewById(R.id.hypeDevicesList);
-
-        try {
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_list_item_1, android.R.id.text1, getHypeDevicesStrings());
-            hypeDevicesListView.setAdapter(adapter);
-
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private ArrayList<String> getHypeDevicesStrings() throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        ArrayList<String> hypeDevices = new ArrayList<String>();
-
         Network network = Network.getInstance();
-        ListIterator<Client> it = network.networkClients.listIterator();
-        while(it.hasNext())
-        {
-            Client client = it.next();
+        hypeDevicesListView = findViewById(R.id.activity_hype_devices_list_view);
+        hypeDevicesListView.setAdapter(network.networkClients.getClientsAdapter(HypeDevicesListActivity.this));
 
-            String clientId = BinaryUtils.byteArrayToHexString(client.instance.getIdentifier());
-            String clientKey = BinaryUtils.byteArrayToHexString(client.key);
-            String clientName = GenericUtils.getInstanceAnnouncementStr(client.instance);
-
-            hypeDevices.add("ClientID: 0x" + clientId + "\n"
-                            + "ClientKey: 0x" + clientKey + "\n"
-                            + "ClientName: " + clientName + "\n");
-        }
-
-        return hypeDevices;
+        setHypeDevicesListActivity(this);
     }
+
+    public static HypeDevicesListActivity getDefaultInstance() {
+
+        return defaultInstance != null ? defaultInstance.get() : null;
+    }
+
+    private static void setHypeDevicesListActivity(HypeDevicesListActivity instance) {
+
+        defaultInstance = new WeakReference<>(instance);
+    }
+
+    protected void updateInterface() {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ((ClientsAdapter)hypeDevicesListView.getAdapter()).notifyDataSetChanged();
+            }
+        });
+    }
+
 }

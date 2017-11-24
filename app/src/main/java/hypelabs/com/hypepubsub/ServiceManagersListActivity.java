@@ -6,6 +6,7 @@ import android.widget.ArrayAdapter;
 import android.support.v7.app.AppCompatActivity;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
 import java.security.NoSuchAlgorithmException;
 import java.util.ListIterator;
 import java.util.ArrayList;
@@ -13,7 +14,8 @@ import java.util.ArrayList;
 
 public class ServiceManagersListActivity extends AppCompatActivity
 {
-    ListView serviceManagersListView;
+    private ListView serviceManagersListView;
+    private static WeakReference<ServiceManagersListActivity> defaultInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -21,54 +23,37 @@ public class ServiceManagersListActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_managers_list);
 
-        // Get ListView object from xml
-        serviceManagersListView = (ListView) findViewById(R.id.serviceManagersList);
-
-        try {
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_list_item_1, android.R.id.text1, getServiceManagersStrings());
-            serviceManagersListView.setAdapter(adapter);
-
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
+        HypePubSub hpb = null;
+        try
+        {
+            hpb = HypePubSub.getInstance();
+        }
+        catch (NoSuchAlgorithmException e)
+        {
             e.printStackTrace();
         }
+        serviceManagersListView = findViewById(R.id.activity_service_manager_list_view);
+        serviceManagersListView.setAdapter(hpb.managedServices.getServiceManagersAdapter(ServiceManagersListActivity.this));
+
+        setServiceManagersListActivity(this);
     }
 
-    private ArrayList<String> getServiceManagersStrings() throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        HypePubSub hpb = HypePubSub.getInstance();
+    public static ServiceManagersListActivity getDefaultInstance() {
 
-        ArrayList<String> servManagers = new ArrayList<String>();
+        return defaultInstance != null ? defaultInstance.get() : null;
+    }
 
-        ListIterator<ServiceManager> itManServices = hpb.managedServices.listIterator();
-        while(itManServices.hasNext())
-        {
-            ServiceManager servMan = itManServices.next();
+    private static void setServiceManagersListActivity(ServiceManagersListActivity instance) {
 
-            String servKeyStr = BinaryUtils.byteArrayToHexString(servMan.serviceKey);
+        defaultInstance = new WeakReference<>(instance);
+    }
 
-            String subscribersStr = new String();
-            subscribersStr = "";
-
-            ListIterator<Client> itSubscribers = servMan.subscribers.listIterator();
-            while(itSubscribers.hasNext())
-            {
-                Client client = itSubscribers.next();
-
-                String clientId = BinaryUtils.byteArrayToHexString(client.instance.getIdentifier());
-                String clientKey = BinaryUtils.byteArrayToHexString(client.key);
-                String clientName = GenericUtils.getInstanceAnnouncementStr(client.instance);;
-
-                subscribersStr += ("Client ID: 0x" + clientId + "\n"
-                                   + "Client Key: 0x" + clientKey + "\n"
-                                   + "Client Name: " + clientName + "\n");
+    protected void updateInterface() {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ((ServiceManagersAdapter)serviceManagersListView.getAdapter()).notifyDataSetChanged();
             }
-
-            servManagers.add("ServiceKey: 0x" + servKeyStr + "\n"
-                             + subscribersStr);
-        }
-
-        return servManagers;
+        });
     }
 }

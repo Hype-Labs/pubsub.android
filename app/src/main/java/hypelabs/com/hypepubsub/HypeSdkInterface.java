@@ -114,7 +114,12 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
             HypePubSub hpb = HypePubSub.getInstance();
             Network network = Network.getInstance();
             network.networkClients.add(var1);
-            hpb.updateManagedServices();
+            hpb.updateManagedServices(); // Updated UI after adding a new instance
+
+            HypeDevicesListActivity hypeDeviceListActivity = HypeDevicesListActivity.getDefaultInstance();
+            if (hypeDeviceListActivity != null) {
+                hypeDeviceListActivity.updateInterface();
+            }
         }
         catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -136,6 +141,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
             Network network = Network.getInstance();
             network.networkClients.remove(var1);
             hpb.updateOwnSubscriptions();
+            updateHypeDevicesUI(); // Updated UI after removing an instance
         }
         catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -196,4 +202,12 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     @Override
     public void onHypeMessageDelivered(MessageInfo var1, Instance var2, float var3, boolean var4){}
 
+
+    private void updateHypeDevicesUI()
+    {
+        HypeDevicesListActivity hypeDeviceListActivity = HypeDevicesListActivity.getDefaultInstance();
+        if (hypeDeviceListActivity != null) {
+            hypeDeviceListActivity.updateInterface();
+        }
+    }
 }

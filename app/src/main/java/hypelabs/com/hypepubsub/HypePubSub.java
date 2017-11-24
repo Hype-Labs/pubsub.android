@@ -13,11 +13,12 @@ public class HypePubSub
 {
     private static final String TAG = Constants.GLOBAL_TAG_PREFIX + HypePubSub.class.getName();
 
-    static HypePubSub hpb = null; // Singleton
+    private static HypePubSub hpb = null; // Singleton
 
-    SubscriptionsList ownSubscriptions;
-    ServiceManagersList managedServices;
-    Network network = Network.getInstance(); // Singleton
+    final SubscriptionsList ownSubscriptions;
+    final ServiceManagersList managedServices;
+
+    private Network network = Network.getInstance();
 
     public static HypePubSub getInstance() throws NoSuchAlgorithmException
     {
@@ -27,7 +28,7 @@ public class HypePubSub
         return hpb;
     }
 
-    private HypePubSub() throws NoSuchAlgorithmException
+    private HypePubSub()
     {
         this.ownSubscriptions = new SubscriptionsList();
         this.managedServices = new ServiceManagersList();
@@ -49,8 +50,10 @@ public class HypePubSub
                     + serviceName + " to Host instance");
 
             this.processSubscribeReq(serviceKey, network.ownClient.instance);
+            return 1;
         }
-        else {
+        else
+        {
             Protocol.sendSubscribeMsg(serviceKey, managerInstance);
         }
 
@@ -99,15 +102,17 @@ public class HypePubSub
                     + serviceName + " to Host instance. Msg: " + msg);
 
             this.processPublishReq(serviceKey, msg);
+            return 1;
         }
-        else {
+        else
+        {
             Protocol.sendPublishMsg(serviceKey, managerInstance, msg);
         }
 
         return 0;
     }
 
-    int processSubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    void processSubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         ServiceManager serviceManager = this.managedServices.find(serviceKey);
         if(serviceManager == null) // If the service does not exist we create it.
         {
@@ -119,12 +124,12 @@ public class HypePubSub
 
             this.managedServices.add(serviceKey);
             serviceManager = this.managedServices.getLast();
+            updateManagedServicesUI(); // Updated UI after adding a new managed service
         }
         serviceManager.subscribers.add(requesterInstance);
-        return 0;
     }
 
-    int processUnsubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException, UnsupportedEncodingException
+    void processUnsubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
         ServiceManager serviceManager = this.managedServices.find(serviceKey);
 
@@ -135,21 +140,22 @@ public class HypePubSub
                     + " by " + GenericUtils.getInstanceAnnouncementStr(requesterInstance)
                     + " (0x" + BinaryUtils.byteArrayToHexString(requesterInstance.getIdentifier()) + ")"
                     + ". Nothing will be done.");
-            return -1;
+            return;
         }
         serviceManager.subscribers.remove(requesterInstance);
 
-        if(serviceManager.subscribers.size() == 0) // Remove the service if there is no subscribers
+        if(serviceManager.subscribers.size() == 0)
+        { // Remove the service if there is no subscribers
             this.managedServices.remove(serviceKey);
-
-        return 0;
+            updateManagedServicesUI(); // Updated UI after removing a managed service
+        }
     }
 
-    int processPublishReq(byte serviceKey[], String msg) throws NoSuchAlgorithmException, IOException
+    void processPublishReq(byte serviceKey[], String msg) throws NoSuchAlgorithmException, IOException
     {
         ServiceManager serviceManager = this.managedServices.find(serviceKey);
         if(serviceManager == null)
-            return -2;
+            return;
 
         ListIterator<Client> it = serviceManager.subscribers.listIterator();
         while(it.hasNext())
@@ -167,8 +173,6 @@ public class HypePubSub
                 Protocol.sendInfoMsg(serviceKey, client.instance, msg);
             }
         }
-
-        return 0;
     }
 
     int processInfoMsg(byte serviceKey[], String msg)
@@ -187,7 +191,7 @@ public class HypePubSub
         return 0;
     }
 
-    int updateManagedServices() throws NoSuchAlgorithmException, UnsupportedEncodingException
+    void updateManagedServices() throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
         Log.i(TAG, "Executing updateManagedServices");
 
@@ -205,12 +209,12 @@ public class HypePubSub
                                 + " to " + GenericUtils.getInstanceAnnouncementStr(newManagerInstance)
                                 + " (0x" + BinaryUtils.byteArrayToHexString(newManagerInstance.getIdentifier()) + ")");
                 this.managedServices.remove(servMan.serviceKey);
+                updateManagedServicesUI(); // Updated UI after removing a managed service
             }
         };
-        return 0;
     }
 
-    int updateOwnSubscriptions() throws IOException, NoSuchAlgorithmException
+    void updateOwnSubscriptions() throws IOException, NoSuchAlgorithmException
     {
         Log.i(TAG, "Executing updateOwnSubscriptions");
 
@@ -233,6 +237,13 @@ public class HypePubSub
                 this.issueSubscribeReq(subscription.serviceName); // re-send the subscribe request to the new manager
             }
         }
-        return 0;
+    }
+
+    private void updateManagedServicesUI()
+    {
+        ServiceManagersListActivity serviceManagersListActivity = ServiceManagersListActivity.getDefaultInstance();
+        if (serviceManagersListActivity != null) {
+            serviceManagersListActivity.updateInterface();
+        }
     }
 }

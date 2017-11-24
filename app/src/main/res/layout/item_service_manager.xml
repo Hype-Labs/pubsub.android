@@ -14,10 +14,16 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/item_subscription_service_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            android:text="Key: 0x" />
+
+        <TextView
+            android:id="@+id/item_service_manager_service_key"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
 
     </LinearLayout>

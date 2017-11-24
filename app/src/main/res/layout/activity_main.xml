@@ -26,7 +26,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/subscribeButton"
+            android:id="@+id/activity_main_subscribe_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Subscribe Service"
@@ -44,7 +44,7 @@
         android:orientation="horizontal">
 
         <Button
-        android:id="@+id/unsubscribeButton"
+        android:id="@+id/activity_main_unsubscribe_button"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="Unsubscribe Service"
@@ -63,7 +63,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/publishButton"
+            android:id="@+id/activity_main_publish_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Publish in Service"
@@ -80,7 +80,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/checkOwnIdButton"
+            android:id="@+id/activity_main_check_own_id_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Check Own ID"
@@ -97,7 +97,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/checkHypeDevicesButton"
+            android:id="@+id/activity_main_check_hype_devices_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Check Hype Devices"
@@ -114,7 +114,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/checkOwnSubscriptionsButton"
+            android:id="@+id/activity_main_check_own_subscriptions_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Check Subscriptions"
@@ -131,7 +131,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/checkManagedServicesButton"
+            android:id="@+id/activity_main_check_managed_services_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Check Managed Services"

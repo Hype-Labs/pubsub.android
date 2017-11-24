@@ -47,8 +47,6 @@ public class HypePubSubUnitTest
 
         assertEquals(0, hpb.managedServices.size());
 
-        assertEquals(-1, hpb.processUnsubscribeReq(HPB_TEST_SERVICE1, instance1));
-
         // Basic test with 2 services with 3 clients
         hpb.processSubscribeReq(HPB_TEST_SERVICE1, instance1);
         assertEquals(1, hpb.managedServices.size());

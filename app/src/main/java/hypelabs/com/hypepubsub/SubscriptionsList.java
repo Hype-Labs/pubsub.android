@@ -1,5 +1,7 @@
 package hypelabs.com.hypepubsub;
 
+import android.content.Context;
+
 import com.hypelabs.hype.Instance;
 
 import java.security.MessageDigest;
@@ -11,9 +13,12 @@ import java.util.ListIterator;
 
 public class SubscriptionsList
 {
+
     // Used composition instead of inheritance to hide the methods that shouldn't be called in
     // a SubscriptionsList.
     private LinkedList<Subscription> subscriptions = new LinkedList<>();
+
+    private SubscriptionsAdapter subscriptionsAdapter = null;
 
     public int add(String serviceName, Instance managerInstance) throws NoSuchAlgorithmException
     {
@@ -56,21 +61,28 @@ public class SubscriptionsList
     }
 
     // Methods from LinkedList that we want to enable.
-    public ListIterator<Subscription> listIterator() {
+    public ListIterator<Subscription> listIterator()
+    {
         return subscriptions.listIterator();
     }
 
-    public int size() {
+    public int size()
+    {
         return subscriptions.size();
     }
 
-    public Subscription get(int index) {
+    public Subscription get(int index)
+    {
         return subscriptions.get(index);
     }
 
-    public LinkedList<Subscription> getLinkedListClone()
+    public SubscriptionsAdapter getSubscriptionsAdapter(Context context)
     {
-        return  (LinkedList) this.subscriptions.clone();
+        if(subscriptionsAdapter == null){
+            subscriptionsAdapter = new SubscriptionsAdapter(context, subscriptions);
+        }
+
+        return  subscriptionsAdapter;
     }
 
 }
