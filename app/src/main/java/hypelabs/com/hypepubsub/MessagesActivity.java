@@ -7,27 +7,65 @@ import android.support.v7.app.AppCompatActivity;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Array;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 
 public class MessagesActivity extends AppCompatActivity
 {
+    public final static String EXTRA_SUBSCRIPTION_KEY = "EXTRA_SUBSCRIPTION_KEY";
     private ListView messagesView;
+    private static WeakReference<MessagesActivity> defaultInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
 
-        String service = this.getIntent().getStringExtra("service");
-        ArrayList<String> messages = this.getIntent().getStringArrayListExtra("messages");
+        byte[] subscriptionKey = this.getIntent().getByteArrayExtra(EXTRA_SUBSCRIPTION_KEY);
 
-        this.setTitle(service + " messages");
+        // Get ListView object from xml
+        HypePubSub hpb = null;
+        try
+        {
+            hpb = HypePubSub.getInstance();
+        } catch (NoSuchAlgorithmException e)
+        {
+            e.printStackTrace();
+        }
+
+        Subscription subscription = hpb.ownSubscriptions.find(subscriptionKey);
+
+        if(subscription == null) // Protection against subscription not found..
+            this.finish();
+
+        this.setTitle(subscription.serviceName + " messages");
         setContentView(R.layout.activity_messages);
 
-        ArrayAdapter receivedMsgAdapter = new ArrayAdapter(MessagesActivity.this, android.R.layout.simple_list_item_1, messages);
+        ArrayAdapter<String> receivedMsgAdapter = subscription.getReceivedMsgAdapter(MessagesActivity.this);
 
         messagesView = findViewById(R.id.activity_messages_view);
         messagesView.setAdapter(receivedMsgAdapter);
+
+        setMessagesActivity(this);
+    }
+
+    public static MessagesActivity getDefaultInstance() {
+
+        return defaultInstance != null ? defaultInstance.get() : null;
+    }
+
+    private static void setMessagesActivity(MessagesActivity instance) {
+
+        defaultInstance = new WeakReference<>(instance);
+    }
+
+    protected void updateInterface() {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ((ArrayAdapter) messagesView.getAdapter()).notifyDataSetChanged();
+            }
+        });
     }
 }

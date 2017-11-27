@@ -42,8 +42,7 @@ public class SubscriptionsListActivity extends AppCompatActivity
 
                 Intent intent = new Intent(SubscriptionsListActivity.this, MessagesActivity.class);
 
-                intent.putExtra("service", subscription.serviceName);
-                intent.putExtra("messages", subscription.receivedMsg);
+                intent.putExtra(MessagesActivity.EXTRA_SUBSCRIPTION_KEY, subscription.serviceKey);
 
                 startActivity(intent);
 

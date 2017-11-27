@@ -1,5 +1,8 @@
 package hypelabs.com.hypepubsub;
 
+import android.content.Context;
+import android.widget.ArrayAdapter;
+
 import com.hypelabs.hype.Instance;
 
 import java.security.NoSuchAlgorithmException;
@@ -17,6 +20,7 @@ public class Subscription {
     byte serviceKey[];
     Instance manager;
     ArrayList<String> receivedMsg;
+    ArrayAdapter<String> receivedMsgAdapter;
 
     public Subscription(String serviceName, Instance manager) throws NoSuchAlgorithmException
     {
@@ -24,5 +28,20 @@ public class Subscription {
         this.serviceKey = GenericUtils.getStrHash(serviceName);
         this.manager = manager;
         this.receivedMsg = new ArrayList<>();
+    }
+
+    public ArrayAdapter<String> getReceivedMsgAdapter(Context context)
+    {
+        if (receivedMsgAdapter == null)
+        {
+            receivedMsgAdapter = new ArrayAdapter<>(context, R.layout.item_message, R.id.item_message_msg, receivedMsg);
+        }
+        return receivedMsgAdapter;
+    }
+
+    public void notifyReceivedMsgAdapter()
+    {
+        if(receivedMsgAdapter != null)
+            receivedMsgAdapter.notifyDataSetChanged();
     }
 }

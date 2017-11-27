@@ -5,7 +5,9 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.ListIterator;
 
 import com.hypelabs.hype.Instance;
@@ -186,9 +188,14 @@ public class HypePubSub
         }
 
         Calendar calendar = Calendar.getInstance();
-        String timeStamp = calendar.get(Calendar.HOUR_OF_DAY) + "h" + calendar.get(Calendar.MINUTE);
-        String msgWithTimeStamp = timeStamp + ": " + msg;
+
+        Date now = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("k'h'mm");
+        String timestamp = sdf.format(now);
+        String msgWithTimeStamp = timestamp + ": " + msg;
+        
         subscription.receivedMsg.add(0, msgWithTimeStamp);
+        updateMessagesUI();
 
         Log.i(TAG, "Received message from service " + subscription.serviceName
                                         + ": " + msg);
@@ -251,4 +258,13 @@ public class HypePubSub
             serviceManagersListActivity.updateInterface();
         }
     }
+
+    private void updateMessagesUI()
+    {
+        MessagesActivity messagesActivity = MessagesActivity.getDefaultInstance();
+        if (messagesActivity != null) {
+            messagesActivity.updateInterface();
+        }
+    }
+
 }
