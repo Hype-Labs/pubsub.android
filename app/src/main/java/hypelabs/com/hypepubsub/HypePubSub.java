@@ -10,9 +10,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.ListIterator;
+import java.util.Locale;
 
 import com.hypelabs.hype.Instance;
 
@@ -20,18 +20,15 @@ public class HypePubSub
 {
     private static final String TAG = Constants.GLOBAL_TAG_PREFIX + HypePubSub.class.getName();
 
-    private static HypePubSub hpb = null; // Singleton
+    final private static HypePubSub hpb = new HypePubSub(); // Early loading to avoid thread-safety issues
 
     final SubscriptionsList ownSubscriptions;
     final ServiceManagersList managedServices;
 
-    private Network network = Network.getInstance();
+    final private Network network = Network.getInstance();
 
-    public static HypePubSub getInstance() throws NoSuchAlgorithmException
+    public static HypePubSub getInstance()
     {
-        if (hpb == null) {
-            hpb = new HypePubSub();
-        }
         return hpb;
     }
 
@@ -136,7 +133,7 @@ public class HypePubSub
         serviceManager.subscribers.add(requesterInstance);
     }
 
-    synchronized void processUnsubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException, UnsupportedEncodingException
+    synchronized void processUnsubscribeReq(byte serviceKey[], Instance requesterInstance) throws UnsupportedEncodingException
     {
         ServiceManager serviceManager = this.managedServices.find(serviceKey);
 
@@ -158,7 +155,7 @@ public class HypePubSub
         }
     }
 
-    synchronized void processPublishReq(byte serviceKey[], String msg) throws NoSuchAlgorithmException, IOException
+    synchronized void processPublishReq(byte serviceKey[], String msg) throws IOException
     {
         ServiceManager serviceManager = this.managedServices.find(serviceKey);
         if(serviceManager == null)
@@ -191,10 +188,8 @@ public class HypePubSub
             return -1;
         }
 
-        Calendar calendar = Calendar.getInstance();
-
         Date now = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("k'h'mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("k'h'mm", Locale.getDefault());
         String timestamp = sdf.format(now);
         String msgWithTimeStamp = timestamp + ": " + msg;
 
@@ -209,27 +204,27 @@ public class HypePubSub
         return 0;
     }
 
-    synchronized void updateManagedServices() throws NoSuchAlgorithmException, UnsupportedEncodingException
+    synchronized void updateManagedServices() throws UnsupportedEncodingException
     {
         Log.i(TAG, "Executing updateManagedServices");
 
         ListIterator<ServiceManager> it = this.managedServices.listIterator();
         while(it.hasNext())
         {
-            ServiceManager servMan = it.next();
+            ServiceManager managedService = it.next();
             // Check if a new Hype client with a closer key to this service key has appeared. If this happens
             // we remove the service from the list of managed services of this Hype client.
-            Instance newManagerInstance = network.getServiceManagerInstance(servMan.serviceKey);
+            Instance newManagerInstance = network.getServiceManagerInstance(managedService.serviceKey);
             if( ! GenericUtils.areInstancesEqual(newManagerInstance, network.ownClient.instance))
             {
                 Log.i(TAG, "Passing the service management for the service 0x "
-                                + BinaryUtils.byteArrayToHexString(servMan.serviceKey)
+                                + BinaryUtils.byteArrayToHexString(managedService.serviceKey)
                                 + " to " + GenericUtils.getInstanceAnnouncementStr(newManagerInstance)
                                 + " (0x" + BinaryUtils.byteArrayToHexString(newManagerInstance.getIdentifier()) + ")");
-                this.managedServices.remove(servMan.serviceKey);
+                this.managedServices.remove(managedService.serviceKey);
                 updateManagedServicesUI(); // Updated UI after removing a managed service
             }
-        };
+        }
     }
 
     synchronized void updateOwnSubscriptions() throws IOException, NoSuchAlgorithmException
@@ -273,10 +268,10 @@ public class HypePubSub
         }
     }
 
-    private void displayNotification(Context context, String notificationChannel, String tile, String content)
+    private void displayNotification(Context context, String notificationChannel, String title, String content)
     {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, notificationChannel);
-        builder.setContentTitle(tile);
+        builder.setContentTitle(title);
         builder.setContentText(content);
         builder.setDefaults(Notification.DEFAULT_ALL);
         builder.setSmallIcon(R.mipmap.ic_launcher);
@@ -284,7 +279,9 @@ public class HypePubSub
         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC); // to show content in lock screen
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(1, builder.build());
+
+        if(notificationManager != null)
+            notificationManager.notify(1, builder.build());
     }
 
 }

@@ -14,7 +14,7 @@ public class ClientsList
     // Used composition instead of inheritance to hide the methods that shouldn't be called in
     // a ClientsList.
 
-    private LinkedList<Client> clients = new LinkedList<>();
+    final private LinkedList<Client> clients = new LinkedList<>();
 
     private ClientsAdapter clientsAdapter = null;
 
@@ -27,7 +27,7 @@ public class ClientsList
         return 0;
     }
 
-    public synchronized int remove(Instance instance) throws NoSuchAlgorithmException
+    public synchronized int remove(Instance instance)
     {
         Client client = find(instance);
         if(client == null)

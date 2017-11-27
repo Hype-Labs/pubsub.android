@@ -24,6 +24,9 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     // Members
     //////////////////////////////////////////////////////////////////////////////
 
+    final private HypePubSub hpb = HypePubSub.getInstance();
+    final private Network network = Network.getInstance();
+
     private static HypeSdkInterface hypeSdkInterface;
     static boolean isHypeReady = false;
     static boolean isHypeFail = false;
@@ -41,7 +44,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     }
 
     protected void requestHypeToStart(Context context) throws UnsupportedEncodingException {
-        Hype.setUserIdentifier(0l);
+        Hype.setUserIdentifier(0L);
         Hype.setAppIdentifier(Constants.HPB_APP_IDENTIFIER);
         Hype.setContext(context);
         Hype.setAnnouncement((android.os.Build.MODEL).getBytes(Constants.HPB_ENCODING_STANDARD));
@@ -72,7 +75,6 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
         {
             Log.i("HypePubSub", "Hype started!");
             isHypeReady = true;
-            Network network = Network.getInstance();
             network.setOwnClient(Hype.getHostInstance());
         }
         catch (NoSuchAlgorithmException e)
@@ -111,9 +113,6 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
             Log.i(TAG, "Instance Found " + GenericUtils.getInstanceAnnouncementStr(var1)
                     + " (0x" + BinaryUtils.byteArrayToHexString(var1.getIdentifier()) + ")");
 
-            HypePubSub hpb = HypePubSub.getInstance();
-            Network network = Network.getInstance();
-
             synchronized (network) // Add thread safety to adding procedure
             {
                 network.networkClients.add(var1);
@@ -136,9 +135,6 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
         {
             Log.i(TAG, "Instance Lost " + GenericUtils.getInstanceAnnouncementStr(var1)
                     + " (0x" + BinaryUtils.byteArrayToHexString(var1.getIdentifier()) + ")");
-
-            HypePubSub hpb = HypePubSub.getInstance();
-            Network network = Network.getInstance();
 
             synchronized (network) // Add thread safety to removal procedure
             {

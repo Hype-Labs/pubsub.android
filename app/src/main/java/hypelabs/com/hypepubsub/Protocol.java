@@ -133,7 +133,7 @@ public class Protocol
         return 0;
     }
 
-    private static int receiveUnsubscribeMsg(Instance originInstance, byte msg[]) throws NoSuchAlgorithmException, UnsupportedEncodingException
+    private static int receiveUnsubscribeMsg(Instance originInstance, byte msg[]) throws UnsupportedEncodingException
     {
         if(msg.length != (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
         {
@@ -152,7 +152,7 @@ public class Protocol
         return 0;
     }
 
-    private static int receivePublishMsg(Instance originInstance, byte msg[]) throws IOException, NoSuchAlgorithmException
+    private static int receivePublishMsg(Instance originInstance, byte msg[]) throws IOException
     {
         if(msg.length <= (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
         {
@@ -174,7 +174,7 @@ public class Protocol
         return 0;
     }
 
-    private static int receiveInfoMsg(Instance originInstance, byte msg[]) throws NoSuchAlgorithmException, UnsupportedEncodingException
+    private static int receiveInfoMsg(Instance originInstance, byte msg[]) throws UnsupportedEncodingException
     {
         if(msg.length <= (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
         {

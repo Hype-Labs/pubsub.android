@@ -16,7 +16,7 @@ public class SubscriptionsList
 
     // Used composition instead of inheritance to hide the methods that shouldn't be called in
     // a SubscriptionsList.
-    private LinkedList<Subscription> subscriptions = new LinkedList<>();
+    final private LinkedList<Subscription> subscriptions = new LinkedList<>();
 
     private SubscriptionsAdapter subscriptionsAdapter = null;
 

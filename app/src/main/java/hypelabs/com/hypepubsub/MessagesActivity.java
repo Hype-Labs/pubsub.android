@@ -6,9 +6,6 @@ import android.widget.ListView;
 import android.support.v7.app.AppCompatActivity;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Array;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 
 
 public class MessagesActivity extends AppCompatActivity
@@ -25,15 +22,7 @@ public class MessagesActivity extends AppCompatActivity
         byte[] subscriptionKey = this.getIntent().getByteArrayExtra(EXTRA_SUBSCRIPTION_KEY);
 
         // Get ListView object from xml
-        HypePubSub hpb = null;
-        try
-        {
-            hpb = HypePubSub.getInstance();
-        } catch (NoSuchAlgorithmException e)
-        {
-            e.printStackTrace();
-        }
-
+        HypePubSub hpb = HypePubSub.getInstance();
         Subscription subscription = hpb.ownSubscriptions.find(subscriptionKey);
 
         if(subscription == null) // Protection against subscription not found..

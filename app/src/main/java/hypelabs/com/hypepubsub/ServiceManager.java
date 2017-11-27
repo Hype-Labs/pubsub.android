@@ -2,8 +2,8 @@ package hypelabs.com.hypepubsub;
 
 public class ServiceManager
 {
-    byte serviceKey[];
-    ClientsList subscribers;
+    final byte serviceKey[];
+    final ClientsList subscribers;
 
     public ServiceManager(byte service_key[])
     {

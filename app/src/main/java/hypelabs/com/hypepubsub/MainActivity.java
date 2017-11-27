@@ -60,15 +60,9 @@ public class MainActivity extends AppCompatActivity
 
     private void getSingletonInstances()
     {
-        try
-        {
-            // Get required singletons
-            hpb = HypePubSub.getInstance();
-            network = Network.getInstance();
-        }
-        catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+        // Get required singletons
+        hpb = HypePubSub.getInstance();
+        network = Network.getInstance();
     }
 
     private void setButtonListeners()
@@ -108,7 +102,7 @@ public class MainActivity extends AppCompatActivity
                 AlertDialogUtils.SingleInputDialog subscribeInput = new AlertDialogUtils.SingleInputDialog() {
 
                     @Override
-                    public void actionOk(String service) throws IOException, NoSuchAlgorithmException
+                    public void onOk(String service) throws IOException, NoSuchAlgorithmException
                     {
                         service = service.toLowerCase().trim();
                         if(service.length() > 0)
@@ -125,7 +119,7 @@ public class MainActivity extends AppCompatActivity
                     }
 
                     @Override
-                    public void actionCancel() {
+                    public void onCancel(){
                         // do nothing;
                     }
                 };
@@ -194,7 +188,7 @@ public class MainActivity extends AppCompatActivity
                 AlertDialogUtils.DoubleInputDialog publishInput = new AlertDialogUtils.DoubleInputDialog() {
 
                     @Override
-                    public void actionOk(String service, String msg) throws IOException, NoSuchAlgorithmException
+                    public void onOk(String service, String msg) throws IOException, NoSuchAlgorithmException
                     {
                         service = service.toLowerCase().trim();
                         msg = msg.trim();
@@ -207,7 +201,7 @@ public class MainActivity extends AppCompatActivity
                     }
 
                     @Override
-                    public void actionCancel() {
+                    public void onCancel() {
                         // do nothing;
                     }
                 };

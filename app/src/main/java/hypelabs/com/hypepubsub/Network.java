@@ -8,7 +8,7 @@ import java.util.ListIterator;
 
 public class Network
 {
-    private static Network network = null;
+    final private static Network network = new Network(); // Early loading to avoid thread-safety issues
 
     protected Client ownClient;
     protected ClientsList networkClients;
@@ -23,9 +23,6 @@ public class Network
 
     public static Network getInstance()
     {
-        if(network == null){
-            network = new Network();
-        }
         return network;
     }
 

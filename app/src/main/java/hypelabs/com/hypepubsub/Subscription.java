@@ -20,7 +20,7 @@ public class Subscription {
     byte serviceKey[];
     Instance manager;
     ArrayList<String> receivedMsg;
-    ArrayAdapter<String> receivedMsgAdapter;
+    private ArrayAdapter<String> receivedMsgAdapter;
 
     public Subscription(String serviceName, Instance manager) throws NoSuchAlgorithmException
     {
@@ -37,11 +37,5 @@ public class Subscription {
             receivedMsgAdapter = new ArrayAdapter<>(context, R.layout.item_message, R.id.item_message_msg, receivedMsg);
         }
         return receivedMsgAdapter;
-    }
-
-    public void notifyReceivedMsgAdapter()
-    {
-        if(receivedMsgAdapter != null)
-            receivedMsgAdapter.notifyDataSetChanged();
     }
 }

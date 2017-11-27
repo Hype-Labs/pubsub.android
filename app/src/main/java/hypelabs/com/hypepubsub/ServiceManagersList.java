@@ -12,7 +12,7 @@ public class ServiceManagersList
     // Used composition instead of inheritance to hide the methods that shouldn't be called in
     // a ServiceManagersList.
 
-    private LinkedList<ServiceManager> serviceManagers = new LinkedList<>();
+    final private LinkedList<ServiceManager> serviceManagers = new LinkedList<>();
 
     private ServiceManagersAdapter serviceManagersAdapter = null;
 

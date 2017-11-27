@@ -7,9 +7,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.support.v7.app.AppCompatActivity;
 
-import java.security.NoSuchAlgorithmException;
-
-
 public class SubscriptionsListActivity extends AppCompatActivity
 {
     private ListView subscriptionsListView;
@@ -22,14 +19,7 @@ public class SubscriptionsListActivity extends AppCompatActivity
         setContentView(R.layout.activity_subscriptions_list);
 
         // Get ListView object from xml
-        HypePubSub hpb = null;
-        try
-        {
-            hpb = HypePubSub.getInstance();
-        } catch (NoSuchAlgorithmException e)
-        {
-            e.printStackTrace();
-        }
+        HypePubSub hpb = HypePubSub.getInstance();
 
         subscriptionsListView = findViewById(R.id.activity_subscriptions_list_view);
         subscriptionsListView.setAdapter(hpb.ownSubscriptions.getSubscriptionsAdapter(SubscriptionsListActivity.this));
