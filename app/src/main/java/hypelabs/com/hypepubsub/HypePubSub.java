@@ -1,5 +1,9 @@
 package hypelabs.com.hypepubsub;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import java.io.IOException;
@@ -193,9 +197,11 @@ public class HypePubSub
         SimpleDateFormat sdf = new SimpleDateFormat("k'h'mm");
         String timestamp = sdf.format(now);
         String msgWithTimeStamp = timestamp + ": " + msg;
-        
+
         subscription.receivedMsg.add(0, msgWithTimeStamp);
         updateMessagesUI();
+        String notificationText = subscription.serviceName + ": " + msg;
+        displayNotification(MainActivity.getContext(), Constants.HPB_NOTIFICATIONS_CHANNEL, Constants.HPB_NOTIFICATIONS_TITLE, notificationText);
 
         Log.i(TAG, "Received message from service " + subscription.serviceName
                                         + ": " + msg);
@@ -265,6 +271,20 @@ public class HypePubSub
         if (messagesActivity != null) {
             messagesActivity.updateInterface();
         }
+    }
+
+    private void displayNotification(Context context, String notificationChannel, String tile, String content)
+    {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, notificationChannel);
+        builder.setContentTitle(tile);
+        builder.setContentText(content);
+        builder.setDefaults(Notification.DEFAULT_ALL);
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setPriority(NotificationCompat.PRIORITY_MAX);
+        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC); // to show content in lock screen
+
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, builder.build());
     }
 
 }

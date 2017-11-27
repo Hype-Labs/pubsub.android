@@ -1,6 +1,7 @@
 package hypelabs.com.hypepubsub;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,6 +24,16 @@ public class MainActivity extends AppCompatActivity
     private Button checkHypeDevicesButton;
     private Button checkOwnSubscriptionsButton;
     private Button checkManagedServicesButton;
+
+    private static MainActivity instance; // Way of accessing the application context from other classes
+
+    public MainActivity() {
+        instance = this;
+    }
+
+    public static Context getContext() {
+        return instance;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
