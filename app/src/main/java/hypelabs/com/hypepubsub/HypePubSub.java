@@ -130,6 +130,11 @@ public class HypePubSub
             serviceManager = this.managedServices.getLast();
             updateManagedServicesUI(); // Updated UI after adding a new managed service
         }
+
+        Log.i(TAG, "Adding instance " + GenericUtils.getInstanceAnnouncementStr(requesterInstance)
+                + " (0x" + BinaryUtils.byteArrayToHexString(requesterInstance.getIdentifier()) + ")"
+                + " to list of subscriber of service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
+
         serviceManager.subscribers.add(requesterInstance);
     }
 
@@ -146,6 +151,11 @@ public class HypePubSub
                     + ". Nothing will be done.");
             return;
         }
+
+        Log.i(TAG, "Removing instance " + GenericUtils.getInstanceAnnouncementStr(requesterInstance)
+                + " (0x" + BinaryUtils.byteArrayToHexString(requesterInstance.getIdentifier()) + ")"
+                + " from list of subscriber of service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
+
         serviceManager.subscribers.remove(requesterInstance);
 
         if(serviceManager.subscribers.size() == 0)
@@ -174,6 +184,12 @@ public class HypePubSub
                 this.processInfoMsg(serviceKey, msg);
             }
             else{
+
+                Log.i(TAG, "Sending info message of service 0x"
+                        + BinaryUtils.byteArrayToHexString(serviceKey)
+                        + " to " + GenericUtils.getInstanceAnnouncementStr(client.instance)
+                        + " (0x" + BinaryUtils.byteArrayToHexString(client.instance.getIdentifier()) + ")");
+
                 Protocol.sendInfoMsg(serviceKey, client.instance, msg);
             }
         }

@@ -194,7 +194,20 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     }
 
     @Override
-    public void onHypeMessageFailedSending(MessageInfo var1, Instance var2, Error var3){}
+    public void onHypeMessageFailedSending(MessageInfo var1, Instance var2, Error var3)
+    {
+        try
+        {
+            Log.i(TAG, "Hype Message Failed Sending " + GenericUtils.getInstanceAnnouncementStr(var2)
+                    + " (0x" + BinaryUtils.byteArrayToHexString(var2.getIdentifier()) + ")");
+        } catch (UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+        }
+        Log.i(TAG, "Hype Message Failed Sending Error Suggestion" + var3.getSuggestion());
+        Log.i(TAG, "Hype Message Failed Sending Error Description" + var3.getDescription());
+        Log.i(TAG, "Hype Message Failed Sending Error Reason" + var3.getReason());
+    }
 
     @Override
     public void onHypeMessageSent(MessageInfo var1, Instance var2, float var3, boolean var4){}
