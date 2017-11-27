@@ -187,10 +187,12 @@ public class HypePubSub
 
         Calendar calendar = Calendar.getInstance();
         String timeStamp = calendar.get(Calendar.HOUR_OF_DAY) + "h" + calendar.get(Calendar.MINUTE);
-        subscription.receivedMsg.add(timeStamp + ": " + msg);
+        String msgWithTimeStamp = timeStamp + ": " + msg;
+        subscription.receivedMsg.add(0, msgWithTimeStamp);
 
         Log.i(TAG, "Received message from service " + subscription.serviceName
                                         + ": " + msg);
+
         return 0;
     }
 
