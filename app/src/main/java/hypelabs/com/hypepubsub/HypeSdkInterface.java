@@ -55,13 +55,13 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
 
         Hype.start();
 
-        Log.i(TAG, "Requested Hype start.");
+        Log.i(TAG, "Requested Hype SDK start.");
     }
 
     protected void requestHypeToStop()
     {
         Hype.stop();
-        Log.i(TAG, "Requested Hype stop.");
+        Log.i(TAG, "Requested Hype SDK stop.");
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i("HypePubSub", "Hype started!");
+            Log.i(TAG, "Hype SDK started!");
             isHypeReady = true;
             network.setOwnClient(Hype.getHostInstance());
         }
@@ -84,7 +84,9 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     }
 
     @Override
-    public void onHypeStop(Error var1) {
+    public void onHypeStop(Error var1)
+    {
+        Log.i(TAG, "Hype SDK stopped!");
         requestHypeToStop();
     }
 
@@ -92,14 +94,23 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     public void onHypeFailedStarting(Error var1)
     {
         isHypeFail = true;
-        Log.e("HypePubSub", "Hype Start Failed. Error description: " + var1.getDescription());
+        Log.e(TAG, "Hype SDK start failed. Error description: " + var1.getDescription());
     }
 
     @Override
-    public void onHypeReady(){}
+    public void onHypeReady()
+    {
+        Log.i( TAG, "Hype SDK is ready");
+    }
+
 
     @Override
-    public void onHypeStateChange(){}
+    public void onHypeStateChange()
+    {
+        Log.i(TAG, "Hype SDK state has changed to " + Hype.getState()
+                        + " [Idle(0), Starting(1), Running(2), Stopping(3)]");
+    }
+
 
     //////////////////////////////////////////////////////////////////////////////
     // Network Observer Methods
@@ -110,7 +121,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, "Instance Found " + GenericUtils.getInstanceAnnouncementStr(var1)
+            Log.i(TAG, "Hype SDK Instance Found " + GenericUtils.getInstanceAnnouncementStr(var1)
                     + " (0x" + BinaryUtils.byteArrayToHexString(var1.getIdentifier()) + ")");
 
             synchronized (network) // Add thread safety to adding procedure
@@ -133,7 +144,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, "Instance Lost " + GenericUtils.getInstanceAnnouncementStr(var1)
+            Log.i(TAG, "Hype SDK Instance Lost " + GenericUtils.getInstanceAnnouncementStr(var1)
                     + " (0x" + BinaryUtils.byteArrayToHexString(var1.getIdentifier()) + ")");
 
             synchronized (network) // Add thread safety to removal procedure
@@ -156,7 +167,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, "Instance Resolved " + GenericUtils.getInstanceAnnouncementStr(var1)
+            Log.i(TAG, "Hype SDK Instance Resolved " + GenericUtils.getInstanceAnnouncementStr(var1)
                     + " (0x" + BinaryUtils.byteArrayToHexString(var1.getIdentifier()) + ")");
         } catch (UnsupportedEncodingException e)
         {
@@ -169,7 +180,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, "Instance Fail Resolving " + GenericUtils.getInstanceAnnouncementStr(var1)
+            Log.i(TAG, "Hype SDK Instance Fail Resolving " + GenericUtils.getInstanceAnnouncementStr(var1)
                     + " (0x" + BinaryUtils.byteArrayToHexString(var1.getIdentifier()) + ")");
         } catch (UnsupportedEncodingException e)
         {
@@ -198,23 +209,29 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, "Hype Message Failed Sending " + GenericUtils.getInstanceAnnouncementStr(var2)
+            Log.i(TAG, "Hype SDK message failed sending " + GenericUtils.getInstanceAnnouncementStr(var2)
                     + " (0x" + BinaryUtils.byteArrayToHexString(var2.getIdentifier()) + ")");
         } catch (UnsupportedEncodingException e)
         {
             e.printStackTrace();
         }
-        Log.i(TAG, "Hype Message Failed Sending Error Suggestion" + var3.getSuggestion());
-        Log.i(TAG, "Hype Message Failed Sending Error Description" + var3.getDescription());
-        Log.i(TAG, "Hype Message Failed Sending Error Reason" + var3.getReason());
+        Log.i(TAG, "Hype SDK message failed sending error. Suggestion" + var3.getSuggestion());
+        Log.i(TAG, "Hype SDK message failed sending error. Description" + var3.getDescription());
+        Log.i(TAG, "Hype SDK message failed sending error. Reason" + var3.getReason());
     }
 
     @Override
-    public void onHypeMessageSent(MessageInfo var1, Instance var2, float var3, boolean var4){}
+    public void onHypeMessageSent(MessageInfo var1, Instance var2, float var3, boolean var4)
+    {
+        Log.i( TAG, "Hype SDK message sent");
+
+    }
 
     @Override
-    public void onHypeMessageDelivered(MessageInfo var1, Instance var2, float var3, boolean var4){}
-
+    public void onHypeMessageDelivered(MessageInfo var1, Instance var2, float var3, boolean var4)
+    {
+        Log.i( TAG, "Hype SDK message delivered");
+    }
 
     private void updateClientsUI()
     {
