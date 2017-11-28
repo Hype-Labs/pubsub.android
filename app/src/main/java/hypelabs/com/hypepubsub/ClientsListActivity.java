@@ -11,6 +11,9 @@ public class ClientsListActivity extends AppCompatActivity
 {
     private ListView clientsListView;
     private static WeakReference<ClientsListActivity> defaultInstance;
+    private ClientsList activityClientsList = new ClientsList();
+    private ClientsAdapter activityClientsAdapter;
+    Network network = Network.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -19,11 +22,28 @@ public class ClientsListActivity extends AppCompatActivity
         this.setTitle("Hype Devices");
         setContentView(R.layout.activity_clients_list);
 
-        Network network = Network.getInstance();
         clientsListView = findViewById(R.id.activity_clients_list_view);
-        clientsListView.setAdapter(network.networkClients.getClientsAdapter(ClientsListActivity.this));
+        setClientsAdapterFromNetworkClients();
+        clientsListView.setAdapter(getClientsAdapter());
 
         setClientsListActivity(this);
+    }
+
+    private void setClientsAdapterFromNetworkClients()
+    {
+        ClientsAdapter clientAdapter = getClientsAdapter();
+        clientAdapter.clear();
+        for(int i=0; i<network.networkClients.size();i++) {
+            clientAdapter.add(network.networkClients.get(i));
+        }
+    }
+
+    private ClientsAdapter getClientsAdapter()
+    {
+        if (activityClientsAdapter == null) {
+            activityClientsAdapter = activityClientsList.getClientsAdapter(ClientsListActivity.this);
+        }
+        return activityClientsAdapter;
     }
 
     public static ClientsListActivity getDefaultInstance() {
@@ -36,11 +56,11 @@ public class ClientsListActivity extends AppCompatActivity
         defaultInstance = new WeakReference<>(instance);
     }
 
-    protected void updateInterface() {
+    protected void updateUI() {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ((ClientsAdapter) clientsListView.getAdapter()).notifyDataSetChanged();
+                setClientsAdapterFromNetworkClients();
             }
         });
     }

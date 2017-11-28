@@ -237,7 +237,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         ClientsListActivity clientsListActivity = ClientsListActivity.getDefaultInstance();
         if (clientsListActivity != null) {
-            clientsListActivity.updateInterface();
+            clientsListActivity.updateUI();
         }
     }
 }
