@@ -14,8 +14,8 @@ import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends AppCompatActivity
 {
-    private HypePubSub hpb = null;
-    private Network network = null;
+    private HypePubSub hpb = HypePubSub.getInstance();
+    private Network network = Network.getInstance();
 
     private Button subscribeButton;
     private Button unsubscribeButton;
@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         initHypeSdk();
-        getSingletonInstances();
         setButtonListeners();
     }
 
@@ -56,13 +55,6 @@ public class MainActivity extends AppCompatActivity
         catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-    }
-
-    private void getSingletonInstances()
-    {
-        // Get required singletons
-        hpb = HypePubSub.getInstance();
-        network = Network.getInstance();
     }
 
     private void setButtonListeners()
