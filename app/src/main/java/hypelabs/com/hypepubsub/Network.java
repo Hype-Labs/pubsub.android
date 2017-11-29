@@ -31,7 +31,7 @@ public class Network
         Instance managerInstance = ownClient.instance;
         byte lowestDist[] = BinaryUtils.xor(serviceKey, ownClient.key);
 
-        synchronized (this) // Add thread safety to iteration procedure
+        synchronized (network) // Add thread safety to iteration procedure
         {
             ListIterator<Client> it = networkClients.listIterator();
             while (it.hasNext())

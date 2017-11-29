@@ -18,7 +18,7 @@ import com.hypelabs.hype.Instance;
 
 public class HypePubSub
 {
-    private static final String TAG = Constants.GLOBAL_TAG_PREFIX + HypePubSub.class.getName();
+    private static final String TAG =  HypePubSub.class.getName();
 
     final private static HypePubSub hpb = new HypePubSub(); // Early loading to avoid thread-safety issues
 
@@ -26,6 +26,7 @@ public class HypePubSub
     final ServiceManagersList managedServices;
 
     final private Network network = Network.getInstance();
+    private int notificationID = 1;
 
     public static HypePubSub getInstance()
     {
@@ -50,7 +51,7 @@ public class HypePubSub
         // the protocol manager
         if(GenericUtils.areInstancesEqual(network.ownClient.instance, managerInstance))
         {
-            Log.i(TAG, "Issuing Subscribe message for service "
+            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Issuing Subscribe message for service "
                     + serviceName + " to Host instance");
 
             this.processSubscribeReq(serviceKey, network.ownClient.instance);
@@ -81,7 +82,7 @@ public class HypePubSub
         // to the protocol manager
         if(GenericUtils.areInstancesEqual(network.ownClient.instance, managerInstance))
         {
-            Log.i(TAG, "Issuing Unsubscribe message for service "
+            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Issuing Unsubscribe message for service "
                     + serviceName + " to Host instance");
 
             this.processUnsubscribeReq(serviceKey, network.ownClient.instance);
@@ -102,7 +103,7 @@ public class HypePubSub
         // to the protocol manager
         if(GenericUtils.areInstancesEqual(network.ownClient.instance, managerInstance))
         {
-            Log.i(TAG, "Issuing Publish message for service "
+            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Issuing Publish message for service "
                     + serviceName + " to Host instance. Msg: " + msg);
 
             this.processPublishReq(serviceKey, msg);
@@ -116,14 +117,27 @@ public class HypePubSub
         return 0;
     }
 
-    synchronized void processSubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        ServiceManager serviceManager = this.managedServices.find(serviceKey);
-        if(serviceManager == null) // If the service does not exist we create it.
+    synchronized void processSubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException, UnsupportedEncodingException
+    {
+        Instance managerInstance = network.getServiceManagerInstance(serviceKey);
+        if( ! GenericUtils.areInstancesEqual(managerInstance, network.ownClient.instance))
         {
-            Log.i(TAG, "Processing Subscribe request for non-existent managed service 0x"
+            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX
+                    + "Received Subscribe request for service 0x"
                     + BinaryUtils.byteArrayToHexString(serviceKey)
-                    + " by " + GenericUtils.getInstanceAnnouncementStr(requesterInstance)
-                    + " (0x" + BinaryUtils.byteArrayToHexString(requesterInstance.getIdentifier()) + ")"
+                    + " by " + GenericUtils.getInstanceLogIdStr(requesterInstance)
+                    + ". However another instance should be responsible for this service: "
+                    + GenericUtils.getInstanceLogIdStr(managerInstance));
+            return;
+        }
+
+        ServiceManager serviceManager = this.managedServices.find(serviceKey);
+        if(serviceManager == null ) // If the service does not exist we create it.
+        {
+            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX
+                    + "Processing Subscribe request for non-existent managed service 0x"
+                    + BinaryUtils.byteArrayToHexString(serviceKey)
+                    + GenericUtils.getInstanceLogIdStr(requesterInstance)
                     + ". Managed service will be created.");
 
             this.managedServices.add(serviceKey);
@@ -131,8 +145,8 @@ public class HypePubSub
             updateManagedServicesUI(); // Updated UI after adding a new managed service
         }
 
-        Log.i(TAG, "Adding instance " + GenericUtils.getInstanceAnnouncementStr(requesterInstance)
-                + " (0x" + BinaryUtils.byteArrayToHexString(requesterInstance.getIdentifier()) + ")"
+        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX
+                + "Adding instance " + GenericUtils.getInstanceLogIdStr(requesterInstance)
                 + " to list of subscriber of service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
 
         serviceManager.subscribers.add(requesterInstance);
@@ -144,16 +158,16 @@ public class HypePubSub
 
         if(serviceManager == null) // If the service does not exist nothing is done
         {
-            Log.e(TAG, "Processing Unsubscribe request for non-existent managed service 0x"
+            Log.e(TAG, Constants.HPB_LOG_MSG_PREFIX
+                    + "Processing Unsubscribe request for non-existent managed service 0x"
                     + BinaryUtils.byteArrayToHexString(serviceKey)
-                    + " by " + GenericUtils.getInstanceAnnouncementStr(requesterInstance)
-                    + " (0x" + BinaryUtils.byteArrayToHexString(requesterInstance.getIdentifier()) + ")"
+                    + " by " + GenericUtils.getInstanceLogIdStr(requesterInstance)
                     + ". Nothing will be done.");
             return;
         }
 
-        Log.i(TAG, "Removing instance " + GenericUtils.getInstanceAnnouncementStr(requesterInstance)
-                + " (0x" + BinaryUtils.byteArrayToHexString(requesterInstance.getIdentifier()) + ")"
+        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX
+                + "Removing instance " + GenericUtils.getInstanceLogIdStr(requesterInstance)
                 + " from list of subscriber of service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
 
         serviceManager.subscribers.remove(requesterInstance);
@@ -180,15 +194,16 @@ public class HypePubSub
 
             if(GenericUtils.areInstancesEqual(network.ownClient.instance, client.instance))
             {
-                Log.i(TAG, "Processing Info message from Host instance. Msg: " + msg);
+                Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX
+                        + "Processing Info message from Host instance. Msg: " + msg);
                 this.processInfoMsg(serviceKey, msg);
             }
             else{
 
-                Log.i(TAG, "Sending info message of service 0x"
+                Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX
+                        + "Sending info message of service 0x"
                         + BinaryUtils.byteArrayToHexString(serviceKey)
-                        + " to " + GenericUtils.getInstanceAnnouncementStr(client.instance)
-                        + " (0x" + BinaryUtils.byteArrayToHexString(client.instance.getIdentifier()) + ")");
+                        + " to " + GenericUtils.getInstanceLogIdStr(client.instance));
 
                 Protocol.sendInfoMsg(serviceKey, client.instance, msg);
             }
@@ -200,7 +215,8 @@ public class HypePubSub
         Subscription subscription = ownSubscriptions.find(serviceKey);
 
         if(subscription == null){
-            Log.e(TAG, "Message received from unsubscribed service: " + msg);
+            Log.e(TAG, Constants.HPB_LOG_MSG_PREFIX
+                    + "HpbMessage received from unsubscribed service: " + msg);
             return -1;
         }
 
@@ -212,19 +228,22 @@ public class HypePubSub
         subscription.receivedMsg.add(0, msgWithTimeStamp);
         updateMessagesUI();
         String notificationText = subscription.serviceName + ": " + msg;
-        displayNotification(MainActivity.getContext(), Constants.HPB_NOTIFICATIONS_CHANNEL, Constants.HPB_NOTIFICATIONS_TITLE, notificationText);
+        displayNotification(MainActivity.getContext(), Constants.HPB_NOTIFICATIONS_CHANNEL, Constants.HPB_NOTIFICATIONS_TITLE, notificationText, notificationID);
+        notificationID++;
 
-        Log.i(TAG, "Received message from service " + subscription.serviceName
-                                        + ": " + msg);
+        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX
+                + "Received message from service " + subscription.serviceName
+                + ": " + msg);
 
         return 0;
     }
 
     synchronized void updateManagedServices() throws UnsupportedEncodingException
     {
-        Log.i(TAG, "Executing updateManagedServices");
+        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Executing updateManagedServices");
 
         ListIterator<ServiceManager> it = this.managedServices.listIterator();
+
         while(it.hasNext())
         {
             ServiceManager managedService = it.next();
@@ -233,19 +252,18 @@ public class HypePubSub
             Instance newManagerInstance = network.getServiceManagerInstance(managedService.serviceKey);
             if( ! GenericUtils.areInstancesEqual(newManagerInstance, network.ownClient.instance))
             {
-                Log.i(TAG, "Passing the service management for the service 0x "
+                Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Passing the service management for the service 0x "
                                 + BinaryUtils.byteArrayToHexString(managedService.serviceKey)
-                                + " to " + GenericUtils.getInstanceAnnouncementStr(newManagerInstance)
-                                + " (0x" + BinaryUtils.byteArrayToHexString(newManagerInstance.getIdentifier()) + ")");
-                this.managedServices.remove(managedService.serviceKey);
-                updateManagedServicesUI(); // Updated UI after removing a managed service
+                                + " to " + GenericUtils.getInstanceLogIdStr(newManagerInstance));
+
+                it.remove();
             }
         }
     }
 
     synchronized void updateOwnSubscriptions() throws IOException, NoSuchAlgorithmException
     {
-        Log.i(TAG, "Executing updateOwnSubscriptions");
+        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Executing updateOwnSubscriptions");
 
         ListIterator<Subscription> it = this.ownSubscriptions.listIterator();
         while(it.hasNext())
@@ -257,10 +275,9 @@ public class HypePubSub
             // If there is a node with a closer key to the service key we change the manager
             if( ! GenericUtils.areInstancesEqual(newManagerInstance, subscription.manager))
             {
-                Log.i(TAG, "Update the subscription manager for the service 0x "
+                Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Update the subscription manager for the service 0x "
                         + BinaryUtils.byteArrayToHexString(subscription.serviceKey)
-                        + " to " + GenericUtils.getInstanceAnnouncementStr(newManagerInstance)
-                        + " (0x" + BinaryUtils.byteArrayToHexString(newManagerInstance.getIdentifier()) + ")");
+                        + " to " + GenericUtils.getInstanceLogIdStr(newManagerInstance));
 
                 subscription.manager = newManagerInstance;
                 this.issueSubscribeReq(subscription.serviceName); // re-send the subscribe request to the new manager
@@ -284,7 +301,7 @@ public class HypePubSub
         }
     }
 
-    private void displayNotification(Context context, String notificationChannel, String title, String content)
+    private void displayNotification(Context context, String notificationChannel, String title, String content, int id)
     {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, notificationChannel);
         builder.setContentTitle(title);
@@ -297,7 +314,7 @@ public class HypePubSub
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if(notificationManager != null)
-            notificationManager.notify(1, builder.build());
+            notificationManager.notify(id, builder.build());
     }
 
 }

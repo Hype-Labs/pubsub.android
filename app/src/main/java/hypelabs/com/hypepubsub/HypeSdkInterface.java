@@ -18,7 +18,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class HypeSdkInterface implements NetworkObserver, StateObserver, MessageObserver
 {
-    private static final String TAG = Constants.GLOBAL_TAG_PREFIX + HypeSdkInterface.class.getName();
+    private static final String TAG = HypeSdkInterface.class.getName();
 
     //////////////////////////////////////////////////////////////////////////////
     // Members
@@ -27,7 +27,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     final private HypePubSub hpb = HypePubSub.getInstance();
     final private Network network = Network.getInstance();
 
-    private static HypeSdkInterface hypeSdkInterface;
+    private static HypeSdkInterface hypeSdkInterface = new HypeSdkInterface();
     static boolean isHypeReady = false;
     static boolean isHypeFail = false;
 
@@ -35,11 +35,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     // Methods
     //////////////////////////////////////////////////////////////////////////////
 
-    public static HypeSdkInterface getInstance()
-    {
-        if(hypeSdkInterface == null){
-            hypeSdkInterface = new HypeSdkInterface();
-        }
+    public static HypeSdkInterface getInstance() {
         return hypeSdkInterface;
     }
 
@@ -55,13 +51,13 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
 
         Hype.start();
 
-        Log.i(TAG, "Requested Hype SDK start.");
+        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Requested Hype SDK start.");
     }
 
     protected void requestHypeToStop()
     {
         Hype.stop();
-        Log.i(TAG, "Requested Hype SDK stop.");
+        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Requested Hype SDK stop.");
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -73,7 +69,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, "Hype SDK started!");
+            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK started! ID: 0x" + BinaryUtils.byteArrayToHexString(Hype.getHostInstance().getIdentifier()));
             isHypeReady = true;
             network.setOwnClient(Hype.getHostInstance());
         }
@@ -86,7 +82,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     @Override
     public void onHypeStop(Error var1)
     {
-        Log.i(TAG, "Hype SDK stopped!");
+        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK stopped!");
         requestHypeToStop();
     }
 
@@ -94,21 +90,20 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     public void onHypeFailedStarting(Error var1)
     {
         isHypeFail = true;
-        Log.e(TAG, "Hype SDK start failed. Error description: " + var1.getDescription());
+        Log.e(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK start failed. Error description: " + var1.getDescription());
     }
 
     @Override
     public void onHypeReady()
     {
-        Log.i( TAG, "Hype SDK is ready");
+        Log.i( TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK is ready");
     }
 
 
     @Override
     public void onHypeStateChange()
     {
-        Log.i(TAG, "Hype SDK state has changed to " + Hype.getState()
-                        + " [Idle(0), Starting(1), Running(2), Stopping(3)]");
+        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK state has changed to " + Hype.getState());
     }
 
 
@@ -121,13 +116,14 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, "Hype SDK Instance Found " + GenericUtils.getInstanceAnnouncementStr(var1)
+            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK Instance Found " + GenericUtils.getInstanceAnnouncementStr(var1)
                     + " (0x" + BinaryUtils.byteArrayToHexString(var1.getIdentifier()) + ")");
 
             synchronized (network) // Add thread safety to adding procedure
             {
                 network.networkClients.add(var1);
-                hpb.updateManagedServices();
+                hpb.updateManagedServices(); //
+                hpb.updateOwnSubscriptions();
                 updateClientsUI(); // Updated UI after adding a new instance
             }
         }
@@ -135,6 +131,9 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
             e.printStackTrace();
         }
         catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e)
+        {
             e.printStackTrace();
         }
     }
@@ -144,7 +143,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, "Hype SDK Instance Lost " + GenericUtils.getInstanceAnnouncementStr(var1)
+            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK Instance Lost " + GenericUtils.getInstanceAnnouncementStr(var1)
                     + " (0x" + BinaryUtils.byteArrayToHexString(var1.getIdentifier()) + ")");
 
             synchronized (network) // Add thread safety to removal procedure
@@ -167,7 +166,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, "Hype SDK Instance Resolved " + GenericUtils.getInstanceAnnouncementStr(var1)
+            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK Instance Resolved " + GenericUtils.getInstanceAnnouncementStr(var1)
                     + " (0x" + BinaryUtils.byteArrayToHexString(var1.getIdentifier()) + ")");
         } catch (UnsupportedEncodingException e)
         {
@@ -180,7 +179,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, "Hype SDK Instance Fail Resolving " + GenericUtils.getInstanceAnnouncementStr(var1)
+            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK Instance Fail Resolving " + GenericUtils.getInstanceAnnouncementStr(var1)
                     + " (0x" + BinaryUtils.byteArrayToHexString(var1.getIdentifier()) + ")");
         } catch (UnsupportedEncodingException e)
         {
@@ -189,7 +188,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     }
 
     //////////////////////////////////////////////////////////////////////////////
-    // Message Observer Methods
+    // HpbMessage Observer Methods
     //////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -209,29 +208,96 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, "Hype SDK message failed sending " + GenericUtils.getInstanceAnnouncementStr(var2)
+            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK message failed sending " + GenericUtils.getInstanceAnnouncementStr(var2)
                     + " (0x" + BinaryUtils.byteArrayToHexString(var2.getIdentifier()) + ")");
         } catch (UnsupportedEncodingException e)
         {
             e.printStackTrace();
         }
-        Log.i(TAG, "Hype SDK message failed sending error. Suggestion" + var3.getSuggestion());
-        Log.i(TAG, "Hype SDK message failed sending error. Description" + var3.getDescription());
-        Log.i(TAG, "Hype SDK message failed sending error. Reason" + var3.getReason());
+        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK message failed sending error. Suggestion" + var3.getSuggestion());
+        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK message failed sending error. Description" + var3.getDescription());
+        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK message failed sending error. Reason" + var3.getReason());
     }
 
     @Override
     public void onHypeMessageSent(MessageInfo var1, Instance var2, float var3, boolean var4)
     {
-        Log.i( TAG, "Hype SDK message sent");
-
+        Log.i( TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK message sent");
     }
 
     @Override
     public void onHypeMessageDelivered(MessageInfo var1, Instance var2, float var3, boolean var4)
     {
-        Log.i( TAG, "Hype SDK message delivered");
+        int msgIdentifier = var1.getIdentifier();
+
+        if(var4 != true) {
+            Log.i( TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK message " + msgIdentifier + " delivered percentage: " + (var3*100) + "%");
+            return;
+        }
+
+        Log.i( TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK message " + msgIdentifier + " delivered. Will now be removed from the confirmation queue");
+
+        ConfirmationQueue queue = ConfirmationQueue.getInstance();
+        ConfirmationQueueElement queueElement = queue.findQueueElementFromId(var1.getIdentifier());
+
+        try
+        {
+            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Removing element from confirmation queue: " + queueElement.toLogString());
+        } catch (UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+        }
+
+        queue.removeQueueElement(queueElement);
     }
+
+    //////////////////////////////////////////////////////////////////////////////
+    // Calls to Hype Send
+    //////////////////////////////////////////////////////////////////////////////
+
+    public void sendMsg(HpbMessage hpbMsg, Instance destination) throws IOException
+    {
+        Message sdkMsg = Hype.send(hpbMsg.toByteArray(), destination, true);
+        int sdkMsgIdentifier = sdkMsg.getMessageInfo().getIdentifier();
+
+        ConfirmationQueueElement queueElement = new ConfirmationQueueElement(hpbMsg, sdkMsgIdentifier, destination);
+        ConfirmationQueue queue = ConfirmationQueue.getInstance();
+
+        try
+        {
+            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Adding element to confirmation queue: " + queueElement.toLogString());
+        } catch (UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+        }
+
+        queue.addQueueElement(queueElement);
+    }
+
+    public int resendMsg(int identifier) throws IOException
+    {
+        ConfirmationQueue queue = ConfirmationQueue.getInstance();
+        ConfirmationQueueElement queueElement = queue.findQueueElementFromId(identifier);
+
+        if(queueElement == null){
+            Log.e(TAG, Constants.HPB_LOG_MSG_PREFIX + "Trying to re-send non-existent message");
+            return -1;
+        }
+
+        if(queueElement.nRetransmissions == Constants.HPB_MAX_RETRANSMISSIONS){
+            Log.e(TAG, Constants.HPB_LOG_MSG_PREFIX + "Trying to re-send non-existent message");
+            queue.removeQueueElement(queueElement);
+            return -2;
+        }
+
+        queueElement.nRetransmissions++;
+        Hype.send(queueElement.hpbMessage.toByteArray(), queueElement.destination, true);
+        return 0;
+    }
+
+    //////////////////////////////////////////////////////////////////////////////
+    // Other methods
+    //////////////////////////////////////////////////////////////////////////////
 
     private void updateClientsUI()
     {

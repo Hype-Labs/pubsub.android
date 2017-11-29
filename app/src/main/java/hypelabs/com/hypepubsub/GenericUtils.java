@@ -64,4 +64,9 @@ public class GenericUtils
         MessageDigest md = MessageDigest.getInstance(Constants.HPB_HASH_ALGORITHM);
         return md.digest(str.getBytes());
     }
+
+    public static String getInstanceLogIdStr(Instance instance) throws UnsupportedEncodingException
+    {
+        return GenericUtils.getInstanceAnnouncementStr(instance) + " (0x" + BinaryUtils.byteArrayToHexString(instance.getIdentifier()) + ")";
+    }
 }
