@@ -26,7 +26,7 @@ public class Network
         return network;
     }
 
-    protected Instance getServiceManagerInstance(byte serviceKey[])
+    protected Instance determineInstanceResponsibleForService(byte serviceKey[])
     {
         Instance managerInstance = ownClient.instance;
         byte lowestDist[] = BinaryUtils.xor(serviceKey, ownClient.key);

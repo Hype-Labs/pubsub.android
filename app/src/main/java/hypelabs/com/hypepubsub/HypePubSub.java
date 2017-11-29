@@ -42,7 +42,7 @@ public class HypePubSub
     int issueSubscribeReq(String serviceName) throws NoSuchAlgorithmException, IOException
     {
         byte serviceKey[] = GenericUtils.getStrHash(serviceName);
-        Instance managerInstance = network.getServiceManagerInstance(serviceKey);
+        Instance managerInstance = network.determineInstanceResponsibleForService(serviceKey);
 
         // Add subscription to the list of own subscriptions. Only adds if it doesn't exist yet.
         ownSubscriptions.add(serviceName, managerInstance);
@@ -68,7 +68,7 @@ public class HypePubSub
     int issueUnsubscribeReq(String serviceName) throws NoSuchAlgorithmException, IOException
     {
         byte serviceKey[] = GenericUtils.getStrHash(serviceName);
-        Instance managerInstance = network.getServiceManagerInstance(serviceKey);
+        Instance managerInstance = network.determineInstanceResponsibleForService(serviceKey);
 
         if(ownSubscriptions.find(serviceKey) == null)
         {
@@ -97,7 +97,7 @@ public class HypePubSub
     int issuePublishReq(String serviceName, String msg) throws NoSuchAlgorithmException, IOException
     {
         byte serviceKey[] = GenericUtils.getStrHash(serviceName);
-        Instance managerInstance = network.getServiceManagerInstance(serviceKey);
+        Instance managerInstance = network.determineInstanceResponsibleForService(serviceKey);
 
         // if this client is the manager of the service we don't need to send the publish message
         // to the protocol manager
@@ -119,7 +119,7 @@ public class HypePubSub
 
     synchronized void processSubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
-        Instance managerInstance = network.getServiceManagerInstance(serviceKey);
+        Instance managerInstance = network.determineInstanceResponsibleForService(serviceKey);
         if( ! GenericUtils.areInstancesEqual(managerInstance, network.ownClient.instance))
         {
             Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX
@@ -249,7 +249,7 @@ public class HypePubSub
             ServiceManager managedService = it.next();
             // Check if a new Hype client with a closer key to this service key has appeared. If this happens
             // we remove the service from the list of managed services of this Hype client.
-            Instance newManagerInstance = network.getServiceManagerInstance(managedService.serviceKey);
+            Instance newManagerInstance = network.determineInstanceResponsibleForService(managedService.serviceKey);
             if( ! GenericUtils.areInstancesEqual(newManagerInstance, network.ownClient.instance))
             {
                 Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Passing the service management for the service 0x "
@@ -270,7 +270,7 @@ public class HypePubSub
         {
             Subscription subscription = it.next();
 
-            Instance newManagerInstance = network.getServiceManagerInstance(subscription.serviceKey);
+            Instance newManagerInstance = network.determineInstanceResponsibleForService(subscription.serviceKey);
 
             // If there is a node with a closer key to the service key we change the manager
             if( ! GenericUtils.areInstancesEqual(newManagerInstance, subscription.manager))

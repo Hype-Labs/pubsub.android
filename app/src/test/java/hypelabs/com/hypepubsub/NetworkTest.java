@@ -1,13 +1,8 @@
 package hypelabs.com.hypepubsub;
 
-import com.hypelabs.hype.Instance;
-
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
@@ -39,8 +34,8 @@ public class NetworkTest
         // Reset own client id
         network.setOwnClient(instance1);
 
-        assertArrayEquals(ID4, network.getServiceManagerInstance(SERVICE_KEY1).getIdentifier());
-        assertArrayEquals(ID1, network.getServiceManagerInstance(SERVICE_KEY2).getIdentifier());
+        assertArrayEquals(ID4, network.determineInstanceResponsibleForService(SERVICE_KEY1).getIdentifier());
+        assertArrayEquals(ID1, network.determineInstanceResponsibleForService(SERVICE_KEY2).getIdentifier());
     }
 
 }
