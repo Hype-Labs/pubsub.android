@@ -25,7 +25,7 @@ public class Subscription {
     public Subscription(String serviceName, Instance manager) throws NoSuchAlgorithmException
     {
         this.serviceName = serviceName;
-        this.serviceKey = GenericUtils.getStrHash(serviceName);
+        this.serviceKey = HpbGenericUtils.getStrHash(serviceName);
         this.manager = manager;
         this.receivedMsg = new ArrayList<>();
     }

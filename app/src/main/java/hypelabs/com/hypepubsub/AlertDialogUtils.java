@@ -99,7 +99,8 @@ public class AlertDialogUtils
     }
 
     /**
-     * Interface to deal with the SingleInputDialog
+     * Interface to be implemented and passed as a parameter when using a SingleInputDialog. It
+     * acts like a callback when the Ok or the Cancel button are pressed.
      */
     public interface SingleInputDialog
     {
@@ -154,7 +155,6 @@ public class AlertDialogUtils
                     public void onClick(DialogInterface dialog, int which)
                     {
                         try {
-                            System.out.println("CLICKED ON OKKK");
                             doubleInputDialog.onOk(input1.getText().toString(),
                                                  input2.getText().toString());
                         }
@@ -187,7 +187,8 @@ public class AlertDialogUtils
     }
 
     /**
-     * Interface to deal with the DoubleInputDialog
+     * Interface to be implemented and passed as a parameter when using a DoubleInputDialog. It
+     * acts like a callback when the Ok or the Cancel button are pressed.
      */
     public interface DoubleInputDialog
     {
@@ -260,7 +261,8 @@ public class AlertDialogUtils
     }
 
     /**
-     * Interface to deal with the ListViewInputDialog
+     * Interface to be implemented and passed as a parameter when using a ListViewInputDialog. It
+     * acts like a callback when an item of the list is clicked.
      */
     public interface ListViewInputDialog
     {

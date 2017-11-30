@@ -5,6 +5,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import hypelabs.com.hypepubsub.Protocol.MessageType;
 
+/**
+ * This class represents a message from the HypePubSub application
+ */
 public class HpbMessage
 {
     private MessageType type;

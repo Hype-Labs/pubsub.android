@@ -26,25 +26,25 @@ public class ConfirmationQueueElement
 
         if(hpbMessage.getType() == Protocol.MessageType.SUBSCRIBE_SERVICE)
             logString = "Subscribe message (id: " + identifier + ") to "
-                    + GenericUtils.getInstanceLogIdStr(destination)
+                    + HpbGenericUtils.getInstanceLogIdStr(destination)
                     + " for service 0x" + BinaryUtils.byteArrayToHexString(hpbMessage.getServiceKey());
         else if(hpbMessage.getType() == Protocol.MessageType.UNSUBSCRIBE_SERVICE)
             logString = "Unsubscribe message (id: " + identifier + ") to "
-                    + GenericUtils.getInstanceLogIdStr(destination)
+                    + HpbGenericUtils.getInstanceLogIdStr(destination)
                     + " for service 0x" + BinaryUtils.byteArrayToHexString(hpbMessage.getServiceKey());
         else if(hpbMessage.getType() == Protocol.MessageType.PUBLISH)
             logString = "Publish message (id: " + identifier + ") to "
-                    + GenericUtils.getInstanceLogIdStr(destination)
+                    + HpbGenericUtils.getInstanceLogIdStr(destination)
                     + " for service 0x" + BinaryUtils.byteArrayToHexString(hpbMessage.getServiceKey())
                     + ". HpbMessage: " + hpbMessage.getInfo();
         else if(hpbMessage.getType() == Protocol.MessageType.INFO)
             logString = "Info message (id: " + identifier + ") to "
-                    + GenericUtils.getInstanceLogIdStr(destination)
+                    + HpbGenericUtils.getInstanceLogIdStr(destination)
                     + " for service 0x" + BinaryUtils.byteArrayToHexString(hpbMessage.getServiceKey())
                     + ". HpbMessage: " + hpbMessage.getInfo();
         else
             logString = "Invalid message to "
-                    + GenericUtils.getInstanceAnnouncementStr(destination)
+                    + HpbGenericUtils.getInstanceAnnouncementStr(destination)
                     + " (0x" + BinaryUtils.byteArrayToHexString(destination.getIdentifier()) + ")";
 
         return logString;

@@ -7,8 +7,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-
-public class GenericUtils
+public class HpbGenericUtils
 {
     /**
      *  Compares 2 Hype instances.
@@ -27,7 +26,7 @@ public class GenericUtils
      *
      * @param instance Hype instance containing the announcement to be decoded.
      * @return Returns the decoded string of the announcement.
-     * @throws UnsupportedEncodingException Throws this exception when the UTF-8 encoding is not
+     * @throws UnsupportedEncodingException Throws this exception when the {@value Constants#HPB_ENCODING_STANDARD} encoding is not
      *                                      available on the device.
      */
     public static String getInstanceAnnouncementStr(Instance instance) throws UnsupportedEncodingException
@@ -42,7 +41,7 @@ public class GenericUtils
      *
      * @param byteArray Byte array to be hashed.
      * @return Returns the hash of the specified byte array.
-     * @throws NoSuchAlgorithmException Throws this exception when the SHA-1 algorithm is not
+     * @throws NoSuchAlgorithmException Throws this exception when the {@value Constants#HPB_HASH_ALGORITHM} algorithm is not
      *                                  available on the device.
      */
     public static byte[] getByteArrayHash(byte[] byteArray) throws NoSuchAlgorithmException
@@ -56,7 +55,7 @@ public class GenericUtils
      *
      * @param str String to be hashed.
      * @return Returns the hash of the specified string.
-     * @throws NoSuchAlgorithmException Throws this exception when the SHA-1 algorithm is not
+     * @throws NoSuchAlgorithmException Throws this exception when the {@value Constants#HPB_HASH_ALGORITHM} algorithm is not
      *                                  available on the device.
      */
     public static byte[] getStrHash(String str) throws NoSuchAlgorithmException
@@ -65,8 +64,18 @@ public class GenericUtils
         return md.digest(str.getBytes());
     }
 
+    /**
+     * This method builds a string containing the announcement string of a given instance
+     * joined with the instance identifier in an hexadecimal format.
+     *
+     * @param instance Instance to be processed.
+     * @return Returns a string containing the announcement string of a given instance and
+     *          the instance identifier in an hexadecimal format.
+     * @throws UnsupportedEncodingException This exception is thrown when the encoding format
+     *          used {@value Constants#HPB_ENCODING_STANDARD}
+     */
     public static String getInstanceLogIdStr(Instance instance) throws UnsupportedEncodingException
     {
-        return GenericUtils.getInstanceAnnouncementStr(instance) + " (0x" + BinaryUtils.byteArrayToHexString(instance.getIdentifier()) + ")";
+        return HpbGenericUtils.getInstanceAnnouncementStr(instance) + " (0x" + BinaryUtils.byteArrayToHexString(instance.getIdentifier()) + ")";
     }
 }

@@ -51,13 +51,13 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
 
         Hype.start();
 
-        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Requested Hype SDK start.");
+        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Requested Hype SDK start.");
     }
 
     protected void requestHypeToStop()
     {
         Hype.stop();
-        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Requested Hype SDK stop.");
+        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Requested Hype SDK stop.");
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK started! ID: 0x" + BinaryUtils.byteArrayToHexString(Hype.getHostInstance().getIdentifier()));
+            Log.i(TAG, Constants.HPB_LOG_PREFIX + "Hype SDK started! ID: 0x" + BinaryUtils.byteArrayToHexString(Hype.getHostInstance().getIdentifier()));
             isHypeReady = true;
             network.setOwnClient(Hype.getHostInstance());
         }
@@ -82,7 +82,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     @Override
     public void onHypeStop(Error var1)
     {
-        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK stopped!");
+        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Hype SDK stopped!");
         requestHypeToStop();
     }
 
@@ -90,20 +90,20 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     public void onHypeFailedStarting(Error var1)
     {
         isHypeFail = true;
-        Log.e(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK start failed. Error description: " + var1.getDescription());
+        Log.e(TAG, Constants.HPB_LOG_PREFIX + "Hype SDK start failed. Error description: " + var1.getDescription());
     }
 
     @Override
     public void onHypeReady()
     {
-        Log.i( TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK is ready");
+        Log.i( TAG, Constants.HPB_LOG_PREFIX + "Hype SDK is ready");
     }
 
 
     @Override
     public void onHypeStateChange()
     {
-        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK state has changed to " + Hype.getState());
+        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Hype SDK state has changed to " + Hype.getState());
     }
 
 
@@ -116,7 +116,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK Instance Found " + GenericUtils.getInstanceAnnouncementStr(var1)
+            Log.i(TAG, Constants.HPB_LOG_PREFIX + "Hype SDK Instance Found " + HpbGenericUtils.getInstanceAnnouncementStr(var1)
                     + " (0x" + BinaryUtils.byteArrayToHexString(var1.getIdentifier()) + ")");
 
             synchronized (network) // Add thread safety to adding procedure
@@ -143,7 +143,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK Instance Lost " + GenericUtils.getInstanceAnnouncementStr(var1)
+            Log.i(TAG, Constants.HPB_LOG_PREFIX + "Hype SDK Instance Lost " + HpbGenericUtils.getInstanceAnnouncementStr(var1)
                     + " (0x" + BinaryUtils.byteArrayToHexString(var1.getIdentifier()) + ")");
 
             synchronized (network) // Add thread safety to removal procedure
@@ -166,7 +166,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK Instance Resolved " + GenericUtils.getInstanceAnnouncementStr(var1)
+            Log.i(TAG, Constants.HPB_LOG_PREFIX + "Hype SDK Instance Resolved " + HpbGenericUtils.getInstanceAnnouncementStr(var1)
                     + " (0x" + BinaryUtils.byteArrayToHexString(var1.getIdentifier()) + ")");
         } catch (UnsupportedEncodingException e)
         {
@@ -179,7 +179,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK Instance Fail Resolving " + GenericUtils.getInstanceAnnouncementStr(var1)
+            Log.i(TAG, Constants.HPB_LOG_PREFIX + "Hype SDK Instance Fail Resolving " + HpbGenericUtils.getInstanceAnnouncementStr(var1)
                     + " (0x" + BinaryUtils.byteArrayToHexString(var1.getIdentifier()) + ")");
         } catch (UnsupportedEncodingException e)
         {
@@ -208,21 +208,21 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK message failed sending " + GenericUtils.getInstanceAnnouncementStr(var2)
+            Log.i(TAG, Constants.HPB_LOG_PREFIX + "Hype SDK message failed sending " + HpbGenericUtils.getInstanceAnnouncementStr(var2)
                     + " (0x" + BinaryUtils.byteArrayToHexString(var2.getIdentifier()) + ")");
         } catch (UnsupportedEncodingException e)
         {
             e.printStackTrace();
         }
-        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK message failed sending error. Suggestion" + var3.getSuggestion());
-        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK message failed sending error. Description" + var3.getDescription());
-        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK message failed sending error. Reason" + var3.getReason());
+        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Hype SDK message failed sending error. Suggestion" + var3.getSuggestion());
+        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Hype SDK message failed sending error. Description" + var3.getDescription());
+        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Hype SDK message failed sending error. Reason" + var3.getReason());
     }
 
     @Override
     public void onHypeMessageSent(MessageInfo var1, Instance var2, float var3, boolean var4)
     {
-        Log.i( TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK message sent");
+        Log.i( TAG, Constants.HPB_LOG_PREFIX + "Hype SDK message sent");
     }
 
     @Override
@@ -231,18 +231,18 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
         int msgIdentifier = var1.getIdentifier();
 
         if(var4 != true) {
-            Log.i( TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK message " + msgIdentifier + " delivered percentage: " + (var3*100) + "%");
+            Log.i( TAG, Constants.HPB_LOG_PREFIX + "Hype SDK message " + msgIdentifier + " delivered percentage: " + (var3*100) + "%");
             return;
         }
 
-        Log.i( TAG, Constants.HPB_LOG_MSG_PREFIX + "Hype SDK message " + msgIdentifier + " delivered. Will now be removed from the confirmation queue");
+        Log.i( TAG, Constants.HPB_LOG_PREFIX + "Hype SDK message " + msgIdentifier + " delivered. Will now be removed from the confirmation queue");
 
         ConfirmationQueue queue = ConfirmationQueue.getInstance();
         ConfirmationQueueElement queueElement = queue.findQueueElementFromId(var1.getIdentifier());
 
         try
         {
-            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Removing element from confirmation queue: " + queueElement.toLogString());
+            Log.i(TAG, Constants.HPB_LOG_PREFIX + "Removing element from confirmation queue: " + queueElement.toLogString());
         } catch (UnsupportedEncodingException e)
         {
             e.printStackTrace();
@@ -265,7 +265,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
 
         try
         {
-            Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Adding element to confirmation queue: " + queueElement.toLogString());
+            Log.i(TAG, Constants.HPB_LOG_PREFIX + "Adding element to confirmation queue: " + queueElement.toLogString());
         } catch (UnsupportedEncodingException e)
         {
             e.printStackTrace();
@@ -280,12 +280,12 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
         ConfirmationQueueElement queueElement = queue.findQueueElementFromId(identifier);
 
         if(queueElement == null){
-            Log.e(TAG, Constants.HPB_LOG_MSG_PREFIX + "Trying to re-send non-existent message");
+            Log.e(TAG, Constants.HPB_LOG_PREFIX + "Trying to re-send non-existent message");
             return -1;
         }
 
         if(queueElement.nRetransmissions == Constants.HPB_MAX_RETRANSMISSIONS){
-            Log.e(TAG, Constants.HPB_LOG_MSG_PREFIX + "Trying to re-send non-existent message");
+            Log.e(TAG, Constants.HPB_LOG_PREFIX + "Trying to re-send non-existent message");
             queue.removeQueueElement(queueElement);
             return -2;
         }

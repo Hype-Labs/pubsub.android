@@ -25,7 +25,7 @@ public class Protocol
 
     static byte[] sendSubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException
     {
-        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Sending Subscribe message to " + GenericUtils.getInstanceAnnouncementStr(destInstance)
+        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Sending Subscribe message to " + HpbGenericUtils.getInstanceAnnouncementStr(destInstance)
                          + " (0x" + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier()) + ")"
                          + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
 
@@ -37,7 +37,7 @@ public class Protocol
 
     static byte[] sendUnsubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException
     {
-        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Sending Unsubscribe message to " + GenericUtils.getInstanceAnnouncementStr(destInstance)
+        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Sending Unsubscribe message to " + HpbGenericUtils.getInstanceAnnouncementStr(destInstance)
                 + " (0x" + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier()) + ")"
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
 
@@ -48,7 +48,7 @@ public class Protocol
 
     static byte[] sendPublishMsg(byte serviceKey[], Instance destInstance, String msg) throws IOException
     {
-        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Sending Publish message to " + GenericUtils.getInstanceAnnouncementStr(destInstance)
+        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Sending Publish message to " + HpbGenericUtils.getInstanceAnnouncementStr(destInstance)
                 + " (0x" + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier()) + ")"
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey)
                 + ". HpbMessage: " + msg);
@@ -60,7 +60,7 @@ public class Protocol
 
     static byte[] sendInfoMsg(byte serviceKey[], Instance destInstance, String msg) throws IOException
     {
-        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Sending Info message to " + GenericUtils.getInstanceAnnouncementStr(destInstance)
+        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Sending Info message to " + HpbGenericUtils.getInstanceAnnouncementStr(destInstance)
                 + " (0x" + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier()) + ")"
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey)
                 + ". HpbMessage: " + msg);
@@ -74,7 +74,7 @@ public class Protocol
     {
         if(msg.length <= 0)
         {
-            Log.e(TAG, Constants.HPB_LOG_MSG_PREFIX + "Received message has an invalid length");
+            Log.e(TAG, Constants.HPB_LOG_PREFIX + "Received message has an invalid length");
             return -1;
         }
 
@@ -95,7 +95,7 @@ public class Protocol
                 receiveInfoMsg(originInstance, msg);
                 break;
             case INVALID:
-                Log.e(TAG, Constants.HPB_LOG_MSG_PREFIX + "Received message has an invalid MessageType");
+                Log.e(TAG, Constants.HPB_LOG_PREFIX + "Received message has an invalid MessageType");
                 return -1; // HpbMessage type not recognized. Discard
         }
 
@@ -106,13 +106,13 @@ public class Protocol
     {
         if(msg.length != (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
         {
-            Log.e(TAG, Constants.HPB_LOG_MSG_PREFIX + "Received Subscribe message with an invalid length");
+            Log.e(TAG, Constants.HPB_LOG_PREFIX + "Received Subscribe message with an invalid length");
             return -1;
         }
 
         byte serviceKey[] = getServiceKey(msg);
 
-        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Received Subscribe message from " + GenericUtils.getInstanceAnnouncementStr(originInstance)
+        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Received Subscribe message from " + HpbGenericUtils.getInstanceAnnouncementStr(originInstance)
                 + " (0x" + BinaryUtils.byteArrayToHexString(originInstance.getIdentifier()) + ")"
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
 
@@ -125,13 +125,13 @@ public class Protocol
     {
         if(msg.length != (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
         {
-            Log.e(TAG, Constants.HPB_LOG_MSG_PREFIX + "Received Unsubscribe message with an invalid length");
+            Log.e(TAG, Constants.HPB_LOG_PREFIX + "Received Unsubscribe message with an invalid length");
             return -1;
         }
 
         byte serviceKey[] = getServiceKey(msg);
 
-        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Received Unsubscribe message from " + GenericUtils.getInstanceAnnouncementStr(originInstance)
+        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Received Unsubscribe message from " + HpbGenericUtils.getInstanceAnnouncementStr(originInstance)
                 + " (0x" + BinaryUtils.byteArrayToHexString(originInstance.getIdentifier()) + ")"
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
 
@@ -144,7 +144,7 @@ public class Protocol
     {
         if(msg.length <= (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
         {
-            Log.e(TAG, Constants.HPB_LOG_MSG_PREFIX + "Received Publish message with an invalid length");
+            Log.e(TAG, Constants.HPB_LOG_PREFIX + "Received Publish message with an invalid length");
             return -1;
         }
 
@@ -152,7 +152,7 @@ public class Protocol
         byte publishedData[] = getInfo(msg);
         String publishedStr = new String(publishedData, Constants.HPB_ENCODING_STANDARD);
 
-        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Received Publish message from " + GenericUtils.getInstanceAnnouncementStr(originInstance)
+        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Received Publish message from " + HpbGenericUtils.getInstanceAnnouncementStr(originInstance)
                 + " (0x" + BinaryUtils.byteArrayToHexString(originInstance.getIdentifier()) + ")"
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey)
                 + ". HpbMessage: " + publishedStr);
@@ -166,7 +166,7 @@ public class Protocol
     {
         if(msg.length <= (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
         {
-            Log.e(TAG, Constants.HPB_LOG_MSG_PREFIX + "Received Info message with an invalid length");
+            Log.e(TAG, Constants.HPB_LOG_PREFIX + "Received Info message with an invalid length");
             return -1;
         }
 
@@ -174,7 +174,7 @@ public class Protocol
         byte infoData[] = getInfo(msg);
         String infoStr = new String(infoData, Constants.HPB_ENCODING_STANDARD);
 
-        Log.i(TAG, Constants.HPB_LOG_MSG_PREFIX + "Received Info message from " + GenericUtils.getInstanceAnnouncementStr(originInstance)
+        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Received Info message from " + HpbGenericUtils.getInstanceAnnouncementStr(originInstance)
                 + " (0x" + BinaryUtils.byteArrayToHexString(originInstance.getIdentifier()) + ")"
                 + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey)
                 + ". HpbMessage: " + infoStr);
