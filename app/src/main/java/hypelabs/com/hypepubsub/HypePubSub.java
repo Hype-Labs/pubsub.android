@@ -234,17 +234,22 @@ public class HypePubSub
 
     synchronized void updateManagedServices() throws UnsupportedEncodingException
     {
-        Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX
-                + "Executing updateManagedServices");
+        Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX + "Executing updateManagedServices"
+                + this.managedServices.size() + " services managed)");
 
         ListIterator<ServiceManager> it = this.managedServices.listIterator();
 
         while(it.hasNext())
         {
             ServiceManager managedService = it.next();
+
             // Check if a new Hype client with a closer key to this service key has appeared. If this happens
             // we remove the service from the list of managed services of this Hype client.
             Instance newManagerInstance = network.determineInstanceResponsibleForService(managedService.serviceKey);
+
+            Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX + "Analyzing ServiceManager from service 0x"
+                    + BinaryUtils.byteArrayToHexString(managedService.serviceKey));
+
             if( ! HpbGenericUtils.areInstancesEqual(newManagerInstance, network.ownClient.instance))
             {
                 Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX
@@ -259,8 +264,8 @@ public class HypePubSub
 
     synchronized void updateOwnSubscriptions() throws IOException, NoSuchAlgorithmException
     {
-        Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX
-                + "Executing updateOwnSubscriptions");
+        Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX + "Executing updateOwnSubscriptions ("
+                + this.ownSubscriptions.size() + " subscriptions)");
 
         ListIterator<Subscription> it = this.ownSubscriptions.listIterator();
         while(it.hasNext())
@@ -268,6 +273,9 @@ public class HypePubSub
             Subscription subscription = it.next();
 
             Instance newManagerInstance = network.determineInstanceResponsibleForService(subscription.serviceKey);
+
+            Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX
+                    + "Analyzing subscription " + HpbGenericUtils.getSubscriptionLogStr(subscription));
 
             // If there is a node with a closer key to the service key we change the manager
             if( ! HpbGenericUtils.areInstancesEqual(newManagerInstance, subscription.manager))

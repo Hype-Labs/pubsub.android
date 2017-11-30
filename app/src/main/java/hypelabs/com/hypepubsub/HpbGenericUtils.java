@@ -78,4 +78,9 @@ public class HpbGenericUtils
     {
         return HpbGenericUtils.getInstanceAnnouncementStr(instance) + " (0x" + BinaryUtils.byteArrayToHexString(instance.getIdentifier()) + ")";
     }
+
+    public static String getSubscriptionLogStr(Subscription subscription) throws UnsupportedEncodingException
+    {
+        return subscription.serviceName + " (0x" + BinaryUtils.byteArrayToHexString(subscription.serviceKey) + ")";
+    }
 }

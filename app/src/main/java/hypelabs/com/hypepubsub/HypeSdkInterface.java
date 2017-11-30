@@ -68,14 +68,15 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     @Override
     public void onHypeStart()
     {
-        try
-        {
-            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK started! ID: 0x" + BinaryUtils.byteArrayToHexString(Hype.getHostInstance().getIdentifier()));
+        try {
+            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK started! Host Instance: "
+                    + HpbGenericUtils.getInstanceLogIdStr(Hype.getHostInstance()));
             isHypeReady = true;
             network.setOwnClient(Hype.getHostInstance());
         }
-        catch (NoSuchAlgorithmException e)
-        {
+        catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
@@ -115,27 +116,23 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     @Override
     public void onHypeInstanceFound(Instance var1)
     {
-        try
-        {
-            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK Instance Found "
-                    + HpbGenericUtils.getInstanceLogIdStr(var1));
+        String instanceLogIdStr = "";
+        try {
+            instanceLogIdStr = HpbGenericUtils.getInstanceLogIdStr(var1);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
-            synchronized (network) // Add thread safety to adding procedure
-            {
-                network.networkClients.add(var1);
-                hpb.updateManagedServices(); //
-                hpb.updateOwnSubscriptions();
-                updateClientsUI(); // Updated UI after adding a new instance
-            }
-        }
-        catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IOException e)
+        if(!var1.isResolved())
         {
-            e.printStackTrace();
+            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK unresolved instance found: " + instanceLogIdStr);
+            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Resolving Hype SDK instance: " + instanceLogIdStr);
+            Hype.resolve(var1);
+        }
+        else
+        {
+            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK resolved instance found: " + instanceLogIdStr);
+            addInstanceAlreadyResolved(var1);
         }
     }
 
@@ -144,15 +141,8 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK Instance Lost "
-                    + HpbGenericUtils.getInstanceLogIdStr(var1));
-
-            synchronized (network) // Add thread safety to removal procedure
-            {
-                network.networkClients.remove(var1);
-                hpb.updateOwnSubscriptions();
-                updateClientsUI(); // Updated UI after removing an instance
-            }
+            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK instance lost:" + HpbGenericUtils.getInstanceLogIdStr(var1));
+            removeInstance(var1);
         }
         catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -167,9 +157,10 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK Instance Resolved "
-                    + HpbGenericUtils.getInstanceLogIdStr(var1));
-        } catch (UnsupportedEncodingException e)
+            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK instance resolved: " + HpbGenericUtils.getInstanceLogIdStr(var1));
+            addInstanceAlreadyResolved(var1);
+        }
+        catch (UnsupportedEncodingException e)
         {
             e.printStackTrace();
         }
@@ -180,16 +171,16 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK Instance Fail Resolving "
-                    + HpbGenericUtils.getInstanceLogIdStr(var1));
-        } catch (UnsupportedEncodingException e)
+            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK instance fail resolving: " + HpbGenericUtils.getInstanceLogIdStr(var1));
+        }
+        catch (UnsupportedEncodingException e)
         {
             e.printStackTrace();
         }
     }
 
     //////////////////////////////////////////////////////////////////////////////
-    // HpbMessage Observer Methods
+    // Message Observer Methods
     //////////////////////////////////////////////////////////////////////////////
 
     @Override
@@ -209,7 +200,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK message failed sending to "
+            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK message failed sending to: "
                     + HpbGenericUtils.getInstanceLogIdStr(var2));
         } catch (UnsupportedEncodingException e)
         {
@@ -229,7 +220,54 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     @Override
     public void onHypeMessageDelivered(MessageInfo var1, Instance var2, float var3, boolean var4)
     {
-        Log.i( TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK message " + var1.getIdentifier() + " delivered percentage: " + (var3*100) + "%");
+        if(! var4) {
+            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK message " + var1.getIdentifier() + " delivered percentage: " + (var3 * 100) + "%");
+        }
+        else {
+            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK message " + var1.getIdentifier() + " fully delivered");
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////
+    // Add and Remove Instances on Founds, Resolved and Losts
+    //////////////////////////////////////////////////////////////////////////////
+
+    public void addInstanceAlreadyResolved(Instance instance)
+    {
+        try
+        {
+            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Adding Hype SDK instance already resolved: "
+                    + HpbGenericUtils.getInstanceLogIdStr(instance));
+
+            synchronized (network) // Add thread safety to adding procedure
+            {
+                network.networkClients.add(instance);
+                hpb.updateManagedServices();
+                hpb.updateOwnSubscriptions();
+                updateClientsUI(); // Updated UI after adding a new instance
+            }
+        }
+        catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void removeInstance(Instance instance) throws IOException, NoSuchAlgorithmException
+    {
+        Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Removing Hype SDK instance already lost: "
+                + HpbGenericUtils.getInstanceLogIdStr(instance));
+
+        synchronized (network) // Add thread safety to removal procedure
+        {
+            network.networkClients.remove(instance);
+            hpb.updateOwnSubscriptions();
+            updateClientsUI(); // Updated UI after removing an instance
+        }
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -238,7 +276,9 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
 
     public void sendMsg(HpbMessage hpbMsg, Instance destination) throws IOException
     {
-        Hype.send(hpbMsg.toByteArray(), destination);
+        Message sdkMsg = Hype.send(hpbMsg.toByteArray(), destination, true);
+        Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK send message with ID:"
+                + sdkMsg.getIdentifier());
     }
 
     //////////////////////////////////////////////////////////////////////////////
