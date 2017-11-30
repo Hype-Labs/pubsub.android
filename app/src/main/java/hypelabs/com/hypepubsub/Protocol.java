@@ -11,210 +11,305 @@ import com.hypelabs.hype.Instance;
 
 public class Protocol
 {
-    private static final String TAG = Protocol.class.getName();
-
     public static final int MESSAGE_TYPE_BYTE_SIZE = 1;
 
-    public enum MessageType {
-        SUBSCRIBE_SERVICE,
-        UNSUBSCRIBE_SERVICE,
-        PUBLISH,
-        INFO,
-        INVALID
-    }
+    private static final String TAG = Protocol.class.getName();
+    private static final String PROTOCOL_LOG_PREFIX = " <Protocol> ";
 
+    //////////////////////////////////////////////////////////////////////////////
+    // Message Sending Processing Methods
+    //////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * This method builds a SubscribeService HpbMessage from a given service key and calls the Hype
+     * SDK to send it to the specified instance.
+     *
+     * @param serviceKey Key of the service to which the message is destined.
+     * @param destInstance Hype instance to which the message should be sent.
+     * @return Returns the HpbMessage created
+     * @throws IOException
+     */
     static byte[] sendSubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException
     {
-        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Sending Subscribe message to " + HpbGenericUtils.getInstanceAnnouncementStr(destInstance)
-                         + " (0x" + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier()) + ")"
-                         + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
-
-        HpbMessage hpbMsg = new HpbMessage(MessageType.SUBSCRIBE_SERVICE, serviceKey, null);
-
+        HpbMessage hpbMsg = new HpbMessage(HpbMessageType.SUBSCRIBE_SERVICE, serviceKey);
+        printMsgSendLog(hpbMsg, destInstance);
         HypeSdkInterface.getInstance().sendMsg(hpbMsg, destInstance);
-        return hpbMsg.toByteArray(); // TODO: Remove return in the future;
+        return hpbMsg.toByteArray();
     }
 
+    /**
+     * This method builds a UnsubscribeService HpbMessage from a given service key and calls the Hype
+     * SDK to send it to the specified instance.
+     *
+     * @param serviceKey Key of the service to which the message is destined.
+     * @param destInstance Hype instance to which the message should be sent.
+     * @return Returns the HpbMessage created
+     * @throws IOException
+     */
     static byte[] sendUnsubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException
     {
-        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Sending Unsubscribe message to " + HpbGenericUtils.getInstanceAnnouncementStr(destInstance)
-                + " (0x" + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier()) + ")"
-                + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
-
-        HpbMessage hpbMsg = new HpbMessage(MessageType.UNSUBSCRIBE_SERVICE, serviceKey, null);
+        HpbMessage hpbMsg = new HpbMessage(HpbMessageType.UNSUBSCRIBE_SERVICE, serviceKey);
+        printMsgSendLog(hpbMsg, destInstance);
         HypeSdkInterface.getInstance().sendMsg(hpbMsg, destInstance);
-        return hpbMsg.toByteArray(); // TODO: Remove return in the future;
+        return hpbMsg.toByteArray();
     }
 
-    static byte[] sendPublishMsg(byte serviceKey[], Instance destInstance, String msg) throws IOException
+    /**
+     * This method builds a Publish HpbMessage from a given service key and info data and calls
+     * the Hype SDK to send it to the specified instance.
+     *
+     * @param serviceKey Key of the service to which the message is destined.
+     * @param destInstance Hype instance to which the message should be sent.
+     * @param info Info that should be sent in the publish packet.
+     * @return Returns the HpbMessage created
+     * @throws IOException
+     */
+    static byte[] sendPublishMsg(byte serviceKey[], Instance destInstance, String info) throws IOException
     {
-        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Sending Publish message to " + HpbGenericUtils.getInstanceAnnouncementStr(destInstance)
-                + " (0x" + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier()) + ")"
-                + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey)
-                + ". HpbMessage: " + msg);
-
-        HpbMessage hpbMsg = new HpbMessage(MessageType.PUBLISH, serviceKey, msg);
+        HpbMessage hpbMsg = new HpbMessage(HpbMessageType.PUBLISH, serviceKey, info);
+        printMsgSendLog(hpbMsg, destInstance);
         HypeSdkInterface.getInstance().sendMsg(hpbMsg, destInstance);
-        return hpbMsg.toByteArray(); // TODO: Remove return in the future;
+        return hpbMsg.toByteArray();
     }
 
-    static byte[] sendInfoMsg(byte serviceKey[], Instance destInstance, String msg) throws IOException
+    /**
+     * This method builds a Info HpbMessage from a given service key and info data and calls the
+     * Hype SDK to send it to the specified instance.
+     *
+     * @param serviceKey Key of the service to which the message is destined.
+     * @param destInstance Hype instance to which the message should be sent.
+     * @param info Info that should be sent in the publish packet.
+     * @return Returns the HpbMessage created
+     * @throws IOException
+     */
+    static byte[] sendInfoMsg(byte serviceKey[], Instance destInstance, String info) throws IOException
     {
-        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Sending Info message to " + HpbGenericUtils.getInstanceAnnouncementStr(destInstance)
-                + " (0x" + BinaryUtils.byteArrayToHexString(destInstance.getIdentifier()) + ")"
-                + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey)
-                + ". HpbMessage: " + msg);
-
-        HpbMessage hpbMsg = new HpbMessage(MessageType.INFO, serviceKey, msg);
+        HpbMessage hpbMsg = new HpbMessage(HpbMessageType.INFO, serviceKey, info);
+        printMsgSendLog(hpbMsg, destInstance);
         HypeSdkInterface.getInstance().sendMsg(hpbMsg, destInstance);
-        return hpbMsg.toByteArray(); // TODO: Remove return in the future;
+        return hpbMsg.toByteArray();
     }
 
-    static int receiveMsg(Instance originInstance, byte msg[]) throws IOException, NoSuchAlgorithmException
+    //////////////////////////////////////////////////////////////////////////////
+    // Received Message Processing Methods
+    //////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Analyzes a received message and it calls the appropriate method to process it given its
+     * HpbMessageType
+     *
+     * @param originInstance Hype instance that sent the message
+     * @param packet Packet received from the Hype SDK
+     * @return Returns 0 in case of sucess and <0 in case of error.
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     */
+    static int receiveMsg(Instance originInstance, byte packet[]) throws IOException, NoSuchAlgorithmException
     {
-        if(msg.length <= 0)
-        {
-            Log.e(TAG, Constants.HPB_LOG_PREFIX + "Received message has an invalid length");
+        if(packet.length <= 0) {
+            Log.e(TAG, Constants.HPB_LOG_PREFIX + PROTOCOL_LOG_PREFIX + "Received message has an invalid length");
             return -1;
         }
 
-        MessageType m_type = getMessageType(msg);
-
-        switch (m_type)
+        switch (extractHpbMessageTypeFromReceivedPacket(packet))
         {
             case SUBSCRIBE_SERVICE:
-                receiveSubscribeMsg(originInstance, msg);
+                receiveSubscribeMsg(originInstance, packet);
                 break;
             case UNSUBSCRIBE_SERVICE:
-                receiveUnsubscribeMsg(originInstance, msg);
+                receiveUnsubscribeMsg(originInstance, packet);
                 break;
             case PUBLISH:
-                receivePublishMsg(originInstance, msg);
+                receivePublishMsg(originInstance, packet);
                 break;
             case INFO:
-                receiveInfoMsg(originInstance, msg);
+                receiveInfoMsg(originInstance, packet);
                 break;
             case INVALID:
-                Log.e(TAG, Constants.HPB_LOG_PREFIX + "Received message has an invalid MessageType");
-                return -1; // HpbMessage type not recognized. Discard
+                Log.e(TAG, Constants.HPB_LOG_PREFIX + PROTOCOL_LOG_PREFIX + "Received message has an invalid MessageType");
+                return -2; // HpbMessage type not recognized. Discard
         }
 
         return 0;
     }
 
-    private static int receiveSubscribeMsg(Instance originInstance, byte msg[]) throws NoSuchAlgorithmException, UnsupportedEncodingException
+    /**
+     * Processes a subscribe message and forwards it to {@link HypePubSub#processSubscribeReq(byte[], Instance)}
+     *
+     * @param originInstance Hype instance that sent the message
+     * @param packet Packet received from the Hype SDK
+     * @return Returns 0 in case of sucess and <0 in case of error.
+     * @throws NoSuchAlgorithmException
+     * @throws UnsupportedEncodingException
+     */
+    private static int receiveSubscribeMsg(Instance originInstance, byte packet[]) throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
-        if(msg.length != (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
-        {
-            Log.e(TAG, Constants.HPB_LOG_PREFIX + "Received Subscribe message with an invalid length");
+        if(packet.length != (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE)) {
+            Log.e(TAG, Constants.HPB_LOG_PREFIX + PROTOCOL_LOG_PREFIX + "Received Subscribe message with an invalid length");
             return -1;
         }
 
-        byte serviceKey[] = getServiceKey(msg);
-
-        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Received Subscribe message from " + HpbGenericUtils.getInstanceAnnouncementStr(originInstance)
-                + " (0x" + BinaryUtils.byteArrayToHexString(originInstance.getIdentifier()) + ")"
-                + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
-
+        HpbMessage hpbMsg = new HpbMessage(HpbMessageType.SUBSCRIBE_SERVICE, extractServiceKeyFromReceivedPacket(packet));
+        printMsgReceivedLog(hpbMsg, originInstance);
         HypePubSub hpb = HypePubSub.getInstance();
-        hpb.processSubscribeReq(serviceKey, originInstance);
+        hpb.processSubscribeReq(hpbMsg.getServiceKey(), originInstance);
         return 0;
     }
 
-    private static int receiveUnsubscribeMsg(Instance originInstance, byte msg[]) throws UnsupportedEncodingException
+    /**
+     * Processes an unsubscribe message and forwards it to {@link HypePubSub#processUnsubscribeReq(byte[], Instance)}
+     *
+     * @param originInstance Hype instance that sent the message
+     * @param packet Packet received from the Hype SDK
+     * @return Returns 0 in case of sucess and <0 in case of error.
+     * @throws NoSuchAlgorithmException
+     * @throws UnsupportedEncodingException
+     */
+    private static int receiveUnsubscribeMsg(Instance originInstance, byte packet[]) throws UnsupportedEncodingException
     {
-        if(msg.length != (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
-        {
-            Log.e(TAG, Constants.HPB_LOG_PREFIX + "Received Unsubscribe message with an invalid length");
+        if(packet.length != (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE)) {
+            Log.e(TAG, Constants.HPB_LOG_PREFIX + PROTOCOL_LOG_PREFIX + "Received Unsubscribe message with an invalid length");
             return -1;
         }
 
-        byte serviceKey[] = getServiceKey(msg);
-
-        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Received Unsubscribe message from " + HpbGenericUtils.getInstanceAnnouncementStr(originInstance)
-                + " (0x" + BinaryUtils.byteArrayToHexString(originInstance.getIdentifier()) + ")"
-                + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
-
+        HpbMessage hpbMsg = new HpbMessage(HpbMessageType.UNSUBSCRIBE_SERVICE, extractServiceKeyFromReceivedPacket(packet));
+        printMsgReceivedLog(hpbMsg, originInstance);
         HypePubSub hpb = HypePubSub.getInstance();
-        hpb.processUnsubscribeReq(serviceKey, originInstance);
+        hpb.processUnsubscribeReq(hpbMsg.getServiceKey(), originInstance);
         return 0;
     }
 
-    private static int receivePublishMsg(Instance originInstance, byte msg[]) throws IOException
+    /**
+     * Processes a publish message and forwards it to {@link HypePubSub#processPublishReq(byte[], String)}
+     *
+     * @param originInstance Hype instance that sent the message
+     * @param packet Packet received from the Hype SDK
+     * @return Returns 0 in case of sucess and <0 in case of error.
+     * @throws NoSuchAlgorithmException
+     * @throws UnsupportedEncodingException
+     */
+    private static int receivePublishMsg(Instance originInstance, byte packet[]) throws IOException
     {
-        if(msg.length <= (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
-        {
-            Log.e(TAG, Constants.HPB_LOG_PREFIX + "Received Publish message with an invalid length");
+        if(packet.length <= (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE)) {
+            Log.e(TAG, Constants.HPB_LOG_PREFIX + PROTOCOL_LOG_PREFIX + "Received Publish message with an invalid length");
             return -1;
         }
 
-        byte serviceKey[] = getServiceKey(msg);
-        byte publishedData[] = getInfo(msg);
-        String publishedStr = new String(publishedData, Constants.HPB_ENCODING_STANDARD);
-
-        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Received Publish message from " + HpbGenericUtils.getInstanceAnnouncementStr(originInstance)
-                + " (0x" + BinaryUtils.byteArrayToHexString(originInstance.getIdentifier()) + ")"
-                + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey)
-                + ". HpbMessage: " + publishedStr);
-
+        HpbMessage hpbMsg = new HpbMessage(HpbMessageType.PUBLISH, extractServiceKeyFromReceivedPacket(packet), new String(extractInfoFromReceivedPacket(packet), Constants.HPB_ENCODING_STANDARD));
+        printMsgReceivedLog(hpbMsg, originInstance);
         HypePubSub hpb = HypePubSub.getInstance();
-        hpb.processPublishReq(serviceKey, publishedStr);
+        hpb.processPublishReq(hpbMsg.getServiceKey(), hpbMsg.getInfo());
         return 0;
     }
 
-    private static int receiveInfoMsg(Instance originInstance, byte msg[]) throws UnsupportedEncodingException
+    /**
+     * Processes an info message and forwards it to {@link HypePubSub#processInfoMsg(byte[], String)}
+     *
+     * @param originInstance Hype instance that sent the message
+     * @param packet Packet received from the Hype SDK
+     * @return Returns 0 in case of sucess and <0 in case of error.
+     * @throws NoSuchAlgorithmException
+     * @throws UnsupportedEncodingException
+     */
+    private static int receiveInfoMsg(Instance originInstance, byte packet[]) throws UnsupportedEncodingException
     {
-        if(msg.length <= (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE))
-        {
-            Log.e(TAG, Constants.HPB_LOG_PREFIX + "Received Info message with an invalid length");
+        if(packet.length <= (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE)) {
+            Log.e(TAG, Constants.HPB_LOG_PREFIX + PROTOCOL_LOG_PREFIX + "Received Info message with an invalid length");
             return -1;
         }
 
-        byte serviceKey[] = getServiceKey(msg);
-        byte infoData[] = getInfo(msg);
-        String infoStr = new String(infoData, Constants.HPB_ENCODING_STANDARD);
-
-        Log.i(TAG, Constants.HPB_LOG_PREFIX + "Received Info message from " + HpbGenericUtils.getInstanceAnnouncementStr(originInstance)
-                + " (0x" + BinaryUtils.byteArrayToHexString(originInstance.getIdentifier()) + ")"
-                + " for service 0x" + BinaryUtils.byteArrayToHexString(serviceKey)
-                + ". HpbMessage: " + infoStr);
-
+        HpbMessage hpbMsg = new HpbMessage(HpbMessageType.INFO, extractServiceKeyFromReceivedPacket(packet), new String(extractInfoFromReceivedPacket(packet), Constants.HPB_ENCODING_STANDARD));
+        printMsgReceivedLog(hpbMsg, originInstance);
         HypePubSub hpb = HypePubSub.getInstance();
-        hpb.processInfoMsg(serviceKey, infoStr);
+        hpb.processInfoMsg(hpbMsg.getServiceKey(), hpbMsg.getInfo());
         return 0;
     }
 
-    public static MessageType getMessageType(byte msg[])
+    //////////////////////////////////////////////////////////////////////////////
+    // Received Message Data Extraction Methods
+    //////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Extracts the HpbMessageType from a packet received from the Hype SDK
+     *
+     * @param packet Received packet
+     * @return Returns the HpbMessageType
+     */
+    public static HpbMessageType extractHpbMessageTypeFromReceivedPacket(byte packet[])
     {
-        if(msg.length <= 0) {
-            return MessageType.INVALID;
+        if(packet.length <= 0) {
+            return HpbMessageType.INVALID;
         }
 
-        if(msg[0] == ((byte) MessageType.SUBSCRIBE_SERVICE.ordinal())) {
-            return MessageType.SUBSCRIBE_SERVICE;
+        if(packet[0] == ((byte) HpbMessageType.SUBSCRIBE_SERVICE.ordinal())) {
+            return HpbMessageType.SUBSCRIBE_SERVICE;
         }
-        else if(msg[0] == ((byte) MessageType.UNSUBSCRIBE_SERVICE.ordinal())) {
-            return MessageType.UNSUBSCRIBE_SERVICE;
+        else if(packet[0] == ((byte) HpbMessageType.UNSUBSCRIBE_SERVICE.ordinal())) {
+            return HpbMessageType.UNSUBSCRIBE_SERVICE;
         }
-        else if(msg[0] == ((byte) MessageType.PUBLISH.ordinal())) {
-            return MessageType.PUBLISH;
+        else if(packet[0] == ((byte) HpbMessageType.PUBLISH.ordinal())) {
+            return HpbMessageType.PUBLISH;
         }
-        else if(msg[0] == ((byte) MessageType.INFO.ordinal())) {
-            return MessageType.INFO;
+        else if(packet[0] == ((byte) HpbMessageType.INFO.ordinal())) {
+            return HpbMessageType.INFO;
         }
 
-        return MessageType.INVALID;
+        return HpbMessageType.INVALID;
     }
 
-    private static byte[] getServiceKey(byte msg[])
+    /**
+     * Extracts the ServiceKey from a packet received from the Hype SDK
+     *
+     * @param packet Received packet
+     * @return Returns the ServiceKey specified on the packet
+     */
+    private static byte[] extractServiceKeyFromReceivedPacket(byte packet[])
     {
-        return Arrays.copyOfRange(msg, MESSAGE_TYPE_BYTE_SIZE,
-                                    MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE);
+        return Arrays.copyOfRange(packet, MESSAGE_TYPE_BYTE_SIZE,
+                MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE);
     }
 
-    private static byte[] getInfo(byte msg[])
+    /**
+     * Extracts the info from a packet received from the Hype SDK
+     *
+     * @param packet Received packet
+     * @return Returns the Info specified on the packet
+     */
+    private static byte[] extractInfoFromReceivedPacket(byte packet[])
     {
-        return Arrays.copyOfRange(msg,MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE,
-                                    msg.length);
+        return Arrays.copyOfRange(packet,MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE,
+                packet.length);
+    }
+
+    //////////////////////////////////////////////////////////////////////////////
+    // Logging Methods
+    //////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Prints a info log message when a message is sent through the Hype SDK
+     *
+     * @param hpbMsg HpbMessage that will be sent
+     * @param destination Hype instance destination of the message
+     * @throws UnsupportedEncodingException
+     */
+    static void printMsgSendLog(HpbMessage hpbMsg, Instance destination) throws UnsupportedEncodingException
+    {
+        Log.i(TAG, Constants.HPB_LOG_PREFIX + PROTOCOL_LOG_PREFIX
+                + "Sending " + hpbMsg.toLogString()
+                + " Destination " + HpbGenericUtils.getInstanceLogIdStr(destination));
+    }
+
+    /**
+     * Prints a info log message when a message is received through the Hype SDK
+     *
+     * @param hpbMsg HpbMessage that was received
+     * @param originator Originator Hype instance of the message
+     * @throws UnsupportedEncodingException
+     */
+    static void printMsgReceivedLog(HpbMessage hpbMsg, Instance originator) throws UnsupportedEncodingException
+    {
+        Log.i(TAG, Constants.HPB_LOG_PREFIX + PROTOCOL_LOG_PREFIX
+                + "Received " + hpbMsg.toLogString()
+                + " Originator " + HpbGenericUtils.getInstanceLogIdStr(originator));
     }
 }

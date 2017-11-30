@@ -3,22 +3,28 @@ package hypelabs.com.hypepubsub;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import hypelabs.com.hypepubsub.Protocol.MessageType;
 
 /**
  * This class represents a message from the HypePubSub application
  */
 public class HpbMessage
 {
-    private MessageType type;
+    private HpbMessageType type;
     private byte[] serviceKey;
     private String info;
 
-    public HpbMessage(MessageType type, byte[] serviceKey, String info)
+    public HpbMessage(HpbMessageType type, byte[] serviceKey, String info)
     {
         this.type = type;
         this.serviceKey = serviceKey;
         this.info = info;
+    }
+
+    public HpbMessage(HpbMessageType type, byte[] serviceKey)
+    {
+        this.type = type;
+        this.serviceKey = serviceKey;
+        this.info = null;
     }
 
     public byte[] toByteArray() throws IOException
@@ -32,7 +38,18 @@ public class HpbMessage
         return outputStream.toByteArray();
     }
 
-    public MessageType getType(){
+    public String toLogString()
+    {
+        String logString = type.toString() + " message for service 0x"
+                + BinaryUtils.byteArrayToHexString(serviceKey) + ".";
+        if(info != null) {
+            logString += " Info: " + info + ".";
+        }
+
+        return logString;
+    }
+
+    public HpbMessageType getType(){
         return type;
     }
 

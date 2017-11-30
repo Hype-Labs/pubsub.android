@@ -228,27 +228,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     @Override
     public void onHypeMessageDelivered(MessageInfo var1, Instance var2, float var3, boolean var4)
     {
-        int msgIdentifier = var1.getIdentifier();
-
-        if(var4 != true) {
-            Log.i( TAG, Constants.HPB_LOG_PREFIX + "Hype SDK message " + msgIdentifier + " delivered percentage: " + (var3*100) + "%");
-            return;
-        }
-
-        Log.i( TAG, Constants.HPB_LOG_PREFIX + "Hype SDK message " + msgIdentifier + " delivered. Will now be removed from the confirmation queue");
-
-        ConfirmationQueue queue = ConfirmationQueue.getInstance();
-        ConfirmationQueueElement queueElement = queue.findQueueElementFromId(var1.getIdentifier());
-
-        try
-        {
-            Log.i(TAG, Constants.HPB_LOG_PREFIX + "Removing element from confirmation queue: " + queueElement.toLogString());
-        } catch (UnsupportedEncodingException e)
-        {
-            e.printStackTrace();
-        }
-
-        queue.removeQueueElement(queueElement);
+        Log.i( TAG, Constants.HPB_LOG_PREFIX + "Hype SDK message " + var1.getIdentifier() + " delivered percentage: " + (var3*100) + "%");
     }
 
     //////////////////////////////////////////////////////////////////////////////
@@ -257,42 +237,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
 
     public void sendMsg(HpbMessage hpbMsg, Instance destination) throws IOException
     {
-        Message sdkMsg = Hype.send(hpbMsg.toByteArray(), destination, true);
-        int sdkMsgIdentifier = sdkMsg.getMessageInfo().getIdentifier();
-
-        ConfirmationQueueElement queueElement = new ConfirmationQueueElement(hpbMsg, sdkMsgIdentifier, destination);
-        ConfirmationQueue queue = ConfirmationQueue.getInstance();
-
-        try
-        {
-            Log.i(TAG, Constants.HPB_LOG_PREFIX + "Adding element to confirmation queue: " + queueElement.toLogString());
-        } catch (UnsupportedEncodingException e)
-        {
-            e.printStackTrace();
-        }
-
-        queue.addQueueElement(queueElement);
-    }
-
-    public int resendMsg(int identifier) throws IOException
-    {
-        ConfirmationQueue queue = ConfirmationQueue.getInstance();
-        ConfirmationQueueElement queueElement = queue.findQueueElementFromId(identifier);
-
-        if(queueElement == null){
-            Log.e(TAG, Constants.HPB_LOG_PREFIX + "Trying to re-send non-existent message");
-            return -1;
-        }
-
-        if(queueElement.nRetransmissions == Constants.HPB_MAX_RETRANSMISSIONS){
-            Log.e(TAG, Constants.HPB_LOG_PREFIX + "Trying to re-send non-existent message");
-            queue.removeQueueElement(queueElement);
-            return -2;
-        }
-
-        queueElement.nRetransmissions++;
-        Hype.send(queueElement.hpbMessage.toByteArray(), queueElement.destination, true);
-        return 0;
+        Hype.send(hpbMsg.toByteArray(), destination);
     }
 
     //////////////////////////////////////////////////////////////////////////////
