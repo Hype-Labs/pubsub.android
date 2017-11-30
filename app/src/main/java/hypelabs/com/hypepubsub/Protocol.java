@@ -14,7 +14,7 @@ public class Protocol
     public static final int MESSAGE_TYPE_BYTE_SIZE = 1;
 
     private static final String TAG = Protocol.class.getName();
-    private static final String PROTOCOL_LOG_PREFIX = " <Protocol> ";
+    private static final String PROTOCOL_LOG_PREFIX = Constants.HPB_LOG_PREFIX + "<Protocol> ";
 
     //////////////////////////////////////////////////////////////////////////////
     // Message Sending Processing Methods
@@ -107,7 +107,7 @@ public class Protocol
     static int receiveMsg(Instance originInstance, byte packet[]) throws IOException, NoSuchAlgorithmException
     {
         if(packet.length <= 0) {
-            Log.e(TAG, Constants.HPB_LOG_PREFIX + PROTOCOL_LOG_PREFIX + "Received message has an invalid length");
+            Log.e(TAG, PROTOCOL_LOG_PREFIX + "Received message has an invalid length");
             return -1;
         }
 
@@ -126,7 +126,7 @@ public class Protocol
                 receiveInfoMsg(originInstance, packet);
                 break;
             case INVALID:
-                Log.e(TAG, Constants.HPB_LOG_PREFIX + PROTOCOL_LOG_PREFIX + "Received message has an invalid MessageType");
+                Log.e(TAG, PROTOCOL_LOG_PREFIX + "Received message has an invalid MessageType");
                 return -2; // HpbMessage type not recognized. Discard
         }
 
@@ -145,7 +145,7 @@ public class Protocol
     private static int receiveSubscribeMsg(Instance originInstance, byte packet[]) throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
         if(packet.length != (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE)) {
-            Log.e(TAG, Constants.HPB_LOG_PREFIX + PROTOCOL_LOG_PREFIX + "Received Subscribe message with an invalid length");
+            Log.e(TAG, PROTOCOL_LOG_PREFIX + "Received Subscribe message with an invalid length");
             return -1;
         }
 
@@ -168,7 +168,7 @@ public class Protocol
     private static int receiveUnsubscribeMsg(Instance originInstance, byte packet[]) throws UnsupportedEncodingException
     {
         if(packet.length != (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE)) {
-            Log.e(TAG, Constants.HPB_LOG_PREFIX + PROTOCOL_LOG_PREFIX + "Received Unsubscribe message with an invalid length");
+            Log.e(TAG, PROTOCOL_LOG_PREFIX + "Received Unsubscribe message with an invalid length");
             return -1;
         }
 
@@ -191,7 +191,7 @@ public class Protocol
     private static int receivePublishMsg(Instance originInstance, byte packet[]) throws IOException
     {
         if(packet.length <= (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE)) {
-            Log.e(TAG, Constants.HPB_LOG_PREFIX + PROTOCOL_LOG_PREFIX + "Received Publish message with an invalid length");
+            Log.e(TAG, PROTOCOL_LOG_PREFIX + "Received Publish message with an invalid length");
             return -1;
         }
 
@@ -214,7 +214,7 @@ public class Protocol
     private static int receiveInfoMsg(Instance originInstance, byte packet[]) throws UnsupportedEncodingException
     {
         if(packet.length <= (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE)) {
-            Log.e(TAG, Constants.HPB_LOG_PREFIX + PROTOCOL_LOG_PREFIX + "Received Info message with an invalid length");
+            Log.e(TAG, PROTOCOL_LOG_PREFIX + "Received Info message with an invalid length");
             return -1;
         }
 
@@ -294,7 +294,7 @@ public class Protocol
      */
     static void printMsgSendLog(HpbMessage hpbMsg, Instance destination) throws UnsupportedEncodingException
     {
-        Log.i(TAG, Constants.HPB_LOG_PREFIX + PROTOCOL_LOG_PREFIX
+        Log.i(TAG, PROTOCOL_LOG_PREFIX
                 + "Sending " + hpbMsg.toLogString()
                 + " Destination " + HpbGenericUtils.getInstanceLogIdStr(destination));
     }
@@ -308,7 +308,7 @@ public class Protocol
      */
     static void printMsgReceivedLog(HpbMessage hpbMsg, Instance originator) throws UnsupportedEncodingException
     {
-        Log.i(TAG, Constants.HPB_LOG_PREFIX + PROTOCOL_LOG_PREFIX
+        Log.i(TAG, PROTOCOL_LOG_PREFIX
                 + "Received " + hpbMsg.toLogString()
                 + " Originator " + HpbGenericUtils.getInstanceLogIdStr(originator));
     }
