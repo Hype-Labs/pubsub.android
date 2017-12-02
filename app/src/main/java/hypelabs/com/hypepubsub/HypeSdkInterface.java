@@ -132,7 +132,17 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
         else
         {
             Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK resolved instance found: " + instanceLogIdStr);
-            addInstanceAlreadyResolved(var1);
+
+            // Add the instance found in a separate thread to release the lock of the
+            // Hype instance object preventing possible deadlock
+            final Instance instanceFound = var1;
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    addInstanceAlreadyResolved(instanceFound);
+                }
+            });
+            t.start();
         }
     }
 
@@ -142,10 +152,26 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
         try
         {
             Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK instance lost:" + HpbGenericUtils.getInstanceLogIdStr(var1));
-            removeInstance(var1);
-        }
-        catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+
+            // Remove the instance lost in a separate thread to release the lock of the
+            // Hype instance object preventing possible deadlock
+            final Instance instanceToRemove = var1;
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try
+                    {
+                        removeInstance(instanceToRemove);
+                    } catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    } catch (NoSuchAlgorithmException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            t.start();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -158,7 +184,16 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
         try
         {
             Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK instance resolved: " + HpbGenericUtils.getInstanceLogIdStr(var1));
-            addInstanceAlreadyResolved(var1);
+
+            // Add instance in a separate thread to prevent deadlock
+            final Instance instanceFound = var1;
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    addInstanceAlreadyResolved(instanceFound);
+                }
+            });
+            t.start();
         }
         catch (UnsupportedEncodingException e)
         {
@@ -186,13 +221,25 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     @Override
     public void onHypeMessageReceived(Message var1, Instance var2)
     {
-        try {
-            Protocol.receiveMsg(var2, var1.getData());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+
+        final Message receivedMsg = var1;
+        final Instance originatorInstance = var2;
+
+        // Process the received message in a separate thread to release the lock of the
+        // Hype instance object preventing possible deadlock
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Protocol.receiveMsg(originatorInstance, receivedMsg.getData());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
     }
 
     @Override

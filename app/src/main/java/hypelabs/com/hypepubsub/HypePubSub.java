@@ -234,7 +234,7 @@ public class HypePubSub
 
     synchronized void updateManagedServices() throws UnsupportedEncodingException
     {
-        Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX + "Executing updateManagedServices"
+        Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX + "Executing updateManagedServices ("
                 + this.managedServices.size() + " services managed)");
 
         ListIterator<ServiceManager> it = this.managedServices.listIterator();
