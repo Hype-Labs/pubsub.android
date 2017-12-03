@@ -13,11 +13,18 @@ public class ClientsList
 {
     // Used composition instead of inheritance to hide the methods that shouldn't be called in
     // a ClientsList.
-
     final private LinkedList<Client> clients = new LinkedList<>();
 
     private ClientsAdapter clientsAdapter = null;
 
+    /**
+     * Adds a client to the client list
+     *
+     * @param instance Instance to be used in the construction of the client object to be added
+     * @return Returns -1 if the client is already present and 0 otherwise.
+     * @throws NoSuchAlgorithmException This exception is thrown when the
+     *          {@value Constants#HPB_HASH_ALGORITHM} algorithm is not available on the device.
+     */
     public synchronized int add(Instance instance) throws NoSuchAlgorithmException
     {
         if(find(instance) != null) // do not add the client if it is already present
@@ -27,6 +34,12 @@ public class ClientsList
         return 0;
     }
 
+    /**
+     * Removes a client from the client list
+     *
+     * @param instance Instance of the client object to be removed
+     * @return Returns -1 if the client is not present and 0 otherwise.
+     */
     public synchronized int remove(Instance instance)
     {
         Client client = find(instance);
@@ -37,6 +50,13 @@ public class ClientsList
         return 0;
     }
 
+
+    /**
+     * Finds a client with a given instance.
+     *
+     * @param instance Instance of the client object to be searched.
+     * @return Returns the object of the client to be searched or NULL if the client does not exist.
+     */
     public synchronized Client find(Instance instance)
     {
         ListIterator<Client> it = listIterator();
