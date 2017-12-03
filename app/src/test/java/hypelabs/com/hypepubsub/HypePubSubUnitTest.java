@@ -14,6 +14,7 @@ import static org.junit.Assert.*;
 
 public class HypePubSubUnitTest
 {
+    byte HPB_TEST_OWN_CLIENT[] = new byte[] {(byte) 0x11, (byte) 0x12, (byte) 0x12, (byte) 0x11, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05, (byte) 0x06, (byte) 0x07, (byte) 0x08, (byte) 0x09};
 
     byte HPB_TEST_CLIENT1[] = new byte[] {(byte) 0x10, (byte) 0x11, (byte) 0x12, (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05, (byte) 0x06, (byte) 0x07, (byte) 0x08, (byte) 0x09};
     byte HPB_TEST_CLIENT2[] = new byte[] {(byte) 0x66, (byte) 0xd8, (byte) 0xf2, (byte) 0x20, (byte) 0x6a, (byte) 0x56, (byte) 0xdb, (byte) 0xe9, (byte) 0x91, (byte) 0x23, (byte) 0x3b, (byte) 0xc2};
@@ -32,6 +33,8 @@ public class HypePubSubUnitTest
     @Test
     public void testProcessSubscribeAndUnsubscribe() throws NoSuchAlgorithmException, NoSuchFieldException, IllegalAccessException, UnsupportedEncodingException
     {
+        FakeHypeInstance ownInstance = new FakeHypeInstance(HPB_TEST_OWN_CLIENT, null, false);
+
         FakeHypeInstance instance1 = new FakeHypeInstance(HPB_TEST_CLIENT1, null, false);
         FakeHypeInstance instance2 = new FakeHypeInstance(HPB_TEST_CLIENT2, null, false);
         FakeHypeInstance instance3 = new FakeHypeInstance(HPB_TEST_CLIENT3, null, false);
@@ -44,6 +47,8 @@ public class HypePubSubUnitTest
         FakeHypeInstance instance10 = new FakeHypeInstance(HPB_TEST_CLIENT10, null, false);
 
         HypePubSub hpb = HypePubSub.getInstance();
+        Network network = Network.getInstance();
+        network.setOwnClient(ownInstance);
 
         assertEquals(0, hpb.managedServices.size());
 
