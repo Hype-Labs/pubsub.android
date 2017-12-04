@@ -175,7 +175,14 @@ public class HypePubSub
     {
         ServiceManager serviceManager = this.managedServices.find(serviceKey);
         if(serviceManager == null)
+        {
+            Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX
+                    + "Processing Publish request for non-existent ServiceManager 0x"
+                    + BinaryUtils.byteArrayToHexString(serviceKey)
+                    + ". Nothing will be done.");
+
             return;
+        }
 
         ListIterator<Client> it = serviceManager.subscribers.listIterator();
         while(it.hasNext())
