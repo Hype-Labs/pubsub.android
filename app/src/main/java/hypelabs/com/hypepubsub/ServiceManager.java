@@ -5,9 +5,9 @@ public class ServiceManager
     final byte serviceKey[];
     final ClientsList subscribers;
 
-    public ServiceManager(byte service_key[])
+    public ServiceManager(byte serviceKey[])
     {
-        this.serviceKey = service_key;
+        this.serviceKey = serviceKey;
         this.subscribers = new ClientsList();
     }
 }
