@@ -33,7 +33,7 @@ public class HpbMessage
         outputStream.write((byte) type.ordinal());
         outputStream.write(serviceKey);
         if(info != null) {
-            outputStream.write(info.getBytes(Constants.HPB_ENCODING_STANDARD));
+            outputStream.write(info.getBytes(HpbConstants.ENCODING_STANDARD));
         }
         return outputStream.toByteArray();
     }

@@ -14,7 +14,7 @@ public class Protocol
     public static final int MESSAGE_TYPE_BYTE_SIZE = 1;
 
     private static final String TAG = Protocol.class.getName();
-    private static final String PROTOCOL_LOG_PREFIX = Constants.HPB_LOG_PREFIX + "<Protocol> ";
+    private static final String PROTOCOL_LOG_PREFIX = HpbConstants.LOG_PREFIX + "<Protocol> ";
 
     //////////////////////////////////////////////////////////////////////////////
     // Message Sending Processing Methods
@@ -144,7 +144,7 @@ public class Protocol
      */
     private static int receiveSubscribeMsg(Instance originInstance, byte packet[]) throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
-        if(packet.length != (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE)) {
+        if(packet.length != (MESSAGE_TYPE_BYTE_SIZE + HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH)) {
             Log.e(TAG, PROTOCOL_LOG_PREFIX + "Received Subscribe message with an invalid length");
             return -1;
         }
@@ -167,7 +167,7 @@ public class Protocol
      */
     private static int receiveUnsubscribeMsg(Instance originInstance, byte packet[]) throws UnsupportedEncodingException
     {
-        if(packet.length != (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE)) {
+        if(packet.length != (MESSAGE_TYPE_BYTE_SIZE + HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH)) {
             Log.e(TAG, PROTOCOL_LOG_PREFIX + "Received Unsubscribe message with an invalid length");
             return -1;
         }
@@ -190,12 +190,12 @@ public class Protocol
      */
     private static int receivePublishMsg(Instance originInstance, byte packet[]) throws IOException
     {
-        if(packet.length <= (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE)) {
+        if(packet.length <= (MESSAGE_TYPE_BYTE_SIZE + HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH)) {
             Log.e(TAG, PROTOCOL_LOG_PREFIX + "Received Publish message with an invalid length");
             return -1;
         }
 
-        HpbMessage hpbMsg = new HpbMessage(HpbMessageType.PUBLISH, extractServiceKeyFromReceivedPacket(packet), new String(extractInfoFromReceivedPacket(packet), Constants.HPB_ENCODING_STANDARD));
+        HpbMessage hpbMsg = new HpbMessage(HpbMessageType.PUBLISH, extractServiceKeyFromReceivedPacket(packet), new String(extractInfoFromReceivedPacket(packet), HpbConstants.ENCODING_STANDARD));
         printMsgReceivedLog(hpbMsg, originInstance);
         HypePubSub hpb = HypePubSub.getInstance();
         hpb.processPublishReq(hpbMsg.getServiceKey(), hpbMsg.getInfo());
@@ -213,12 +213,12 @@ public class Protocol
      */
     private static int receiveInfoMsg(Instance originInstance, byte packet[]) throws UnsupportedEncodingException
     {
-        if(packet.length <= (MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE)) {
+        if(packet.length <= (MESSAGE_TYPE_BYTE_SIZE + HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH)) {
             Log.e(TAG, PROTOCOL_LOG_PREFIX + "Received Info message with an invalid length");
             return -1;
         }
 
-        HpbMessage hpbMsg = new HpbMessage(HpbMessageType.INFO, extractServiceKeyFromReceivedPacket(packet), new String(extractInfoFromReceivedPacket(packet), Constants.HPB_ENCODING_STANDARD));
+        HpbMessage hpbMsg = new HpbMessage(HpbMessageType.INFO, extractServiceKeyFromReceivedPacket(packet), new String(extractInfoFromReceivedPacket(packet), HpbConstants.ENCODING_STANDARD));
         printMsgReceivedLog(hpbMsg, originInstance);
         HypePubSub hpb = HypePubSub.getInstance();
         hpb.processInfoMsg(hpbMsg.getServiceKey(), hpbMsg.getInfo());
@@ -266,7 +266,7 @@ public class Protocol
     private static byte[] extractServiceKeyFromReceivedPacket(byte packet[])
     {
         return Arrays.copyOfRange(packet, MESSAGE_TYPE_BYTE_SIZE,
-                MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE);
+                MESSAGE_TYPE_BYTE_SIZE + HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH);
     }
 
     /**
@@ -277,7 +277,7 @@ public class Protocol
      */
     private static byte[] extractInfoFromReceivedPacket(byte packet[])
     {
-        return Arrays.copyOfRange(packet,MESSAGE_TYPE_BYTE_SIZE + Constants.SHA1_BYTE_SIZE,
+        return Arrays.copyOfRange(packet,MESSAGE_TYPE_BYTE_SIZE + HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH,
                 packet.length);
     }
 

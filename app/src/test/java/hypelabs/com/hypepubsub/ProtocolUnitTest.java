@@ -77,17 +77,17 @@ public class ProtocolUnitTest
         packet = Protocol.sendPublishMsg(SERVICE_KEY1, instance1, MSG1);
         assertEquals((byte) HpbMessageType.PUBLISH.ordinal(), packet[0]);
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
-        assertArrayEquals(SERVICE_KEY1, Arrays.copyOfRange(packet, offset, offset+Constants.SHA1_BYTE_SIZE));
-        offset += Constants.SHA1_BYTE_SIZE;
-        expectedInfoStr = new String(Arrays.copyOfRange(packet, offset, packet.length), Constants.HPB_ENCODING_STANDARD);
+        assertArrayEquals(SERVICE_KEY1, Arrays.copyOfRange(packet, offset, offset+ HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH));
+        offset += HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH;
+        expectedInfoStr = new String(Arrays.copyOfRange(packet, offset, packet.length), HpbConstants.ENCODING_STANDARD);
         assertEquals(MSG1, expectedInfoStr);
 
         packet = Protocol.sendPublishMsg(SERVICE_KEY2, instance2, MSG2);
         assertEquals((byte) HpbMessageType.PUBLISH.ordinal(), packet[0]);
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
-        assertArrayEquals(SERVICE_KEY2, Arrays.copyOfRange(packet, offset, offset+Constants.SHA1_BYTE_SIZE));
-        offset += Constants.SHA1_BYTE_SIZE;
-        expectedInfoStr = new String(Arrays.copyOfRange(packet, offset, packet.length), Constants.HPB_ENCODING_STANDARD);
+        assertArrayEquals(SERVICE_KEY2, Arrays.copyOfRange(packet, offset, offset+ HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH));
+        offset += HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH;
+        expectedInfoStr = new String(Arrays.copyOfRange(packet, offset, packet.length), HpbConstants.ENCODING_STANDARD);
         assertEquals(MSG2, expectedInfoStr);
     }
 
@@ -110,17 +110,17 @@ public class ProtocolUnitTest
         packet = Protocol.sendInfoMsg(SERVICE_KEY1, instance1, MSG1);
         assertEquals((byte) HpbMessageType.INFO.ordinal(), packet[0]);
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
-        assertArrayEquals(SERVICE_KEY1, Arrays.copyOfRange(packet, offset, offset+Constants.SHA1_BYTE_SIZE));
-        offset += Constants.SHA1_BYTE_SIZE;
-        expectedInfoStr = new String(Arrays.copyOfRange(packet, offset, packet.length), Constants.HPB_ENCODING_STANDARD);
+        assertArrayEquals(SERVICE_KEY1, Arrays.copyOfRange(packet, offset, offset+ HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH));
+        offset += HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH;
+        expectedInfoStr = new String(Arrays.copyOfRange(packet, offset, packet.length), HpbConstants.ENCODING_STANDARD);
         assertEquals(MSG1, expectedInfoStr);
 
         packet = Protocol.sendInfoMsg(SERVICE_KEY2, instance2, MSG2);
         assertEquals((byte) HpbMessageType.INFO.ordinal(), packet[0]);
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
-        assertArrayEquals(SERVICE_KEY2, Arrays.copyOfRange(packet, offset, offset+Constants.SHA1_BYTE_SIZE));
-        offset += Constants.SHA1_BYTE_SIZE;
-        expectedInfoStr = new String(Arrays.copyOfRange(packet, offset, packet.length), Constants.HPB_ENCODING_STANDARD);
+        assertArrayEquals(SERVICE_KEY2, Arrays.copyOfRange(packet, offset, offset+ HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH));
+        offset += HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH;
+        expectedInfoStr = new String(Arrays.copyOfRange(packet, offset, packet.length), HpbConstants.ENCODING_STANDARD);
         assertEquals(MSG2, expectedInfoStr);
     }
 

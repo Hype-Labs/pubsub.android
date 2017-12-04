@@ -19,7 +19,7 @@ import java.security.NoSuchAlgorithmException;
 public class HypeSdkInterface implements NetworkObserver, StateObserver, MessageObserver
 {
     private static final String TAG = HypeSdkInterface.class.getName();
-    private static final String HYPE_SDK_INTERFACE_LOG_PREFIX = Constants.HPB_LOG_PREFIX + "<HypeSdkInterface> ";
+    private static final String HYPE_SDK_INTERFACE_LOG_PREFIX = HpbConstants.LOG_PREFIX + "<HypeSdkInterface> ";
 
     //////////////////////////////////////////////////////////////////////////////
     // Members
@@ -42,9 +42,9 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
 
     protected void requestHypeToStart(Context context) throws UnsupportedEncodingException {
         Hype.setUserIdentifier(0L);
-        Hype.setAppIdentifier(Constants.HPB_APP_IDENTIFIER);
+        Hype.setAppIdentifier(HpbConstants.APP_IDENTIFIER);
         Hype.setContext(context);
-        Hype.setAnnouncement((android.os.Build.MODEL).getBytes(Constants.HPB_ENCODING_STANDARD));
+        Hype.setAnnouncement((android.os.Build.MODEL).getBytes(HpbConstants.ENCODING_STANDARD));
 
         Hype.addStateObserver(this);
         Hype.addNetworkObserver(this);

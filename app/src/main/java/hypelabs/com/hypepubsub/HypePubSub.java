@@ -19,7 +19,7 @@ import com.hypelabs.hype.Instance;
 public class HypePubSub
 {
     private static final String TAG =  HypePubSub.class.getName();
-    private static final String HYPE_PUB_SUB_LOG_PREFIX = Constants.HPB_LOG_PREFIX + "<HypePubSub> ";
+    private static final String HYPE_PUB_SUB_LOG_PREFIX = HpbConstants.LOG_PREFIX + "<HypePubSub> ";
 
     final private static HypePubSub hpb = new HypePubSub(); // Early loading to avoid thread-safety issues
 
@@ -229,7 +229,7 @@ public class HypePubSub
         subscription.receivedMsg.add(0, msgWithTimeStamp);
         updateMessagesUI();
         String notificationText = subscription.serviceName + ": " + msg;
-        displayNotification(MainActivity.getContext(), Constants.HPB_NOTIFICATIONS_CHANNEL, Constants.HPB_NOTIFICATIONS_TITLE, notificationText, notificationID);
+        displayNotification(MainActivity.getContext(), HpbConstants.NOTIFICATIONS_CHANNEL, HpbConstants.NOTIFICATIONS_TITLE, notificationText, notificationID);
         notificationID++;
 
         Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX
