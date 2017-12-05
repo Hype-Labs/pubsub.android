@@ -92,7 +92,10 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     public void onHypeFailedStarting(Error var1)
     {
         isHypeFail = true;
-        Log.e(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK start failed. Error description: " + var1.getDescription());
+
+        Log.e(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK start failed. Suggestion: " + var1.getSuggestion());
+        Log.e(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK start failed. Description: " + var1.getDescription());
+        Log.e(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK start failed. Reason: " + var1.getReason());
     }
 
     @Override
@@ -206,7 +209,11 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK instance fail resolving: " + HpbGenericUtils.getInstanceLogIdStr(var1));
+            Log.e(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK instance fail resolving: " + HpbGenericUtils.getInstanceLogIdStr(var1));
+
+            Log.e(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK instance fail resolving. Suggestion: " + var2.getSuggestion());
+            Log.e(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK instance fail resolving. Description: " + var2.getDescription());
+            Log.e(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK instance fail resolving. Reason: " + var2.getReason());
         }
         catch (UnsupportedEncodingException e)
         {
@@ -253,15 +260,20 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
         {
             e.printStackTrace();
         }
-        Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK message failed sending error. Suggestion: " + var3.getSuggestion());
-        Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK message failed sending error. Description: " + var3.getDescription());
-        Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK message failed sending error. Reason: " + var3.getReason());
+        Log.e(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK message failed sending error. Suggestion: " + var3.getSuggestion());
+        Log.e(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK message failed sending error. Description: " + var3.getDescription());
+        Log.e(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK message failed sending error. Reason: " + var3.getReason());
     }
 
     @Override
     public void onHypeMessageSent(MessageInfo var1, Instance var2, float var3, boolean var4)
     {
-        Log.i( TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK message sent");
+        if(! var4) {
+            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK message " + var1.getIdentifier() + " sending percentage: " + (var3 * 100) + "%");
+        }
+        else {
+            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK message " + var1.getIdentifier() + " fully sent");
+        }
     }
 
     @Override
