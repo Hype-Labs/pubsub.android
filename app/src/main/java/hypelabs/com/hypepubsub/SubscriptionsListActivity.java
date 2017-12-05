@@ -19,10 +19,10 @@ public class SubscriptionsListActivity extends AppCompatActivity
         setContentView(R.layout.activity_subscriptions_list);
 
         // Get ListView object from xml
-        HypePubSub hpb = HypePubSub.getInstance();
+        HypePubSub hps = HypePubSub.getInstance();
 
         subscriptionsListView = findViewById(R.id.activity_subscriptions_list_view);
-        subscriptionsListView.setAdapter(hpb.ownSubscriptions.getSubscriptionsAdapter(SubscriptionsListActivity.this));
+        subscriptionsListView.setAdapter(hps.ownSubscriptions.getSubscriptionsAdapter(SubscriptionsListActivity.this));
 
         subscriptionsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

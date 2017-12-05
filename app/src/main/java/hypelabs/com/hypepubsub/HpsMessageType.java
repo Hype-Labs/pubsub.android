@@ -1,6 +1,6 @@
 package hypelabs.com.hypepubsub;
 
-public enum HpbMessageType
+public enum HpsMessageType
 {
     SUBSCRIBE_SERVICE,
     UNSUBSCRIBE_SERVICE,

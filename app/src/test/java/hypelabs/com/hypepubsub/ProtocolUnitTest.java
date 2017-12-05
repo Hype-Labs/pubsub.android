@@ -26,11 +26,11 @@ public class ProtocolUnitTest
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
 
         byte packet[] = Protocol.sendSubscribeMsg(SERVICE_KEY1, instance1);
-        assertEquals((byte) HpbMessageType.SUBSCRIBE_SERVICE.ordinal(), packet[0]);
+        assertEquals((byte) HpsMessageType.SUBSCRIBE_SERVICE.ordinal(), packet[0]);
         assertArrayEquals(SERVICE_KEY1, Arrays.copyOfRange(packet, offset, packet.length));
 
         packet = Protocol.sendSubscribeMsg(SERVICE_KEY2, instance2);
-        assertEquals((byte) HpbMessageType.SUBSCRIBE_SERVICE.ordinal(), packet[0]);
+        assertEquals((byte) HpsMessageType.SUBSCRIBE_SERVICE.ordinal(), packet[0]);
         assertArrayEquals(SERVICE_KEY2, Arrays.copyOfRange(packet, offset, packet.length));
     }
 
@@ -50,11 +50,11 @@ public class ProtocolUnitTest
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
 
         packet = Protocol.sendUnsubscribeMsg(SERVICE_KEY1, instance1);
-        assertEquals((byte) HpbMessageType.UNSUBSCRIBE_SERVICE.ordinal(), packet[0]);
+        assertEquals((byte) HpsMessageType.UNSUBSCRIBE_SERVICE.ordinal(), packet[0]);
         assertArrayEquals(SERVICE_KEY1, Arrays.copyOfRange(packet, offset, packet.length));
 
         packet = Protocol.sendUnsubscribeMsg(SERVICE_KEY2, instance2);
-        assertEquals((byte) HpbMessageType.UNSUBSCRIBE_SERVICE.ordinal(), packet[0]);
+        assertEquals((byte) HpsMessageType.UNSUBSCRIBE_SERVICE.ordinal(), packet[0]);
         assertArrayEquals(SERVICE_KEY2, Arrays.copyOfRange(packet, offset, packet.length));
     }
 
@@ -75,19 +75,19 @@ public class ProtocolUnitTest
         FakeHypeInstance instance2 = new FakeHypeInstance(DEST_ID2, null, false);
 
         packet = Protocol.sendPublishMsg(SERVICE_KEY1, instance1, MSG1);
-        assertEquals((byte) HpbMessageType.PUBLISH.ordinal(), packet[0]);
+        assertEquals((byte) HpsMessageType.PUBLISH.ordinal(), packet[0]);
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
-        assertArrayEquals(SERVICE_KEY1, Arrays.copyOfRange(packet, offset, offset+ HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH));
-        offset += HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH;
-        expectedInfoStr = new String(Arrays.copyOfRange(packet, offset, packet.length), HpbConstants.ENCODING_STANDARD);
+        assertArrayEquals(SERVICE_KEY1, Arrays.copyOfRange(packet, offset, offset+ HpsConstants.HASH_ALGORITHM_DIGEST_LENGTH));
+        offset += HpsConstants.HASH_ALGORITHM_DIGEST_LENGTH;
+        expectedInfoStr = new String(Arrays.copyOfRange(packet, offset, packet.length), HpsConstants.ENCODING_STANDARD);
         assertEquals(MSG1, expectedInfoStr);
 
         packet = Protocol.sendPublishMsg(SERVICE_KEY2, instance2, MSG2);
-        assertEquals((byte) HpbMessageType.PUBLISH.ordinal(), packet[0]);
+        assertEquals((byte) HpsMessageType.PUBLISH.ordinal(), packet[0]);
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
-        assertArrayEquals(SERVICE_KEY2, Arrays.copyOfRange(packet, offset, offset+ HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH));
-        offset += HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH;
-        expectedInfoStr = new String(Arrays.copyOfRange(packet, offset, packet.length), HpbConstants.ENCODING_STANDARD);
+        assertArrayEquals(SERVICE_KEY2, Arrays.copyOfRange(packet, offset, offset+ HpsConstants.HASH_ALGORITHM_DIGEST_LENGTH));
+        offset += HpsConstants.HASH_ALGORITHM_DIGEST_LENGTH;
+        expectedInfoStr = new String(Arrays.copyOfRange(packet, offset, packet.length), HpsConstants.ENCODING_STANDARD);
         assertEquals(MSG2, expectedInfoStr);
     }
 
@@ -108,19 +108,19 @@ public class ProtocolUnitTest
         FakeHypeInstance instance2 = new FakeHypeInstance(DEST_ID2, null, false);
 
         packet = Protocol.sendInfoMsg(SERVICE_KEY1, instance1, MSG1);
-        assertEquals((byte) HpbMessageType.INFO.ordinal(), packet[0]);
+        assertEquals((byte) HpsMessageType.INFO.ordinal(), packet[0]);
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
-        assertArrayEquals(SERVICE_KEY1, Arrays.copyOfRange(packet, offset, offset+ HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH));
-        offset += HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH;
-        expectedInfoStr = new String(Arrays.copyOfRange(packet, offset, packet.length), HpbConstants.ENCODING_STANDARD);
+        assertArrayEquals(SERVICE_KEY1, Arrays.copyOfRange(packet, offset, offset+ HpsConstants.HASH_ALGORITHM_DIGEST_LENGTH));
+        offset += HpsConstants.HASH_ALGORITHM_DIGEST_LENGTH;
+        expectedInfoStr = new String(Arrays.copyOfRange(packet, offset, packet.length), HpsConstants.ENCODING_STANDARD);
         assertEquals(MSG1, expectedInfoStr);
 
         packet = Protocol.sendInfoMsg(SERVICE_KEY2, instance2, MSG2);
-        assertEquals((byte) HpbMessageType.INFO.ordinal(), packet[0]);
+        assertEquals((byte) HpsMessageType.INFO.ordinal(), packet[0]);
         offset = Protocol.MESSAGE_TYPE_BYTE_SIZE;
-        assertArrayEquals(SERVICE_KEY2, Arrays.copyOfRange(packet, offset, offset+ HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH));
-        offset += HpbConstants.HASH_ALGORITHM_DIGEST_LENGTH;
-        expectedInfoStr = new String(Arrays.copyOfRange(packet, offset, packet.length), HpbConstants.ENCODING_STANDARD);
+        assertArrayEquals(SERVICE_KEY2, Arrays.copyOfRange(packet, offset, offset+ HpsConstants.HASH_ALGORITHM_DIGEST_LENGTH));
+        offset += HpsConstants.HASH_ALGORITHM_DIGEST_LENGTH;
+        expectedInfoStr = new String(Arrays.copyOfRange(packet, offset, packet.length), HpsConstants.ENCODING_STANDARD);
         assertEquals(MSG2, expectedInfoStr);
     }
 
@@ -132,35 +132,35 @@ public class ProtocolUnitTest
         String MSG = "HelloHypeWorld";
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
-        outputStream.write((byte) HpbMessageType.SUBSCRIBE_SERVICE.ordinal());
+        outputStream.write((byte) HpsMessageType.SUBSCRIBE_SERVICE.ordinal());
         outputStream.write(SERVICE_KEY);
         packet = outputStream.toByteArray();
-        assertEquals(HpbMessageType.SUBSCRIBE_SERVICE, Protocol.extractHpbMessageTypeFromReceivedPacket(packet));
+        assertEquals(HpsMessageType.SUBSCRIBE_SERVICE, Protocol.extractHpsMessageTypeFromReceivedPacket(packet));
 
         outputStream.reset();
-        outputStream.write((byte) HpbMessageType.UNSUBSCRIBE_SERVICE.ordinal());
+        outputStream.write((byte) HpsMessageType.UNSUBSCRIBE_SERVICE.ordinal());
         outputStream.write(SERVICE_KEY);
         packet = outputStream.toByteArray();
-        assertEquals(HpbMessageType.UNSUBSCRIBE_SERVICE, Protocol.extractHpbMessageTypeFromReceivedPacket(packet));
+        assertEquals(HpsMessageType.UNSUBSCRIBE_SERVICE, Protocol.extractHpsMessageTypeFromReceivedPacket(packet));
 
         outputStream.reset();
-        outputStream.write((byte) HpbMessageType.PUBLISH.ordinal());
+        outputStream.write((byte) HpsMessageType.PUBLISH.ordinal());
         outputStream.write(SERVICE_KEY);
         outputStream.write(MSG.getBytes());
         packet = outputStream.toByteArray();
-        assertEquals(HpbMessageType.PUBLISH, Protocol.extractHpbMessageTypeFromReceivedPacket(packet));
+        assertEquals(HpsMessageType.PUBLISH, Protocol.extractHpsMessageTypeFromReceivedPacket(packet));
 
         outputStream.reset();
-        outputStream.write((byte) HpbMessageType.INFO.ordinal());
+        outputStream.write((byte) HpsMessageType.INFO.ordinal());
         outputStream.write(SERVICE_KEY);
         outputStream.write(MSG.getBytes());
         packet = outputStream.toByteArray();
-        assertEquals(HpbMessageType.INFO, Protocol.extractHpbMessageTypeFromReceivedPacket(packet));
+        assertEquals(HpsMessageType.INFO, Protocol.extractHpsMessageTypeFromReceivedPacket(packet));
 
         outputStream.reset();
         outputStream.write((byte) 0xFF);
         outputStream.write(SERVICE_KEY);
         packet = outputStream.toByteArray();
-        assertEquals(HpbMessageType.INVALID, Protocol.extractHpbMessageTypeFromReceivedPacket(packet));
+        assertEquals(HpsMessageType.INVALID, Protocol.extractHpsMessageTypeFromReceivedPacket(packet));
     }
 }

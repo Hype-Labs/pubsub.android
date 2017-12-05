@@ -7,20 +7,20 @@ import java.io.IOException;
 /**
  * This class represents a message from the HypePubSub application
  */
-public class HpbMessage
+public class HpsMessage
 {
-    private HpbMessageType type;
+    private HpsMessageType type;
     private byte[] serviceKey;
     private String info;
 
-    public HpbMessage(HpbMessageType type, byte[] serviceKey, String info)
+    public HpsMessage(HpsMessageType type, byte[] serviceKey, String info)
     {
         this.type = type;
         this.serviceKey = serviceKey;
         this.info = info;
     }
 
-    public HpbMessage(HpbMessageType type, byte[] serviceKey)
+    public HpsMessage(HpsMessageType type, byte[] serviceKey)
     {
         this.type = type;
         this.serviceKey = serviceKey;
@@ -33,7 +33,7 @@ public class HpbMessage
         outputStream.write((byte) type.ordinal());
         outputStream.write(serviceKey);
         if(info != null) {
-            outputStream.write(info.getBytes(HpbConstants.ENCODING_STANDARD));
+            outputStream.write(info.getBytes(HpsConstants.ENCODING_STANDARD));
         }
         return outputStream.toByteArray();
     }
@@ -49,7 +49,7 @@ public class HpbMessage
         return logString;
     }
 
-    public HpbMessageType getType(){
+    public HpsMessageType getType(){
         return type;
     }
 

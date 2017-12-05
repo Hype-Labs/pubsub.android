@@ -22,8 +22,8 @@ public class MessagesActivity extends AppCompatActivity
         byte[] subscriptionKey = this.getIntent().getByteArrayExtra(EXTRA_SUBSCRIPTION_KEY);
 
         // Get ListView object from xml
-        HypePubSub hpb = HypePubSub.getInstance();
-        Subscription subscription = hpb.ownSubscriptions.find(subscriptionKey);
+        HypePubSub hps = HypePubSub.getInstance();
+        Subscription subscription = hps.ownSubscriptions.find(subscriptionKey);
 
         if(subscription == null) // Protection against subscription not found..
             this.finish();

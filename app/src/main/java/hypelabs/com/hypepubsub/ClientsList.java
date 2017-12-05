@@ -23,7 +23,7 @@ public class ClientsList
      * @param instance Instance to be used in the construction of the client object to be added
      * @return Returns -1 if the client is already present and 0 otherwise.
      * @throws NoSuchAlgorithmException This exception is thrown when the
-     *          {@value HpbConstants#HASH_ALGORITHM} algorithm is not available on the device.
+     *          {@value HpsConstants#HASH_ALGORITHM} algorithm is not available on the device.
      */
     public synchronized int add(Instance instance) throws NoSuchAlgorithmException
     {
@@ -63,7 +63,7 @@ public class ClientsList
         while(it.hasNext())
         {
             Client currentClient = it.next();
-            if(HpbGenericUtils.areInstancesEqual(currentClient.instance, instance)) {
+            if(HpsGenericUtils.areInstancesEqual(currentClient.instance, instance)) {
                 return currentClient;
             }
         }

@@ -19,10 +19,10 @@ public class ServiceManagersListActivity extends AppCompatActivity
         this.setTitle("Managed Services");
         setContentView(R.layout.activity_service_managers_list);
 
-        HypePubSub hpb = HypePubSub.getInstance();
+        HypePubSub hps = HypePubSub.getInstance();
 
         serviceManagersListView = findViewById(R.id.activity_service_manager_list_view);
-        serviceManagersListView.setAdapter(hpb.managedServices.getServiceManagersAdapter(ServiceManagersListActivity.this));
+        serviceManagersListView.setAdapter(hps.managedServices.getServiceManagersAdapter(ServiceManagersListActivity.this));
 
         setServiceManagersListActivity(this);
     }

@@ -14,7 +14,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends AppCompatActivity
 {
-    private HypePubSub hpb = HypePubSub.getInstance();
+    private HypePubSub hps = HypePubSub.getInstance();
     private Network network = Network.getInstance();
 
     private Button subscribeButton;
@@ -99,9 +99,9 @@ public class MainActivity extends AppCompatActivity
                         service = service.toLowerCase().trim();
                         if(service.length() > 0)
                         {
-                            if(hpb.ownSubscriptions.find(HpbGenericUtils.getStrHash(service)) == null)
+                            if(hps.ownSubscriptions.find(HpsGenericUtils.getStrHash(service)) == null)
                             {
-                                hpb.issueSubscribeReq(service);
+                                hps.issueSubscribeReq(service);
                             }
                             else
                             {
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
 
-                if(hpb.ownSubscriptions.size() == 0){
+                if(hps.ownSubscriptions.size() == 0){
                     AlertDialogUtils.showOkDialog(MainActivity.this, "INFO", "No services subscribed");
                     return;
                 }
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity
                     {
                         Subscription subscription = (Subscription) listItem;
                         String serviceName = subscription.serviceName;
-                        hpb.issueUnsubscribeReq(serviceName);
+                        hps.issueUnsubscribeReq(serviceName);
 
                         AlertDialogUtils.showOkDialog(MainActivity.this,
                                 "INFO",
@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity
 
                 AlertDialogUtils.showListViewInputDialog(MainActivity.this,
                         "UNSUBSCRIBE SERVICE" ,
-                        hpb.ownSubscriptions.getSubscriptionsAdapter(MainActivity.this),
+                        hps.ownSubscriptions.getSubscriptionsAdapter(MainActivity.this),
                         unsubscribeList);
             }
         });
@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity
                         service = service.toLowerCase().trim();
                         msg = msg.trim();
                         if(service.length() > 0 && msg.length() > 0)
-                            hpb.issuePublishReq(service, msg);
+                            hps.issuePublishReq(service, msg);
                         else
                             AlertDialogUtils.showOkDialog(MainActivity.this,
                                                             "WARNING",
@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity
                 try
                 {
                     AlertDialogUtils.showOkDialog(MainActivity.this,"Own Device",
-                                                HpbGenericUtils.getInstanceAnnouncementStr (network.ownClient.instance) + "\n"
+                                                HpsGenericUtils.getInstanceAnnouncementStr (network.ownClient.instance) + "\n"
                                                 + "Id: 0x" + BinaryUtils.byteArrayToHexString(network.ownClient.instance.getIdentifier()) + "\n"
                                                 + "Key: 0x" + BinaryUtils.byteArrayToHexString(network.ownClient.key));
                 } catch (UnsupportedEncodingException e)
@@ -263,7 +263,7 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
 
-                if(hpb.ownSubscriptions.size() == 0){
+                if(hps.ownSubscriptions.size() == 0){
                     AlertDialogUtils.showOkDialog(MainActivity.this, "INFO", "No services subscribed");
                     return;
                 }

@@ -7,7 +7,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-public class HpbGenericUtils
+public class HpsGenericUtils
 {
     /**
      *  Compares 2 Hype instances.
@@ -26,14 +26,14 @@ public class HpbGenericUtils
      *
      * @param instance Hype instance containing the announcement to be decoded.
      * @return Returns the decoded string of the announcement.
-     * @throws UnsupportedEncodingException Throws this exception when the {@value HpbConstants#ENCODING_STANDARD} encoding is not
+     * @throws UnsupportedEncodingException Throws this exception when the {@value HpsConstants#ENCODING_STANDARD} encoding is not
      *                                      available on the device.
      */
     public static String getInstanceAnnouncementStr(Instance instance) throws UnsupportedEncodingException
     {
         if(instance.getAnnouncement() == null)
             return "---";
-        return new String(instance.getAnnouncement(), HpbConstants.ENCODING_STANDARD);
+        return new String(instance.getAnnouncement(), HpsConstants.ENCODING_STANDARD);
     }
 
     /**
@@ -41,12 +41,12 @@ public class HpbGenericUtils
      *
      * @param byteArray Byte array to be hashed.
      * @return Returns the hash of the specified byte array.
-     * @throws NoSuchAlgorithmException Throws this exception when the {@value HpbConstants#HASH_ALGORITHM} algorithm is not
+     * @throws NoSuchAlgorithmException Throws this exception when the {@value HpsConstants#HASH_ALGORITHM} algorithm is not
      *                                  available on the device.
      */
     public static byte[] getByteArrayHash(byte[] byteArray) throws NoSuchAlgorithmException
     {
-        MessageDigest md = MessageDigest.getInstance(HpbConstants.HASH_ALGORITHM);
+        MessageDigest md = MessageDigest.getInstance(HpsConstants.HASH_ALGORITHM);
         return md.digest(byteArray);
     }
 
@@ -55,12 +55,12 @@ public class HpbGenericUtils
      *
      * @param str String to be hashed.
      * @return Returns the hash of the specified string.
-     * @throws NoSuchAlgorithmException Throws this exception when the {@value HpbConstants#HASH_ALGORITHM} algorithm is not
+     * @throws NoSuchAlgorithmException Throws this exception when the {@value HpsConstants#HASH_ALGORITHM} algorithm is not
      *                                  available on the device.
      */
     public static byte[] getStrHash(String str) throws NoSuchAlgorithmException
     {
-        MessageDigest md = MessageDigest.getInstance(HpbConstants.HASH_ALGORITHM);
+        MessageDigest md = MessageDigest.getInstance(HpsConstants.HASH_ALGORITHM);
         return md.digest(str.getBytes());
     }
 
@@ -72,11 +72,11 @@ public class HpbGenericUtils
      * @return Returns a string containing the announcement string of a given instance and
      *          the instance identifier in an hexadecimal format.
      * @throws UnsupportedEncodingException This exception is thrown when the encoding format
-     *          used {@value HpbConstants#ENCODING_STANDARD}
+     *          used {@value HpsConstants#ENCODING_STANDARD}
      */
     public static String getInstanceLogIdStr(Instance instance) throws UnsupportedEncodingException
     {
-        return HpbGenericUtils.getInstanceAnnouncementStr(instance) + " (0x" + BinaryUtils.byteArrayToHexString(instance.getIdentifier()) + ")";
+        return HpsGenericUtils.getInstanceAnnouncementStr(instance) + " (0x" + BinaryUtils.byteArrayToHexString(instance.getIdentifier()) + ")";
     }
 
     public static String getSubscriptionLogStr(Subscription subscription) throws UnsupportedEncodingException

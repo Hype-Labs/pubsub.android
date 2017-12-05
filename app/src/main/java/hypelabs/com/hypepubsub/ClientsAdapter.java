@@ -49,7 +49,7 @@ public class ClientsAdapter extends ArrayAdapter<Client>
             // Populate the data into the template view using the data object
             try
             {
-                clientName.setText(HpbGenericUtils.getInstanceAnnouncementStr(client.instance));
+                clientName.setText(HpsGenericUtils.getInstanceAnnouncementStr(client.instance));
                 clientId.setText(BinaryUtils.byteArrayToHexString(client.instance.getIdentifier()));
                 clientKey.setText(BinaryUtils.byteArrayToHexString(client.key));
             } catch (UnsupportedEncodingException e)
