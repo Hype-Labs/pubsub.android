@@ -39,7 +39,7 @@ public class Network
                 Client client = it.next();
 
                 byte dist[] = BinaryUtils.xor(serviceKey, client.key);
-                if (BinaryUtils.getHigherByteArray(lowestDist, dist) == 1)
+                if (BinaryUtils.determineHigherBigEndianByteArray(lowestDist, dist) == 1)
                 {
                     lowestDist = dist;
                     managerInstance = client.instance;

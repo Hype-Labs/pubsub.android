@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity
                         service = service.toLowerCase().trim();
                         if(service.length() > 0)
                         {
-                            if(hps.ownSubscriptions.find(HpsGenericUtils.getStrHash(service)) == null)
+                            if(hps.ownSubscriptions.find(HpsGenericUtils.stringHash(service)) == null)
                             {
                                 hps.issueSubscribeReq(service);
                             }
@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity
                 try
                 {
                     AlertDialogUtils.showOkDialog(MainActivity.this,"Own Device",
-                                                HpsGenericUtils.getInstanceAnnouncementStr (network.ownClient.instance) + "\n"
+                                                HpsGenericUtils.buildInstanceAnnouncementStr(network.ownClient.instance) + "\n"
                                                 + "Id: 0x" + BinaryUtils.byteArrayToHexString(network.ownClient.instance.getIdentifier()) + "\n"
                                                 + "Key: 0x" + BinaryUtils.byteArrayToHexString(network.ownClient.key));
                 } catch (UnsupportedEncodingException e)

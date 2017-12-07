@@ -2,8 +2,6 @@ package hypelabs.com.hypepubsub;
 
 import org.junit.Test;
 
-import java.security.NoSuchAlgorithmException;
-
 import static org.junit.Assert.*;
 
 public class BinaryUtilsUnitTest {
@@ -36,11 +34,11 @@ public class BinaryUtilsUnitTest {
         byte val3[] = new byte[] {(byte) 0x1d, (byte) 0x02, (byte) 0x8b, (byte) 0xb7, (byte) 0xc4, (byte) 0x90, (byte) 0x7f, (byte) 0xcb, (byte) 0xab, (byte) 0x6f, (byte) 0x9e, (byte) 0x9c, (byte) 0x8b, (byte) 0x26, (byte) 0x2c, (byte) 0x87, (byte) 0x7e, (byte) 0xe3, (byte) 0x84, (byte) 0xe4}; // 0001110100000010100010111011011111000100100100000111111111001011101010110110111110011110100111001000101100100110001011001000011101111110111000111000010011100100
         byte val4[] = new byte[] {(byte) 0xa0, (byte) 0x81, (byte) 0x89, (byte) 0xe8, (byte) 0xca, (byte) 0x01, (byte) 0x37, (byte) 0x19, (byte) 0x07, (byte) 0xab, (byte) 0x9d, (byte) 0xb8, (byte) 0x0f, (byte) 0x0e, (byte) 0xb0, (byte) 0x62, (byte) 0x12, (byte) 0x42, (byte) 0x72, (byte) 0x22}; // 1010000010000001100010011110100011001010000000010011011100011001000001111010101110011101101110000000111100001110101100000110001000010010010000100111001000100010
 
-        assertEquals(0, BinaryUtils.getHigherByteArray(val1, val1));
-        assertEquals(1, BinaryUtils.getHigherByteArray(val1, val2));
-        assertEquals(2, BinaryUtils.getHigherByteArray(val2, val1));
-        assertEquals(1, BinaryUtils.getHigherByteArray(val2, val3));
-        assertEquals(1, BinaryUtils.getHigherByteArray(val4, val2));
-        assertEquals(2, BinaryUtils.getHigherByteArray(val4, val1));
+        assertEquals(0, BinaryUtils.determineHigherBigEndianByteArray(val1, val1));
+        assertEquals(1, BinaryUtils.determineHigherBigEndianByteArray(val1, val2));
+        assertEquals(2, BinaryUtils.determineHigherBigEndianByteArray(val2, val1));
+        assertEquals(1, BinaryUtils.determineHigherBigEndianByteArray(val2, val3));
+        assertEquals(1, BinaryUtils.determineHigherBigEndianByteArray(val4, val2));
+        assertEquals(2, BinaryUtils.determineHigherBigEndianByteArray(val4, val1));
     }
 }

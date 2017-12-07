@@ -36,6 +36,12 @@ public class NetworkTest
 
         assertArrayEquals(ID4, network.determineInstanceResponsibleForService(SERVICE_KEY1).getIdentifier());
         assertArrayEquals(ID1, network.determineInstanceResponsibleForService(SERVICE_KEY2).getIdentifier());
+
+        // Clear clients from Network singleton
+        network.networkClients.remove(instance1);
+        network.networkClients.remove(instance2);
+        network.networkClients.remove(instance3);
+        network.networkClients.remove(instance4);
     }
 
 }

@@ -38,7 +38,7 @@ public class BinaryUtils
      *         higher integer value the value 1 is returned. If the byte array specified in the second
      *         parameter has an higher integer value the value 2 is returned.
      */
-    public static int getHigherByteArray(byte array1[], byte array2[])
+    public static int determineHigherBigEndianByteArray(byte array1[], byte array2[])
     {
         if (array1 == null || array2 == null || array1.length != array2.length || array1.length == 0) {
             return -1;

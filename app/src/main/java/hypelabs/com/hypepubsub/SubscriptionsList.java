@@ -13,10 +13,10 @@ import java.util.ListIterator;
 
 public class SubscriptionsList
 {
-
     // Used composition instead of inheritance to hide the methods that shouldn't be called in
     // a SubscriptionsList.
     final private LinkedList<Subscription> subscriptions = new LinkedList<>();
+
 
     private SubscriptionsAdapter subscriptionsAdapter = null;
 
@@ -25,9 +25,8 @@ public class SubscriptionsList
         MessageDigest md = MessageDigest.getInstance(HpsConstants.HASH_ALGORITHM);
         byte serviceKey[] = md.digest(serviceName.getBytes());
 
-        if(find(serviceKey) != null) {
+        if(isSubscriptionAlreadyAdded(serviceKey))
             return -1;
-        }
 
         subscriptions.add(new Subscription(serviceName, managerInstance));
         return 0;
@@ -47,6 +46,15 @@ public class SubscriptionsList
         return 0;
     }
 
+    public synchronized boolean isSubscriptionAlreadyAdded(byte serviceKey[])
+    {
+        if(find(serviceKey) == null)
+            return false;
+
+        return true;
+    }
+
+
     public synchronized Subscription find(byte serviceKey[])
     {
         ListIterator<Subscription> it = listIterator();
@@ -60,7 +68,19 @@ public class SubscriptionsList
         return null;
     }
 
-    // Methods from LinkedList that we want to enable.
+    public synchronized SubscriptionsAdapter getSubscriptionsAdapter(Context context)
+    {
+        if(subscriptionsAdapter == null){
+            subscriptionsAdapter = new SubscriptionsAdapter(context, subscriptions);
+        }
+
+        return  subscriptionsAdapter;
+    }
+
+    //////////////////////////////////////////////////////////////////////////////
+    //  LinkedList methods to enable
+    //////////////////////////////////////////////////////////////////////////////
+
     public synchronized ListIterator<Subscription> listIterator()
     {
         return subscriptions.listIterator();
@@ -74,15 +94,6 @@ public class SubscriptionsList
     public synchronized Subscription get(int index)
     {
         return subscriptions.get(index);
-    }
-
-    public synchronized SubscriptionsAdapter getSubscriptionsAdapter(Context context)
-    {
-        if(subscriptionsAdapter == null){
-            subscriptionsAdapter = new SubscriptionsAdapter(context, subscriptions);
-        }
-
-        return  subscriptionsAdapter;
     }
 
 }

@@ -11,16 +11,8 @@ import android.widget.TextView;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 
-/**
- * Adapter to enable the screen display of a list of clients
- */
 public class ClientsAdapter extends ArrayAdapter<Client>
 {
-    /**
-     * Constructor of the ClientsAdapter
-     * @param context Context of the android activity
-     * @param clients Linked list containing the clients to be displayed
-     */
     public ClientsAdapter(Context context, LinkedList<Client> clients)
     {
         super(context, 0, clients);
@@ -49,7 +41,7 @@ public class ClientsAdapter extends ArrayAdapter<Client>
             // Populate the data into the template view using the data object
             try
             {
-                clientName.setText(HpsGenericUtils.getInstanceAnnouncementStr(client.instance));
+                clientName.setText(HpsGenericUtils.buildInstanceAnnouncementStr(client.instance));
                 clientId.setText(BinaryUtils.byteArrayToHexString(client.instance.getIdentifier()));
                 clientKey.setText(BinaryUtils.byteArrayToHexString(client.key));
             } catch (UnsupportedEncodingException e)

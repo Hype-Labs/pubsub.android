@@ -11,14 +11,14 @@ public class ServiceManagersList
 {
     // Used composition instead of inheritance to hide the methods that shouldn't be called in
     // a ServiceManagersList.
-
     final private LinkedList<ServiceManager> serviceManagers = new LinkedList<>();
+
 
     private ServiceManagersAdapter serviceManagersAdapter = null;
 
     public synchronized int add(byte serviceKey[])
     {
-        if(find(serviceKey) != null)
+        if(isServiceManagerAlreadyAdded(serviceKey))
             return -1;
 
         serviceManagers.add(new ServiceManager(serviceKey));
@@ -35,6 +35,14 @@ public class ServiceManagersList
         return 0;
     }
 
+    public synchronized boolean isServiceManagerAlreadyAdded(byte serviceKey[])
+    {
+        if(find(serviceKey) == null)
+            return false;
+
+        return true;
+    }
+
     public synchronized ServiceManager find(byte serviceKey[])
     {
         ListIterator<ServiceManager> it = listIterator();
@@ -48,7 +56,18 @@ public class ServiceManagersList
         return null;
     }
 
-    // Methods from LinkedList that we want to enable.
+    public synchronized ServiceManagersAdapter getServiceManagersAdapter(Context context)
+    {
+        if(serviceManagersAdapter == null){
+            serviceManagersAdapter = new ServiceManagersAdapter(context, serviceManagers);
+        }
+        return serviceManagersAdapter;
+    }
+
+    //////////////////////////////////////////////////////////////////////////////
+    //  LinkedList methods to enable
+    //////////////////////////////////////////////////////////////////////////////
+
     public synchronized ListIterator<ServiceManager> listIterator() {
         return serviceManagers.listIterator();
     }
@@ -64,14 +83,6 @@ public class ServiceManagersList
 
     public synchronized ServiceManager getLast() {
         return serviceManagers.getLast();
-    }
-
-    public synchronized ServiceManagersAdapter getServiceManagersAdapter(Context context)
-    {
-        if(serviceManagersAdapter == null){
-            serviceManagersAdapter = new ServiceManagersAdapter(context, serviceManagers);
-        }
-        return serviceManagersAdapter;
     }
 
 }

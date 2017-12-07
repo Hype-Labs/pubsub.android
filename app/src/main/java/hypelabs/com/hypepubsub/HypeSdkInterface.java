@@ -70,7 +70,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try {
             Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK started! Host Instance: "
-                    + HpsGenericUtils.getInstanceLogIdStr(Hype.getHostInstance()));
+                    + HpsGenericUtils.buildInstanceLogIdStr(Hype.getHostInstance()));
             isHypeReady = true;
             network.setOwnClient(Hype.getHostInstance());
         }
@@ -121,7 +121,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         String instanceLogIdStr = "";
         try {
-            instanceLogIdStr = HpsGenericUtils.getInstanceLogIdStr(var1);
+            instanceLogIdStr = HpsGenericUtils.buildInstanceLogIdStr(var1);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -154,7 +154,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK instance lost:" + HpsGenericUtils.getInstanceLogIdStr(var1));
+            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK instance lost:" + HpsGenericUtils.buildInstanceLogIdStr(var1));
 
             // Remove the instance lost in a separate thread to release the lock of the
             // Hype instance object preventing possible deadlock
@@ -186,7 +186,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK instance resolved: " + HpsGenericUtils.getInstanceLogIdStr(var1));
+            Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK instance resolved: " + HpsGenericUtils.buildInstanceLogIdStr(var1));
 
             // Add instance in a separate thread to prevent deadlock
             final Instance instanceFound = var1;
@@ -209,7 +209,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.e(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK instance fail resolving: " + HpsGenericUtils.getInstanceLogIdStr(var1));
+            Log.e(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK instance fail resolving: " + HpsGenericUtils.buildInstanceLogIdStr(var1));
 
             Log.e(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK instance fail resolving. Suggestion: " + var2.getSuggestion());
             Log.e(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK instance fail resolving. Description: " + var2.getDescription());
@@ -255,7 +255,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
         try
         {
             Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Hype SDK message failed sending to: "
-                    + HpsGenericUtils.getInstanceLogIdStr(var2));
+                    + HpsGenericUtils.buildInstanceLogIdStr(var2));
         } catch (UnsupportedEncodingException e)
         {
             e.printStackTrace();
@@ -296,7 +296,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
         try
         {
             Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Adding Hype SDK instance already resolved: "
-                    + HpsGenericUtils.getInstanceLogIdStr(instance));
+                    + HpsGenericUtils.buildInstanceLogIdStr(instance));
 
             synchronized (network) // Add thread safety to adding procedure
             {
@@ -319,7 +319,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     public void removeInstance(Instance instance) throws IOException, NoSuchAlgorithmException
     {
         Log.i(TAG, HYPE_SDK_INTERFACE_LOG_PREFIX + "Removing Hype SDK instance already lost: "
-                + HpsGenericUtils.getInstanceLogIdStr(instance));
+                + HpsGenericUtils.buildInstanceLogIdStr(instance));
 
         synchronized (network) // Add thread safety to removal procedure
         {
