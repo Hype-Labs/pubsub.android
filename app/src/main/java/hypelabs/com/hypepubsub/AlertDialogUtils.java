@@ -13,9 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-
 /**
  * This class has some utility methods to create several types of AlertDialogs.
  */
