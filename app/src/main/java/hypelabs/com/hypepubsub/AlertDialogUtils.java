@@ -21,7 +21,6 @@ import java.security.NoSuchAlgorithmException;
  */
 public class AlertDialogUtils
 {
-
     /**
      * This method creates and displays an alert dialog with a given message and an Ok button.
      *
@@ -44,11 +43,11 @@ public class AlertDialogUtils
      * @param context Context on which the dialog should be displayed.
      * @param title Title of the the dialog.
      * @param hintInput Hint to suggest the type of input expected.
-     * @param singleInputDialog Object of a class that implemented the SingleInputDialog interface.
+     * @param singleInputDialog Object of a class that implemented the ISingleInputDialog interface.
      *                          This object defines what will be executed when the Ok and Cancel
      *                          buttons are pressed.
      */
-    public static void showSingleInputDialog(Context context, String title, String hintInput, final SingleInputDialog singleInputDialog)
+    public static void showSingleInputDialog(Context context, String title, String hintInput, final ISingleInputDialog singleInputDialog)
     {
         final EditText input = new EditText(context);
         input.setHint(hintInput);
@@ -70,9 +69,7 @@ public class AlertDialogUtils
                         try {
                             singleInputDialog.onOk(input.getText().toString());
                         }
-                        catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (NoSuchAlgorithmException e) {
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -99,23 +96,22 @@ public class AlertDialogUtils
     }
 
     /**
-     * Interface to be implemented and passed as a parameter when using a SingleInputDialog. It
+     * Interface to be implemented and passed as a parameter when using a ISingleInputDialog. It
      * acts like a callback when the Ok or the Cancel button are pressed.
      */
-    public interface SingleInputDialog
+    public interface ISingleInputDialog
     {
         /**
          *
-         * Method called when the Ok button of a SingleInputDialog is pressed
+         * Method called when the Ok button of a ISingleInputDialog is pressed
          *
          * @param str Value of the dialog input
-         * @throws IOException
-         * @throws NoSuchAlgorithmException
+         * @throws Exception
          */
-        void onOk(String str) throws IOException, NoSuchAlgorithmException;
+        void onOk(String str) throws Exception;
 
         /**
-         * Method called when the Cancel button of a SingleInputDialog is pressed
+         * Method called when the Cancel button of a ISingleInputDialog is pressed
          */
         void onCancel();
     }
@@ -128,11 +124,11 @@ public class AlertDialogUtils
      * @param title Title of the the dialog.
      * @param hintInput1 Hint to suggest the type of 1st input expected.
      * @param hintInput2 Hint to suggest the type of 2nd input expected.
-     * @param doubleInputDialog Object of a class that implemented the DoubleInputDialog interface.
+     * @param doubleInputDialog Object of a class that implemented the IDoubleInputDialog interface.
      *                          This object defines what will be executed when the Ok and Cancel
      *                          buttons are pressed.
      */
-    public static void showDoubleInputDialog(Context context, String title, String hintInput1, String hintInput2, final DoubleInputDialog doubleInputDialog)
+    public static void showDoubleInputDialog(Context context, String title, String hintInput1, String hintInput2, final IDoubleInputDialog doubleInputDialog)
     {
         final EditText input1 = new EditText(context);
         input1.setHint(hintInput1);
@@ -158,9 +154,7 @@ public class AlertDialogUtils
                             doubleInputDialog.onOk(input1.getText().toString(),
                                                  input2.getText().toString());
                         }
-                        catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (NoSuchAlgorithmException e) {
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -187,24 +181,23 @@ public class AlertDialogUtils
     }
 
     /**
-     * Interface to be implemented and passed as a parameter when using a DoubleInputDialog. It
+     * Interface to be implemented and passed as a parameter when using a IDoubleInputDialog. It
      * acts like a callback when the Ok or the Cancel button are pressed.
      */
-    public interface DoubleInputDialog
+    public interface IDoubleInputDialog
     {
         /**
          *
-         * Method called when the Ok button of a DoubleInputDialog is pressed
+         * Method called when the Ok button of a IDoubleInputDialog is pressed
          *
          * @param str1 Value of the 1st dialog input
          * @param str2 Value of the 2nd dialog input
-         * @throws IOException
-         * @throws NoSuchAlgorithmException
+         * @throws Exception
          */
-        void onOk(String str1, String str2) throws IOException, NoSuchAlgorithmException;
+        void onOk(String str1, String str2) throws Exception;
 
         /**
-         * Method called when the Cancel button of a DoubleInputDialog is pressed
+         * Method called when the Cancel button of a IDoubleInputDialog is pressed
          */
         void onCancel();
     }
@@ -216,10 +209,10 @@ public class AlertDialogUtils
      * @param context Context on which the dialog should be displayed.
      * @param title Title of the the dialog.
      * @param adapter Adapter to be given to the list view
-     * @param listViewInputDialog Object of a class that implemented the ListViewInputDialog interface.
+     * @param listViewInputDialog Object of a class that implemented the IListViewInputDialog interface.
      *                            This object defines what will be executed when an item of the list is clicked.
      */
-    public static void showListViewInputDialog(Context context, String title, ListAdapter adapter, final ListViewInputDialog listViewInputDialog)
+    public static void showListViewInputDialog(Context context, String title, ListAdapter adapter, final IListViewInputDialog listViewInputDialog)
     {
         final ListView listView = new ListView(context);
         listView.setAdapter(adapter);
@@ -250,10 +243,7 @@ public class AlertDialogUtils
                     listViewInputDialog.onItemClick(listItem, dialog);
 
                 }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-                catch (NoSuchAlgorithmException e) {
+                catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -261,19 +251,18 @@ public class AlertDialogUtils
     }
 
     /**
-     * Interface to be implemented and passed as a parameter when using a ListViewInputDialog. It
+     * Interface to be implemented and passed as a parameter when using a IListViewInputDialog. It
      * acts like a callback when an item of the list is clicked.
      */
-    public interface ListViewInputDialog
+    public interface IListViewInputDialog
     {
         /**
          * Method called when a list item is pressed
          *
          * @param listItem Object associated to the selected list item.
          * @param dialog Dialog in which the list view is being displayed.
-         * @throws IOException
-         * @throws NoSuchAlgorithmException
+         * @throws Exception
          */
-        void onItemClick(Object listItem, Dialog dialog) throws IOException, NoSuchAlgorithmException;
+        void onItemClick(Object listItem, Dialog dialog) throws Exception;
     }
 }

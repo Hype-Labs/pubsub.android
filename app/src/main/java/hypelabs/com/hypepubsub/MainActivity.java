@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
 
-                AlertDialogUtils.SingleInputDialog subscribeInput = new AlertDialogUtils.SingleInputDialog() {
+                AlertDialogUtils.ISingleInputDialog subscribeInput = new AlertDialogUtils.ISingleInputDialog() {
 
                     @Override
                     public void onOk(String service) throws IOException, NoSuchAlgorithmException
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
 
-                AlertDialogUtils.ListViewInputDialog unsubscribeList = new AlertDialogUtils.ListViewInputDialog() {
+                AlertDialogUtils.IListViewInputDialog unsubscribeList = new AlertDialogUtils.IListViewInputDialog() {
 
                     @Override
                     public void onItemClick(Object listItem, Dialog dialog) throws IOException, NoSuchAlgorithmException
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
 
-                AlertDialogUtils.DoubleInputDialog publishInput = new AlertDialogUtils.DoubleInputDialog() {
+                AlertDialogUtils.IDoubleInputDialog publishInput = new AlertDialogUtils.IDoubleInputDialog() {
 
                     @Override
                     public void onOk(String service, String msg) throws IOException, NoSuchAlgorithmException
