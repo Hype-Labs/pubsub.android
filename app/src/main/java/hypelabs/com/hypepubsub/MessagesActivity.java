@@ -23,7 +23,7 @@ public class MessagesActivity extends AppCompatActivity
 
         // Get ListView object from xml
         HypePubSub hps = HypePubSub.getInstance();
-        Subscription subscription = hps.ownSubscriptions.find(subscriptionKey);
+        Subscription subscription = hps.ownSubscriptions.findSubscriptionWithServiceKey(subscriptionKey);
 
         if(subscription == null) // Protection against subscription not found..
             this.finish();

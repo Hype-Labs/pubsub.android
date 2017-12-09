@@ -4,9 +4,7 @@ package hypelabs.com.hypepubsub;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-/**
- * This class represents a message from the HypePubSub application
- */
+
 public class HpsMessage
 {
     private HpsMessageType type;
@@ -35,15 +33,17 @@ public class HpsMessage
         if(info != null) {
             outputStream.write(info.getBytes(HpsConstants.ENCODING_STANDARD));
         }
+
         return outputStream.toByteArray();
     }
 
     public String toLogString()
     {
-        String logString = type.toString() + " message for service 0x"
-                + BinaryUtils.byteArrayToHexString(serviceKey) + ".";
+
+        String logString = String.format("%s message for service 0x%s.",
+                type.toString(), BinaryUtils.byteArrayToHexString(serviceKey));
         if(info != null) {
-            logString += " Info: " + info + ".";
+            logString += String.format(" Info: %s.", info);
         }
 
         return logString;

@@ -12,11 +12,11 @@ public class Subscription {
 
     String serviceName;
     byte serviceKey[];
-    Instance manager;
+    Client manager;
     ArrayList<String> receivedMsg;
     private ArrayAdapter<String> receivedMsgAdapter;
 
-    public Subscription(String serviceName, Instance manager) throws NoSuchAlgorithmException
+    public Subscription(String serviceName, Client manager) throws NoSuchAlgorithmException
     {
         this.serviceName = serviceName;
         this.serviceKey = HpsGenericUtils.stringHash(serviceName);
@@ -26,8 +26,7 @@ public class Subscription {
 
     public ArrayAdapter<String> getReceivedMsgAdapter(Context context)
     {
-        if (receivedMsgAdapter == null)
-        {
+        if (receivedMsgAdapter == null) {
             receivedMsgAdapter = new ArrayAdapter<>(context, R.layout.item_message, R.id.item_message_msg, receivedMsg);
         }
         return receivedMsgAdapter;

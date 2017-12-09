@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity
 {
     private HypePubSub hps = HypePubSub.getInstance();
     private Network network = Network.getInstance();
+    private HypeSdkInterface hypeSdk = HypeSdkInterface.getInstance();
 
     private Button subscribeButton;
     private Button unsubscribeButton;
@@ -99,13 +100,14 @@ public class MainActivity extends AppCompatActivity
                         service = service.toLowerCase().trim();
                         if(service.length() > 0)
                         {
-                            if(hps.ownSubscriptions.find(HpsGenericUtils.stringHash(service)) == null)
+                            if(hps.ownSubscriptions.findSubscriptionWithServiceKey(HpsGenericUtils.stringHash(service)) == null)
                             {
                                 hps.issueSubscribeReq(service);
                             }
                             else
                             {
-                                AlertDialogUtils.showOkDialog(MainActivity.this, "INFO", "Service already subscribed");
+                                AlertDialogUtils.showOkDialog(MainActivity.this,
+                                        "INFO", "Service already subscribed");
                             }
                         }
                     }
@@ -137,7 +139,8 @@ public class MainActivity extends AppCompatActivity
                 }
 
                 if(hps.ownSubscriptions.size() == 0){
-                    AlertDialogUtils.showOkDialog(MainActivity.this, "INFO", "No services subscribed");
+                    AlertDialogUtils.showOkDialog(MainActivity.this,
+                            "INFO", "No services subscribed");
                     return;
                 }
 
@@ -264,7 +267,8 @@ public class MainActivity extends AppCompatActivity
                 }
 
                 if(hps.ownSubscriptions.size() == 0){
-                    AlertDialogUtils.showOkDialog(MainActivity.this, "INFO", "No services subscribed");
+                    AlertDialogUtils.showOkDialog(MainActivity.this,
+                            "INFO", "No services subscribed");
                     return;
                 }
 
@@ -293,12 +297,14 @@ public class MainActivity extends AppCompatActivity
 
     private boolean isHypeSdkReady()
     {
-        if(HypeSdkInterface.isHypeFail){
-            AlertDialogUtils.showOkDialog(MainActivity.this, "Warning", "Hype SDK could not be started");
+        if(hypeSdk.isHypeFail){
+            AlertDialogUtils.showOkDialog(MainActivity.this,
+                    "Warning", "Hype SDK could not be started");
             return false;
         }
-        else if( ! HypeSdkInterface.isHypeReady){
-            AlertDialogUtils.showOkDialog(MainActivity.this, "Warning", "Hype SDK is not ready yet");
+        else if( ! hypeSdk.isHypeReady){
+            AlertDialogUtils.showOkDialog(MainActivity.this,
+                    "Warning", "Hype SDK is not ready yet");
             return false;
         }
 

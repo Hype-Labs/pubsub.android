@@ -55,19 +55,19 @@ public class HypePubSubUnitTest
         hps.processSubscribeReq(HPS_TEST_SERVICE1, instance3);
         assertEquals(2, hps.managedServices.size());
 
-        ServiceManager service1 = hps.managedServices.find(HPS_TEST_SERVICE1);
+        ServiceManager service1 = hps.managedServices.findServiceManagerWithKey(HPS_TEST_SERVICE1);
         assertNotNull(service1);
         assertEquals(2, service1.subscribers.size());
-        ServiceManager service2 = hps.managedServices.find(HPS_TEST_SERVICE2);
+        ServiceManager service2 = hps.managedServices.findServiceManagerWithKey(HPS_TEST_SERVICE2);
         assertNotNull(service2);
         assertEquals(1, service2.subscribers.size());
 
-        assertNotNull(service1.subscribers.find(instance1));
-        assertNull(service1.subscribers.find(instance2));
-        assertNotNull(service1.subscribers.find(instance3));
-        assertNull(service2.subscribers.find(instance1));
-        assertNotNull(service2.subscribers.find(instance2));
-        assertNull(service2.subscribers.find(instance3));
+        assertNotNull(service1.subscribers.findClientWithInstance(instance1));
+        assertNull(service1.subscribers.findClientWithInstance(instance2));
+        assertNotNull(service1.subscribers.findClientWithInstance(instance3));
+        assertNull(service2.subscribers.findClientWithInstance(instance1));
+        assertNotNull(service2.subscribers.findClientWithInstance(instance2));
+        assertNull(service2.subscribers.findClientWithInstance(instance3));
 
         // Test unsubscriptions on the 1st managed service
         hps.processUnsubscribeReq(HPS_TEST_SERVICE1, instance1);
@@ -89,24 +89,24 @@ public class HypePubSubUnitTest
         hps.processSubscribeReq(HPS_TEST_SERVICE2, instance9);
         hps.processSubscribeReq(HPS_TEST_SERVICE2, instance10);
         assertEquals(10, service2.subscribers.size());
-        assertNotNull(service2.subscribers.find(instance1));
-        assertNotNull(service2.subscribers.find(instance2));
-        assertNotNull(service2.subscribers.find(instance3));
-        assertNotNull(service2.subscribers.find(instance4));
-        assertNotNull(service2.subscribers.find(instance5));
-        assertNotNull(service2.subscribers.find(instance6));
-        assertNotNull(service2.subscribers.find(instance7));
-        assertNotNull(service2.subscribers.find(instance8));
-        assertNotNull(service2.subscribers.find(instance9));
-        assertNotNull(service2.subscribers.find(instance10));
+        assertNotNull(service2.subscribers.findClientWithInstance(instance1));
+        assertNotNull(service2.subscribers.findClientWithInstance(instance2));
+        assertNotNull(service2.subscribers.findClientWithInstance(instance3));
+        assertNotNull(service2.subscribers.findClientWithInstance(instance4));
+        assertNotNull(service2.subscribers.findClientWithInstance(instance5));
+        assertNotNull(service2.subscribers.findClientWithInstance(instance6));
+        assertNotNull(service2.subscribers.findClientWithInstance(instance7));
+        assertNotNull(service2.subscribers.findClientWithInstance(instance8));
+        assertNotNull(service2.subscribers.findClientWithInstance(instance9));
+        assertNotNull(service2.subscribers.findClientWithInstance(instance10));
 
         // Test unsubscriptions on the 2nd managed service
         hps.processUnsubscribeReq(HPS_TEST_SERVICE2, instance3);
         hps.processUnsubscribeReq(HPS_TEST_SERVICE2, instance7);
         hps.processUnsubscribeReq(HPS_TEST_SERVICE2, instance9);
         assertEquals(7, service2.subscribers.size());
-        assertNull(service2.subscribers.find(instance3));
-        assertNull(service2.subscribers.find(instance7));
-        assertNull(service2.subscribers.find(instance9));
+        assertNull(service2.subscribers.findClientWithInstance(instance3));
+        assertNull(service2.subscribers.findClientWithInstance(instance7));
+        assertNull(service2.subscribers.findClientWithInstance(instance9));
     }
 }

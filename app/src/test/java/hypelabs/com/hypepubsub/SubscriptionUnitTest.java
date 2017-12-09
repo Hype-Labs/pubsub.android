@@ -26,16 +26,16 @@ public class SubscriptionUnitTest
         FakeHypeInstance instance2 = new FakeHypeInstance(SUBS2_MANAGER_ID, null, false);
         FakeHypeInstance instance3 = new FakeHypeInstance(SUBS3_MANAGER_ID, null, false);
 
-        Subscription subsc1 = new Subscription(SUBS1_SERVICE_NAME, instance1);
-        Subscription subsc2 = new Subscription(SUBS2_SERVICE_NAME, instance2);
-        Subscription subsc3 = new Subscription(SUBS3_SERVICE_NAME, instance3);
+        Subscription subsc1 = new Subscription(SUBS1_SERVICE_NAME, new Client(instance1));
+        Subscription subsc2 = new Subscription(SUBS2_SERVICE_NAME, new Client(instance2));
+        Subscription subsc3 = new Subscription(SUBS3_SERVICE_NAME, new Client(instance3));
 
         assertNotNull(subsc1.serviceKey);
-        assertNotNull(subsc1.manager.getIdentifier());
+        assertNotNull(subsc1.manager.instance.getIdentifier());
         assertNotNull(subsc2.serviceKey);
-        assertNotNull(subsc2.manager.getIdentifier());
+        assertNotNull(subsc2.manager.instance.getIdentifier());
         assertNotNull(subsc3.serviceKey);
-        assertNotNull(subsc3.manager.getIdentifier());
+        assertNotNull(subsc3.manager.instance.getIdentifier());
 
         assertEquals(SUBS1_SERVICE_NAME, subsc1.serviceName);
         assertEquals(SUBS2_SERVICE_NAME, subsc2.serviceName);
@@ -45,8 +45,8 @@ public class SubscriptionUnitTest
         assertArrayEquals(SUBS2_SERVICE_KEY, subsc2.serviceKey);
         assertArrayEquals(SUBS3_SERVICE_KEY, subsc3.serviceKey);
 
-        assertArrayEquals(SUBS1_MANAGER_ID, subsc1.manager.getIdentifier());
-        assertArrayEquals(SUBS2_MANAGER_ID, subsc2.manager.getIdentifier());
-        assertArrayEquals(SUBS3_MANAGER_ID, subsc3.manager.getIdentifier());
+        assertArrayEquals(SUBS1_MANAGER_ID, subsc1.manager.instance.getIdentifier());
+        assertArrayEquals(SUBS2_MANAGER_ID, subsc2.manager.instance.getIdentifier());
+        assertArrayEquals(SUBS3_MANAGER_ID, subsc3.manager.instance.getIdentifier());
     }
 }

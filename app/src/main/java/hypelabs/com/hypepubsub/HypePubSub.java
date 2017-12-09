@@ -18,17 +18,17 @@ import com.hypelabs.hype.Instance;
 
 public class HypePubSub
 {
-    private static final String TAG =  HypePubSub.class.getName();
-    private static final String HYPE_PUB_SUB_LOG_PREFIX = HpsConstants.LOG_PREFIX + "<HypePubSub> ";
-
-    final private static HypePubSub hps = new HypePubSub(); // Early loading to avoid thread-safety issues
-
+    // Members
     final SubscriptionsList ownSubscriptions;
     final ServiceManagersList managedServices;
 
+    // Private
+    private static final String TAG =  HypePubSub.class.getName();
+    private static final String HYPE_PUB_SUB_LOG_PREFIX = HpsConstants.LOG_PREFIX + "<HypePubSub> ";
     final private Network network = Network.getInstance();
     private int notificationID = 1;
 
+    final private static HypePubSub hps = new HypePubSub(); // Early loading to avoid thread-safety issues
     public static HypePubSub getInstance()
     {
         return hps;
@@ -40,147 +40,134 @@ public class HypePubSub
         this.managedServices = new ServiceManagersList();
     }
 
-    int issueSubscribeReq(String serviceName) throws NoSuchAlgorithmException, IOException
+    //////////////////////////////////////////////////////////////////////////////
+    // Request Issuing
+    //////////////////////////////////////////////////////////////////////////////
+
+    void issueSubscribeReq(String serviceName) throws NoSuchAlgorithmException, IOException
     {
         byte serviceKey[] = HpsGenericUtils.stringHash(serviceName);
-        Instance managerInstance = network.determineInstanceResponsibleForService(serviceKey);
+        Client managerClient = network.determineClientResponsibleForService(serviceKey);
 
-        // Add subscription to the list of own subscriptions. Only adds if it doesn't exist yet.
-        ownSubscriptions.add(serviceName, managerInstance);
-
-        // if this client is the manager of the service we don't need to send the subscribe message to
-        // the protocol manager
-        if(HpsGenericUtils.areInstancesEqual(network.ownClient.instance, managerInstance))
-        {
-            printIssueReqToHostInstanceLog("Subscribe", serviceName);
-            this.processSubscribeReq(serviceKey, network.ownClient.instance);
-            return 1;
-        }
-        else
-        {
-            Protocol.sendSubscribeMsg(serviceKey, managerInstance);
-        }
-
-        return 0;
-    }
-
-    int issueUnsubscribeReq(String serviceName) throws NoSuchAlgorithmException, IOException
-    {
-        byte serviceKey[] = HpsGenericUtils.stringHash(serviceName);
-        Instance managerInstance = network.determineInstanceResponsibleForService(serviceKey);
-
-        if(ownSubscriptions.find(serviceKey) == null)
-        {
-            return -2;
-        }
-
-        // Remove the subscription from the list of own subscriptions
-        ownSubscriptions.remove(serviceName);
-
-        // if this client is the manager of the service we don't need to send the unsubscribe message
-        // to the protocol manager
-        if(HpsGenericUtils.areInstancesEqual(network.ownClient.instance, managerInstance))
-        {
-            printIssueReqToHostInstanceLog("Unsubscribe", serviceName);
-            this.processUnsubscribeReq(serviceKey, network.ownClient.instance);
-        }
-        else {
-            Protocol.sendUnsubscribeMsg(serviceKey, managerInstance);
-        }
-
-        return 0;
-    }
-
-    int issuePublishReq(String serviceName, String msg) throws NoSuchAlgorithmException, IOException
-    {
-        byte serviceKey[] = HpsGenericUtils.stringHash(serviceName);
-        Instance managerInstance = network.determineInstanceResponsibleForService(serviceKey);
-
-        // if this client is the manager of the service we don't need to send the publish message
-        // to the protocol manager
-        if(HpsGenericUtils.areInstancesEqual(network.ownClient.instance, managerInstance))
-        {
-            printIssueReqToHostInstanceLog("Publish", serviceName);
-            this.processPublishReq(serviceKey, msg);
-            return 1;
-        }
-        else
-        {
-            Protocol.sendPublishMsg(serviceKey, managerInstance, msg);
-        }
-
-        return 0;
-    }
-
-    synchronized void processSubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException, UnsupportedEncodingException
-    {
-        Instance managerInstance = network.determineInstanceResponsibleForService(serviceKey);
-        if( ! HpsGenericUtils.areInstancesEqual(managerInstance, network.ownClient.instance))
-        {
-            Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX
-                    + "Another instance should be responsible for the service 0x"
-                    + BinaryUtils.byteArrayToHexString(serviceKey) + ": "
-                    + HpsGenericUtils.buildInstanceLogIdStr(managerInstance));
+        boolean wasSubscriptionAdded = ownSubscriptions.addSubscription(new Subscription(serviceName, managerClient));
+        if(!wasSubscriptionAdded) {
             return;
         }
 
-        ServiceManager serviceManager = this.managedServices.find(serviceKey);
-        if(serviceManager == null ) // If the service does not exist we create it.
+        if(HpsGenericUtils.areClientsEqual(network.ownClient, managerClient))
         {
-            Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX
-                    + "Processing Subscribe request for non-existent ServiceManager 0x"
-                    + BinaryUtils.byteArrayToHexString(serviceKey)
-                    + ". ServiceManager will be created.");
+            printIssueReqToHostInstanceLog("Subscribe", serviceName);
+            processSubscribeReq(serviceKey, network.ownClient.instance); // bypass protocol manager
+        }
+        else {
+            Protocol.sendSubscribeMsg(serviceKey, managerClient.instance);
+        }
+    }
 
-            this.managedServices.add(serviceKey);
-            serviceManager = this.managedServices.getLast();
-            updateManagedServicesUI(); // Updated UI after adding a new managed service
+    void issueUnsubscribeReq(String serviceName) throws NoSuchAlgorithmException, IOException
+    {
+        byte serviceKey[] = HpsGenericUtils.stringHash(serviceName);
+        Client managerClient = network.determineClientResponsibleForService(serviceKey);
+
+        boolean wasSubscriptionRemoved =  ownSubscriptions.removeSubscriptionWithServiceName(serviceName);
+        if(!wasSubscriptionRemoved) {
+            return;
         }
 
-        Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX
-                + "Adding instance " + HpsGenericUtils.buildInstanceLogIdStr(requesterInstance)
-                + " to the list of subscribers of the service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
+        if(HpsGenericUtils.areClientsEqual(network.ownClient, managerClient))
+        {
+            printIssueReqToHostInstanceLog("Unsubscribe", serviceName);
+            processUnsubscribeReq(serviceKey, network.ownClient.instance); // bypass protocol manager
+        }
+        else {
+            Protocol.sendUnsubscribeMsg(serviceKey, managerClient.instance);
+        }
+    }
 
-        serviceManager.subscribers.add(requesterInstance);
+    void issuePublishReq(String serviceName, String msg) throws NoSuchAlgorithmException, IOException
+    {
+        byte serviceKey[] = HpsGenericUtils.stringHash(serviceName);
+        Client managerClient = network.determineClientResponsibleForService(serviceKey);
+
+        if(HpsGenericUtils.areClientsEqual(network.ownClient, managerClient))
+        {
+            printIssueReqToHostInstanceLog("Publish", serviceName);
+            processPublishReq(serviceKey, msg); // bypass protocol manager
+        }
+        else {
+            Protocol.sendPublishMsg(serviceKey, managerClient.instance, msg);
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////
+    // Request Processing
+    //////////////////////////////////////////////////////////////////////////////
+
+    synchronized void processSubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException, UnsupportedEncodingException
+    {
+        Client managerClient = network.determineClientResponsibleForService(serviceKey);
+        if( ! HpsGenericUtils.areClientsEqual(managerClient, network.ownClient))
+        {
+            Log.i(TAG, String.format("%s Another instance should be responsible for the service 0x%s: %s",
+                    HYPE_PUB_SUB_LOG_PREFIX,
+                    BinaryUtils.byteArrayToHexString(serviceKey),
+                    HpsGenericUtils.buildClientLogIdStr(managerClient)));
+            return;
+        }
+
+        ServiceManager serviceManager = managedServices.findServiceManagerWithKey(serviceKey);
+        if(serviceManager == null ) // If the service does not exist we create it.
+        {
+            Log.i(TAG, String.format("%s Processing Subscribe request for non-existent ServiceManager 0x%s. ServiceManager will be created.",
+                    HYPE_PUB_SUB_LOG_PREFIX,
+                    BinaryUtils.byteArrayToHexString(serviceKey)));
+
+            managedServices.addServiceManager(new ServiceManager(serviceKey));
+            serviceManager = managedServices.getLast();
+            updateManagedServicesUI();
+        }
+
+        Log.i(TAG, String.format("%s Adding instance %s to the list of subscribers of the service 0x%s",
+                HYPE_PUB_SUB_LOG_PREFIX,
+                HpsGenericUtils.buildInstanceLogIdStr(requesterInstance),
+                BinaryUtils.byteArrayToHexString(serviceKey)));
+
+        serviceManager.subscribers.addClient(new Client(requesterInstance));
     }
 
     synchronized void processUnsubscribeReq(byte serviceKey[], Instance requesterInstance) throws UnsupportedEncodingException
     {
-        ServiceManager serviceManager = this.managedServices.find(serviceKey);
+        ServiceManager serviceManager = managedServices.findServiceManagerWithKey(serviceKey);
 
-        if(serviceManager == null) // If the service does not exist nothing is done
+        if(serviceManager == null)
         {
-            Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX
-                    + "Processing Unsubscribe request for non-existent ServiceManager 0x"
-                    + BinaryUtils.byteArrayToHexString(serviceKey)
-                    + ". Nothing will be done.");
-
+            Log.i(TAG, String.format("%s Processing Unsubscribe request for non-existent ServiceManager 0x%s. Nothing will be done",
+                    HYPE_PUB_SUB_LOG_PREFIX,
+                    BinaryUtils.byteArrayToHexString(serviceKey)));
             return;
         }
 
-        Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX
-                + "Removing instance " + HpsGenericUtils.buildInstanceLogIdStr(requesterInstance)
-                + " from the list of subscribers of the service 0x" + BinaryUtils.byteArrayToHexString(serviceKey));
+        Log.i(TAG, String.format("%s Removing instance %s from the list of subscribers of the service 0x%s",
+                HYPE_PUB_SUB_LOG_PREFIX,
+                HpsGenericUtils.buildInstanceLogIdStr(requesterInstance),
+                BinaryUtils.byteArrayToHexString(serviceKey)));
 
-        serviceManager.subscribers.remove(requesterInstance);
+        serviceManager.subscribers.removeClientWithInstance(requesterInstance);
 
-        if(serviceManager.subscribers.size() == 0)
-        { // Remove the service if there is no subscribers
-            this.managedServices.remove(serviceKey);
+        if(serviceManager.subscribers.size() == 0) {
+            managedServices.removeServiceManagerWithKey(serviceKey);
             updateManagedServicesUI(); // Updated UI after removing a managed service
         }
     }
 
     synchronized void processPublishReq(byte serviceKey[], String msg) throws IOException
     {
-        ServiceManager serviceManager = this.managedServices.find(serviceKey);
+        ServiceManager serviceManager = managedServices.findServiceManagerWithKey(serviceKey);
         if(serviceManager == null)
         {
-            Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX
-                    + "Processing Publish request for non-existent ServiceManager 0x"
-                    + BinaryUtils.byteArrayToHexString(serviceKey)
-                    + ". Nothing will be done.");
-
+            Log.i(TAG, String.format("%s Processing Publish request for non-existent ServiceManager 0x%s. Nothing will be done.",
+                    HYPE_PUB_SUB_LOG_PREFIX,
+                    BinaryUtils.byteArrayToHexString(serviceKey)));
             return;
         }
 
@@ -191,79 +178,75 @@ public class HypePubSub
             if(client == null)
                 continue;
 
-            if(HpsGenericUtils.areInstancesEqual(network.ownClient.instance, client.instance))
+            if(HpsGenericUtils.areClientsEqual(network.ownClient, client))
             {
-                Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX
-                        + "Publishing info from service 0x" + BinaryUtils.byteArrayToHexString(serviceKey)
-                        + " to Host instance");
-
-                this.processInfoMsg(serviceKey, msg);
+                Log.i(TAG, String.format("%s Publishing info from service 0x%s to Host instance",
+                        HYPE_PUB_SUB_LOG_PREFIX,
+                        BinaryUtils.byteArrayToHexString(serviceKey)));
+                processInfoMsg(serviceKey, msg);
             }
-            else{
-
-                Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX
-                        + "Publishing info from service 0x" + BinaryUtils.byteArrayToHexString(serviceKey)
-                        + " to " + HpsGenericUtils.buildInstanceLogIdStr(client.instance));
-
+            else
+            {
+                Log.i(TAG, String.format("%s Publishing info from service 0x%s to %s",
+                        HYPE_PUB_SUB_LOG_PREFIX,
+                        BinaryUtils.byteArrayToHexString(serviceKey),
+                        HpsGenericUtils.buildClientLogIdStr(client)));
                 Protocol.sendInfoMsg(serviceKey, client.instance, msg);
             }
         }
     }
 
-    int processInfoMsg(byte serviceKey[], String msg)
+    void processInfoMsg(byte serviceKey[], String msg)
     {
-        Subscription subscription = ownSubscriptions.find(serviceKey);
-
-        if(subscription == null){
-            Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX
-                    + "Info received from the unsubscribed service"
-                    + BinaryUtils.byteArrayToHexString(serviceKey) + ": " + msg);
-            return -1;
+        Subscription subscription = ownSubscriptions.findSubscriptionWithServiceKey(serviceKey);
+        if(subscription == null) {
+            Log.i(TAG, String.format("%s Info received from the unsubscribed service 0x%s: %s",
+                    HYPE_PUB_SUB_LOG_PREFIX,
+                    BinaryUtils.byteArrayToHexString(serviceKey),
+                    msg));
+            return;
         }
 
-        Date now = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("k'h'mm", Locale.getDefault());
-        String timestamp = sdf.format(now);
-        String msgWithTimeStamp = timestamp + ": " + msg;
-
+        String msgWithTimeStamp = HpsGenericUtils.getTimeStamp() + ": " + msg;
         subscription.receivedMsg.add(0, msgWithTimeStamp);
+
         updateMessagesUI();
         String notificationText = subscription.serviceName + ": " + msg;
-        displayNotification(MainActivity.getContext(), HpsConstants.NOTIFICATIONS_CHANNEL, HpsConstants.NOTIFICATIONS_TITLE, notificationText, notificationID);
-        notificationID++;
+        displayNotification(MainActivity.getContext(), HpsConstants.NOTIFICATIONS_CHANNEL,
+                HpsConstants.NOTIFICATIONS_TITLE, notificationText, notificationID);
 
-        Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX
-                + "Info received from the unsubscribed service"
-                + subscription.serviceName + ": " + msg);
-
-        return 0;
+        Log.i(TAG, String.format("%s Info received from the subscribed service '%s': %s",
+                HYPE_PUB_SUB_LOG_PREFIX,
+                subscription.serviceName,
+                msg));
     }
 
     synchronized void updateManagedServices() throws UnsupportedEncodingException
     {
-        Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX + "Executing updateManagedServices ("
-                + this.managedServices.size() + " services managed)");
+        Log.i(TAG, String.format("%s Executing updateManagedServices (%d services managed)",
+                HYPE_PUB_SUB_LOG_PREFIX,
+                managedServices.size()));
 
-        ListIterator<ServiceManager> it = this.managedServices.listIterator();
+        ListIterator<ServiceManager> it = managedServices.listIterator();
 
         while(it.hasNext())
         {
             ServiceManager managedService = it.next();
 
             // Check if a new Hype client with a closer key to this service key has appeared. If this happens
-            // we remove the service from the list of managed services of this Hype client.
-            Instance newManagerInstance = network.determineInstanceResponsibleForService(managedService.serviceKey);
+            // we removeClientWithInstance the service from the list of managed services of this Hype client.
+            Client newManagerClient = network.determineClientResponsibleForService(managedService.serviceKey);
 
-            Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX + "Analyzing ServiceManager from service 0x"
-                    + BinaryUtils.byteArrayToHexString(managedService.serviceKey));
+            Log.i(TAG, String.format("%s Analyzing ServiceManager from service 0x%s",
+                    HYPE_PUB_SUB_LOG_PREFIX,
+                    BinaryUtils.byteArrayToHexString(managedService.serviceKey)));
 
-            if( ! HpsGenericUtils.areInstancesEqual(newManagerInstance, network.ownClient.instance))
+            if( ! HpsGenericUtils.areClientsEqual(newManagerClient, network.ownClient))
             {
-                Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX
-                        + "The service 0x" + BinaryUtils.byteArrayToHexString(managedService.serviceKey)
-                        + " will be managed by: " + HpsGenericUtils.buildInstanceLogIdStr(newManagerInstance)
-                        + ". ServiceManager will be removed");
-
+                Log.i(TAG, String.format("%s The service 0x%s will be managed by: %s. ServiceManager will be removed",
+                        HYPE_PUB_SUB_LOG_PREFIX,
+                        BinaryUtils.byteArrayToHexString(managedService.serviceKey),
+                        HpsGenericUtils.buildClientLogIdStr(newManagerClient)));
                 it.remove();
             }
         }
@@ -271,32 +254,37 @@ public class HypePubSub
 
     synchronized void updateOwnSubscriptions() throws IOException, NoSuchAlgorithmException
     {
-        Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX + "Executing updateOwnSubscriptions ("
-                + this.ownSubscriptions.size() + " subscriptions)");
+        Log.i(TAG, String.format("%s Executing updateManagedServices (%d subscriptions)",
+                HYPE_PUB_SUB_LOG_PREFIX,
+                ownSubscriptions.size()));
 
-        ListIterator<Subscription> it = this.ownSubscriptions.listIterator();
+        ListIterator<Subscription> it = ownSubscriptions.listIterator();
         while(it.hasNext())
         {
             Subscription subscription = it.next();
+            Client newManagerClient = network.determineClientResponsibleForService(subscription.serviceKey);
 
-            Instance newManagerInstance = network.determineInstanceResponsibleForService(subscription.serviceKey);
-
-            Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX
-                    + "Analyzing subscription " + HpsGenericUtils.buildSubscriptionLogStr(subscription));
+            Log.i(TAG, String.format("%s Analyzing subscription %s",
+                    HYPE_PUB_SUB_LOG_PREFIX,
+                    HpsGenericUtils.buildSubscriptionLogStr(subscription)));
 
             // If there is a node with a closer key to the service key we change the manager
-            if( ! HpsGenericUtils.areInstancesEqual(newManagerInstance, subscription.manager))
+            if( ! HpsGenericUtils.areClientsEqual(newManagerClient, subscription.manager))
             {
-                Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX
-                        + "The manager of the subscribed service " + subscription.serviceName
-                        + " has changed: " + HpsGenericUtils.buildInstanceLogIdStr(newManagerInstance)
-                        + ". A new Subscribe message will be issued");
+                Log.i(TAG, String.format("%s The manager of the subscribed service '%s' has changed: %s. A new Subscribe message will be issued",
+                        HYPE_PUB_SUB_LOG_PREFIX,
+                        subscription.serviceName,
+                        HpsGenericUtils.buildClientLogIdStr(newManagerClient)));
 
-                subscription.manager = newManagerInstance;
-                this.issueSubscribeReq(subscription.serviceName); // re-send the subscribe request to the new manager
+                subscription.manager = newManagerClient;
+                issueSubscribeReq(subscription.serviceName); // re-send the subscribe request to the new manager
             }
         }
     }
+
+    //////////////////////////////////////////////////////////////////////////////
+    // UI Methods
+    //////////////////////////////////////////////////////////////////////////////
 
     private void updateManagedServicesUI()
     {
@@ -328,18 +316,19 @@ public class HypePubSub
 
         if(notificationManager != null)
             notificationManager.notify(id, builder.build());
+
+        notificationID++;
     }
 
     //////////////////////////////////////////////////////////////////////////////
     // Logging Methods
     //////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * Prints a info log message when a message is issued to the host instance
-     */
     static void printIssueReqToHostInstanceLog(String msgType, String serviceName) throws UnsupportedEncodingException
     {
-        Log.i(TAG, HYPE_PUB_SUB_LOG_PREFIX
-                + "Issuing " + msgType+ " for service " + serviceName + " to HOST instance");
+        Log.i(TAG, String.format("%s Issuing %s for service '%s' to HOST instance",
+                HYPE_PUB_SUB_LOG_PREFIX,
+                msgType,
+                serviceName));
     }
 }

@@ -26,8 +26,7 @@ public class ClientsAdapter extends ArrayAdapter<Client>
         Client client = getItem(position);
 
         // Check if an existing view is being reused, otherwise inflate the view
-        if (convertView == null)
-        {
+        if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_client, parent, false);
         }
 

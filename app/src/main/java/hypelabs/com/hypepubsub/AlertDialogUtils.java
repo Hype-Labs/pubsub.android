@@ -84,8 +84,7 @@ public class AlertDialogUtils
         AlertDialog dialog = builder.create();
         Window dialogWindow = dialog.getWindow();
 
-        if(dialogWindow != null)
-        {
+        if(dialogWindow != null) {
             dialogWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }
 
@@ -169,8 +168,7 @@ public class AlertDialogUtils
         AlertDialog dialog = builder.create();
         Window dialogWindow = dialog.getWindow();
 
-        if(dialogWindow != null)
-        {
+        if(dialogWindow != null) {
             dialogWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }
 

@@ -1,7 +1,5 @@
 package hypelabs.com.hypepubsub;
 
-import com.hypelabs.hype.Instance;
-
 import org.junit.Test;
 
 import java.security.NoSuchAlgorithmException;
@@ -35,23 +33,23 @@ public class ServiceManagerUnitTest
         FakeHypeInstance instance2 = new FakeHypeInstance(SUBSCRIBER_ID2, null, false);
 
         // Test add_subscriber
-        serv1.subscribers.add(instance1);
+        serv1.subscribers.addClient(new Client(instance1));
         assertEquals(1, serv1.subscribers.size());
-        serv1.subscribers.add(instance2);
+        serv1.subscribers.addClient(new Client(instance2));
         assertEquals(2, serv1.subscribers.size());
-        serv1.subscribers.add(instance1); // Add duplicated subscriber
+        serv1.subscribers.addClient(new Client(instance1)); // Add duplicated subscriber
         assertEquals(2, serv1.subscribers.size());
         assertArrayEquals(SUBSCRIBER_ID1, serv1.subscribers.get(0).instance.getIdentifier());
         assertArrayEquals(SUBSCRIBER_ID2, serv1.subscribers.get(1).instance.getIdentifier());
 
         // Test remove_subscriber
-        serv1.subscribers.remove(instance2);
+        serv1.subscribers.removeClientWithInstance(instance2);
         assertEquals(1, serv1.subscribers.size());
         assertArrayEquals(SUBSCRIBER_ID1, serv1.subscribers.get(0).instance.getIdentifier());
-        serv1.subscribers.remove(instance2); // Remove subscriber that was already removed
+        serv1.subscribers.removeClientWithInstance(instance2); // Remove subscriber that was already removed
         assertEquals(1, serv1.subscribers.size());
         assertArrayEquals(SUBSCRIBER_ID1, serv1.subscribers.get(0).instance.getIdentifier());
-        serv1.subscribers.remove(instance1);
+        serv1.subscribers.removeClientWithInstance(instance1);
         assertEquals(0, serv1.subscribers.size());
     }
 }

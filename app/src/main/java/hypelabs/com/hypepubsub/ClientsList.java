@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.hypelabs.hype.Instance;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -14,31 +13,28 @@ public class ClientsList
     // Used composition instead of inheritance to hide the methods that shouldn't be called in
     // a ClientsList.
     final private LinkedList<Client> clients = new LinkedList<>();
-
-
     private ClientsAdapter clientsAdapter = null;
 
-    public synchronized int add(Instance instance) throws NoSuchAlgorithmException
+    public synchronized boolean addClient(Client client)
     {
-        if(isClientAlreadyAdded(instance))
-            return -1;
+        if(containsClientWithInstance(client.instance)) {
+            return false;
+        }
 
-        clients.add(new Client(instance));
-        return 0;
+        return clients.add(client);
     }
 
-    public synchronized int remove(Instance instance)
+    public synchronized boolean removeClientWithInstance(Instance instance)
     {
-        Client client = find(instance);
-        if(client == null)
-            return -1;
+        Client client = findClientWithInstance(instance);
+        if(client == null) {
+            return false;
+        }
 
-        clients.remove(client);
-        return 0;
+        return clients.remove(client);
     }
 
-
-    public synchronized Client find(Instance instance)
+    public synchronized Client findClientWithInstance(Instance instance)
     {
         ListIterator<Client> it = listIterator();
         while(it.hasNext())
@@ -48,13 +44,15 @@ public class ClientsList
                 return currentClient;
             }
         }
+
         return null;
     }
 
-    public synchronized boolean isClientAlreadyAdded(Instance instance)
+    public synchronized boolean containsClientWithInstance(Instance instance)
     {
-        if(find(instance) == null)
+        if(findClientWithInstance(instance) == null) {
             return false;
+        }
 
         return true;
     }
@@ -64,6 +62,7 @@ public class ClientsList
         if(clientsAdapter == null){
             clientsAdapter = new ClientsAdapter(context, clients);
         }
+
         return clientsAdapter;
     }
 

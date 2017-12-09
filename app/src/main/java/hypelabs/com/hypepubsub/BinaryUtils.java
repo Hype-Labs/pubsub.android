@@ -2,7 +2,6 @@ package hypelabs.com.hypepubsub;
 
 public class BinaryUtils
 {
-
     /**
      * Calculates the XOR operation between 2 byte arrays.
      *
@@ -49,8 +48,9 @@ public class BinaryUtils
             int val1 = byteToUnsignedInt(array1[i]);
             int val2 = byteToUnsignedInt(array2[i]);
 
-            if(val1 == val2)
+            if(val1 == val2) {
                 continue;
+            }
 
             // The array which has the largest most significant byte is the higher one
             if(val1 > val2) {

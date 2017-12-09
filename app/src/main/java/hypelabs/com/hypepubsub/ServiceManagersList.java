@@ -12,38 +12,28 @@ public class ServiceManagersList
     // Used composition instead of inheritance to hide the methods that shouldn't be called in
     // a ServiceManagersList.
     final private LinkedList<ServiceManager> serviceManagers = new LinkedList<>();
-
-
     private ServiceManagersAdapter serviceManagersAdapter = null;
 
-    public synchronized int add(byte serviceKey[])
+    public synchronized boolean addServiceManager(ServiceManager serviceManager)
     {
-        if(isServiceManagerAlreadyAdded(serviceKey))
-            return -1;
-
-        serviceManagers.add(new ServiceManager(serviceKey));
-        return 0;
-    }
-
-    public synchronized int remove(byte serviceKey[])
-    {
-        ServiceManager serviceMan = find(serviceKey);
-        if(serviceMan == null)
-            return -1;
-
-        serviceManagers.remove(serviceMan);
-        return 0;
-    }
-
-    public synchronized boolean isServiceManagerAlreadyAdded(byte serviceKey[])
-    {
-        if(find(serviceKey) == null)
+        if (containsServiceManagerWithKey(serviceManager.serviceKey)) {
             return false;
+        }
 
-        return true;
+        return serviceManagers.add(serviceManager);
     }
 
-    public synchronized ServiceManager find(byte serviceKey[])
+    public synchronized boolean removeServiceManagerWithKey(byte serviceKey[])
+    {
+        ServiceManager serviceMan = findServiceManagerWithKey(serviceKey);
+        if (serviceMan == null) {
+            return false;
+        }
+
+        return serviceManagers.remove(serviceMan);
+    }
+
+    public synchronized ServiceManager findServiceManagerWithKey(byte serviceKey[])
     {
         ListIterator<ServiceManager> it = listIterator();
         while(it.hasNext())
@@ -53,7 +43,17 @@ public class ServiceManagersList
                 return currentServiceMan;
             }
         }
+
         return null;
+    }
+
+    public synchronized boolean containsServiceManagerWithKey(byte serviceKey[])
+    {
+        if(findServiceManagerWithKey(serviceKey) == null) {
+            return false;
+        }
+
+        return true;
     }
 
     public synchronized ServiceManagersAdapter getServiceManagersAdapter(Context context)
@@ -61,6 +61,7 @@ public class ServiceManagersList
         if(serviceManagersAdapter == null){
             serviceManagersAdapter = new ServiceManagersAdapter(context, serviceManagers);
         }
+
         return serviceManagersAdapter;
     }
 

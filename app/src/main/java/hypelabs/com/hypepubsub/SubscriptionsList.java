@@ -2,8 +2,6 @@ package hypelabs.com.hypepubsub;
 
 import android.content.Context;
 
-import com.hypelabs.hype.Instance;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -16,46 +14,31 @@ public class SubscriptionsList
     // Used composition instead of inheritance to hide the methods that shouldn't be called in
     // a SubscriptionsList.
     final private LinkedList<Subscription> subscriptions = new LinkedList<>();
-
-
     private SubscriptionsAdapter subscriptionsAdapter = null;
 
-    public synchronized int add(String serviceName, Instance managerInstance) throws NoSuchAlgorithmException
+    public synchronized boolean addSubscription(Subscription subscription)
     {
-        MessageDigest md = MessageDigest.getInstance(HpsConstants.HASH_ALGORITHM);
-        byte serviceKey[] = md.digest(serviceName.getBytes());
-
-        if(isSubscriptionAlreadyAdded(serviceKey))
-            return -1;
-
-        subscriptions.add(new Subscription(serviceName, managerInstance));
-        return 0;
-    }
-
-    public synchronized int remove(String serviceName) throws NoSuchAlgorithmException
-    {
-        MessageDigest md = MessageDigest.getInstance(HpsConstants.HASH_ALGORITHM);
-        byte serviceKey[] = md.digest(serviceName.getBytes());
-
-        Subscription subscription = find(serviceKey);
-        if(subscription == null) {
-            return -1;
+        if (containsSubscriptionWithServiceKey(subscription.serviceKey)) {
+            return false;
         }
 
-        subscriptions.remove(subscription);
-        return 0;
+        return subscriptions.add(subscription);
     }
 
-    public synchronized boolean isSubscriptionAlreadyAdded(byte serviceKey[])
+    public synchronized boolean removeSubscriptionWithServiceName(String serviceName) throws NoSuchAlgorithmException
     {
-        if(find(serviceKey) == null)
-            return false;
+        MessageDigest md = MessageDigest.getInstance(HpsConstants.HASH_ALGORITHM);
+        byte serviceKey[] = md.digest(serviceName.getBytes());
 
-        return true;
+        Subscription subscription = findSubscriptionWithServiceKey(serviceKey);
+        if(subscription == null) {
+            return false;
+        }
+
+        return subscriptions.remove(subscription);
     }
 
-
-    public synchronized Subscription find(byte serviceKey[])
+    public synchronized Subscription findSubscriptionWithServiceKey(byte serviceKey[])
     {
         ListIterator<Subscription> it = listIterator();
         while(it.hasNext())
@@ -65,12 +48,22 @@ public class SubscriptionsList
                 return currentSubs;
             }
         }
+
         return null;
+    }
+
+    public synchronized boolean containsSubscriptionWithServiceKey(byte serviceKey[])
+    {
+        if(findSubscriptionWithServiceKey(serviceKey) == null) {
+            return false;
+        }
+
+        return true;
     }
 
     public synchronized SubscriptionsAdapter getSubscriptionsAdapter(Context context)
     {
-        if(subscriptionsAdapter == null){
+        if(subscriptionsAdapter == null) {
             subscriptionsAdapter = new SubscriptionsAdapter(context, subscriptions);
         }
 

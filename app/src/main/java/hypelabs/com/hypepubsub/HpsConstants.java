@@ -1,8 +1,5 @@
 package hypelabs.com.hypepubsub;
 
-/**
- * Class containing useful constants.
- */
 
 public class HpsConstants
 {

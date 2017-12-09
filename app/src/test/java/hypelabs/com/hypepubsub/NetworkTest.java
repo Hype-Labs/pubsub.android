@@ -26,22 +26,22 @@ public class NetworkTest
         FakeHypeInstance instance3 = new FakeHypeInstance(ID3, null, false);
         FakeHypeInstance instance4 = new FakeHypeInstance(ID4, null, false);
 
-        network.networkClients.add(instance1);
-        network.networkClients.add(instance2);
-        network.networkClients.add(instance3);
-        network.networkClients.add(instance4);
+        network.networkClients.addClient(new Client(instance1));
+        network.networkClients.addClient(new Client(instance2));
+        network.networkClients.addClient(new Client(instance3));
+        network.networkClients.addClient(new Client(instance4));
 
         // Reset own client id
         network.setOwnClient(instance1);
 
-        assertArrayEquals(ID4, network.determineInstanceResponsibleForService(SERVICE_KEY1).getIdentifier());
-        assertArrayEquals(ID1, network.determineInstanceResponsibleForService(SERVICE_KEY2).getIdentifier());
+        assertArrayEquals(ID4, network.determineClientResponsibleForService(SERVICE_KEY1).instance.getIdentifier());
+        assertArrayEquals(ID1, network.determineClientResponsibleForService(SERVICE_KEY2).instance.getIdentifier());
 
         // Clear clients from Network singleton
-        network.networkClients.remove(instance1);
-        network.networkClients.remove(instance2);
-        network.networkClients.remove(instance3);
-        network.networkClients.remove(instance4);
+        network.networkClients.removeClientWithInstance(instance1);
+        network.networkClients.removeClientWithInstance(instance2);
+        network.networkClients.removeClientWithInstance(instance3);
+        network.networkClients.removeClientWithInstance(instance4);
     }
 
 }

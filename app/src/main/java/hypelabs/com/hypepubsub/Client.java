@@ -7,7 +7,6 @@ import com.hypelabs.hype.Instance;
 public class Client
 {
     final Instance instance;
-
     byte key[];
 
     public Client(Instance instance) throws NoSuchAlgorithmException

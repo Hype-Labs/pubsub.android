@@ -26,9 +26,9 @@ public class Network
         return network;
     }
 
-    protected Instance determineInstanceResponsibleForService(byte serviceKey[])
+    protected Client determineClientResponsibleForService(byte serviceKey[])
     {
-        Instance managerInstance = ownClient.instance;
+        Client managerClient = ownClient;
         byte lowestDist[] = BinaryUtils.xor(serviceKey, ownClient.key);
 
         synchronized (network) // Add thread safety to iteration procedure
@@ -42,11 +42,11 @@ public class Network
                 if (BinaryUtils.determineHigherBigEndianByteArray(lowestDist, dist) == 1)
                 {
                     lowestDist = dist;
-                    managerInstance = client.instance;
+                    managerClient = client;
                 }
             }
         }
-        return managerInstance;
+        return managerClient;
     }
 
     protected void setOwnClient(Instance ownInstance) throws NoSuchAlgorithmException {

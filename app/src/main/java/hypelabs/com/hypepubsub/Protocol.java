@@ -59,7 +59,7 @@ public class Protocol
     static int receiveMsg(Instance originInstance, byte packet[]) throws IOException, NoSuchAlgorithmException
     {
         if(packet.length <= 0) {
-            Log.e(TAG, PROTOCOL_LOG_PREFIX + "Received message has an invalid length");
+            Log.e(TAG, String.format("%s Received message has an invalid length", PROTOCOL_LOG_PREFIX));
             return -1;
         }
 
@@ -78,7 +78,7 @@ public class Protocol
                 receiveInfoMsg(originInstance, packet);
                 break;
             case INVALID:
-                Log.e(TAG, PROTOCOL_LOG_PREFIX + "Received message has an invalid MessageType");
+                Log.e(TAG, String.format("%s Received message has an invalid MessageType", PROTOCOL_LOG_PREFIX));
                 return -2; // Discard
         }
 
@@ -88,7 +88,7 @@ public class Protocol
     private static int receiveSubscribeMsg(Instance originInstance, byte packet[]) throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
         if(packet.length != (MESSAGE_TYPE_BYTE_SIZE + HpsConstants.HASH_ALGORITHM_DIGEST_LENGTH)) {
-            Log.e(TAG, PROTOCOL_LOG_PREFIX + "Received Subscribe message with an invalid length");
+            Log.e(TAG, String.format("%s Received Subscribe message with an invalid length", PROTOCOL_LOG_PREFIX));
             return -1;
         }
 
@@ -102,7 +102,7 @@ public class Protocol
     private static int receiveUnsubscribeMsg(Instance originInstance, byte packet[]) throws UnsupportedEncodingException
     {
         if(packet.length != (MESSAGE_TYPE_BYTE_SIZE + HpsConstants.HASH_ALGORITHM_DIGEST_LENGTH)) {
-            Log.e(TAG, PROTOCOL_LOG_PREFIX + "Received Unsubscribe message with an invalid length");
+            Log.e(TAG, String.format("%s Received Unsubscribe message with an invalid length", PROTOCOL_LOG_PREFIX));
             return -1;
         }
 
@@ -116,7 +116,7 @@ public class Protocol
     private static int receivePublishMsg(Instance originInstance, byte packet[]) throws IOException
     {
         if(packet.length <= (MESSAGE_TYPE_BYTE_SIZE + HpsConstants.HASH_ALGORITHM_DIGEST_LENGTH)) {
-            Log.e(TAG, PROTOCOL_LOG_PREFIX + "Received Publish message with an invalid length");
+            Log.e(TAG, String.format("%s Received Publish message with an invalid length", PROTOCOL_LOG_PREFIX));
             return -1;
         }
 
@@ -130,7 +130,7 @@ public class Protocol
     private static int receiveInfoMsg(Instance originInstance, byte packet[]) throws UnsupportedEncodingException
     {
         if(packet.length <= (MESSAGE_TYPE_BYTE_SIZE + HpsConstants.HASH_ALGORITHM_DIGEST_LENGTH)) {
-            Log.e(TAG, PROTOCOL_LOG_PREFIX + "Received Info message with an invalid length");
+            Log.e(TAG, String.format("%s Received Info message with an invalid length", PROTOCOL_LOG_PREFIX));
             return -1;
         }
 
@@ -142,7 +142,7 @@ public class Protocol
     }
 
     //////////////////////////////////////////////////////////////////////////////
-    // Received Message Data Extraction Methods
+    // Packet Data Extraction Methods
     //////////////////////////////////////////////////////////////////////////////
 
     public static HpsMessageType extractHpsMessageTypeFromReceivedPacket(byte packet[])
@@ -185,15 +185,17 @@ public class Protocol
 
     static void printMsgSendLog(HpsMessage hpsMsg, Instance destination) throws UnsupportedEncodingException
     {
-        Log.i(TAG, PROTOCOL_LOG_PREFIX
-                + "Sending " + hpsMsg.toLogString()
-                + " Destination " + HpsGenericUtils.buildInstanceLogIdStr(destination));
+        Log.i(TAG, String.format("%s Sending %s Destination %s",
+                PROTOCOL_LOG_PREFIX,
+                hpsMsg.toLogString(),
+                HpsGenericUtils.buildInstanceLogIdStr(destination)));
     }
 
     static void printMsgReceivedLog(HpsMessage hpsMsg, Instance originator) throws UnsupportedEncodingException
     {
-        Log.i(TAG, PROTOCOL_LOG_PREFIX
-                + "Received " + hpsMsg.toLogString()
-                + " Originator " + HpsGenericUtils.buildInstanceLogIdStr(originator));
+        Log.i(TAG, String.format("%s Received %s Originator %s",
+                PROTOCOL_LOG_PREFIX,
+                hpsMsg.toLogString(),
+                HpsGenericUtils.buildInstanceLogIdStr(originator)));
     }
 }

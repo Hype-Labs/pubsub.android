@@ -43,6 +43,7 @@ public class ClientsListActivity extends AppCompatActivity
         if (activityClientsAdapter == null) {
             activityClientsAdapter = activityClientsList.getClientsAdapter(ClientsListActivity.this);
         }
+
         return activityClientsAdapter;
     }
 
