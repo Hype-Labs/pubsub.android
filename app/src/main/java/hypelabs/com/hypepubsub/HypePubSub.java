@@ -277,7 +277,13 @@ public class HypePubSub
                         HpsGenericUtils.buildClientLogIdStr(newManagerClient)));
 
                 subscription.manager = newManagerClient;
-                issueSubscribeReq(subscription.serviceName); // re-send the subscribe request to the new manager
+
+                if(HpsGenericUtils.areClientsEqual(network.ownClient, newManagerClient)){
+                    processSubscribeReq(subscription.serviceKey, network.ownClient.instance); // bypass protocol manager
+                }
+                else {
+                    Protocol.sendSubscribeMsg(subscription.serviceKey, newManagerClient.instance);
+                }
             }
         }
     }
