@@ -21,6 +21,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     // Members
     boolean isHypeReady = false;
     boolean isHypeFail = false;
+    String hypeFailedMsg = "";
 
     // Private
     private static final String TAG = HypeSdkInterface.class.getName();
@@ -85,6 +86,10 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     public void onHypeFailedStarting(Error var1)
     {
         isHypeFail = true;
+        hypeFailedMsg = String.format("Suggestion: %s\n" +
+                        "Description: %s\n" +
+                        "Reason: %s",
+                var1.getSuggestion(), var1.getDescription(), var1.getReason());
 
         Log.e(TAG, String.format("%s Hype SDK start failed. Suggestion: %s",
                 HYPE_SDK_INTERFACE_LOG_PREFIX, var1.getSuggestion()));
