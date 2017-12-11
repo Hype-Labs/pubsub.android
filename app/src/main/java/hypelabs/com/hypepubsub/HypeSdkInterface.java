@@ -61,7 +61,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     public void onHypeStart()
     {
         try {
-            Log.i(TAG, String.format("%s Hype SDK started! Host Instance: ",
+            Log.i(TAG, String.format("%s Hype SDK started! Host Instance: %s",
                     HYPE_SDK_INTERFACE_LOG_PREFIX,
                     HpsGenericUtils.buildInstanceLogIdStr(Hype.getHostInstance())));
             isHypeReady = true;
@@ -131,15 +131,15 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
 
         if(!var1.isResolved())
         {
-            Log.i(TAG, String.format("%s Hype SDK unresolved instance found: ",
+            Log.i(TAG, String.format("%s Hype SDK unresolved instance found: %s",
                     HYPE_SDK_INTERFACE_LOG_PREFIX, instanceLogIdStr));
-            Log.i(TAG, String.format("%s Resolving Hype SDK instance: ",
+            Log.i(TAG, String.format("%s Resolving Hype SDK instance: %s",
                     HYPE_SDK_INTERFACE_LOG_PREFIX, instanceLogIdStr));
             Hype.resolve(var1);
         }
         else
         {
-            Log.i(TAG, String.format("%s Hype SDK resolved instance found: ",
+            Log.i(TAG, String.format("%s Hype SDK resolved instance found: %s",
                     HYPE_SDK_INTERFACE_LOG_PREFIX, instanceLogIdStr));
 
             // Add the instance found in a separate thread to release the lock of the
@@ -160,7 +160,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, String.format("%s Hype SDK instance lost:",
+            Log.i(TAG, String.format("%s Hype SDK instance lost: %s",
                     HYPE_SDK_INTERFACE_LOG_PREFIX,
                     HpsGenericUtils.buildInstanceLogIdStr(var1)));
 
@@ -325,7 +325,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     {
         try
         {
-            Log.i(TAG, String.format("%s Adding Hype SDK instance already resolved: ",
+            Log.i(TAG, String.format("%s Adding Hype SDK instance already resolved: %s",
                     HYPE_SDK_INTERFACE_LOG_PREFIX, HpsGenericUtils.buildInstanceLogIdStr(instance)));
 
             synchronized (network) // Add thread safety to adding procedure
@@ -347,7 +347,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
 
     public void removeInstance(Instance instance) throws IOException, NoSuchAlgorithmException
     {
-        Log.i(TAG, String.format("%s Removing Hype SDK instance already lost: ",
+        Log.i(TAG, String.format("%s Removing Hype SDK instance already lost: %s",
                 HYPE_SDK_INTERFACE_LOG_PREFIX,
                 HpsGenericUtils.buildInstanceLogIdStr(instance)));
 
