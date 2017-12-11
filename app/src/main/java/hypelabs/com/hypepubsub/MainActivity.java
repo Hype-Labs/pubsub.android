@@ -299,12 +299,17 @@ public class MainActivity extends AppCompatActivity
     {
         if(hypeSdk.isHypeFail){
             AlertDialogUtils.showOkDialog(MainActivity.this,
-                    "Warning", "Hype SDK could not be started.\n" + hypeSdk.hypeFailedMsg);
+                    "Error", "Hype SDK could not be started.\n" + hypeSdk.hypeFailedMsg);
             return false;
         }
         else if( ! hypeSdk.isHypeReady){
             AlertDialogUtils.showOkDialog(MainActivity.this,
                     "Warning", "Hype SDK is not ready yet");
+            return false;
+        }
+        else if(hypeSdk.hasHypeStopped){
+            AlertDialogUtils.showOkDialog(MainActivity.this,
+                    "Error", "Hype SDK stopped.\n" + hypeSdk.hypeFailedMsg);
             return false;
         }
 
