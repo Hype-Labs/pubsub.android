@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.ListIterator;
 import java.util.Locale;
@@ -286,6 +287,19 @@ public class HypePubSub
                     Protocol.sendSubscribeMsg(subscription.serviceKey, newManagerClient.instance);
                 }
             }
+        }
+    }
+
+    synchronized void  removeSubscriptionsFromLostInstance(Instance instance) throws UnsupportedEncodingException
+    {
+        Log.i(TAG, String.format("Executing removeSubscriptionsFromLostInstance"));
+        ArrayList<byte[]> keysOfServicesToUnsubscribe = new ArrayList<>();
+        for (int i=0; i < managedServices.size(); i++) {
+            keysOfServicesToUnsubscribe.add(managedServices.get(i).serviceKey);
+        }
+
+        for (int i=0; i < keysOfServicesToUnsubscribe.size(); i++) {
+            processUnsubscribeReq(keysOfServicesToUnsubscribe.get(i), instance);
         }
     }
 

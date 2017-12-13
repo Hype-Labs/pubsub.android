@@ -363,6 +363,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
         {
             network.networkClients.removeClientWithInstance(instance);
             hps.updateOwnSubscriptions();
+            hps.removeSubscriptionsFromLostInstance(instance);
             updateClientsUI();
         }
     }
