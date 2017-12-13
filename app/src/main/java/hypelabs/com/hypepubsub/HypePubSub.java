@@ -248,6 +248,7 @@ public class HypePubSub
                         BinaryUtils.byteArrayToHexString(managedService.serviceKey),
                         HpsGenericUtils.buildClientLogIdStr(newManagerClient)));
                 it.remove();
+                updateManagedServicesUI(); // Updated UI after removing a managed service
             }
         }
     }
