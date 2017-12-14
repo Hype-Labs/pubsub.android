@@ -34,8 +34,8 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     private static HypeSdkInterface hypeSdkInterface = new HypeSdkInterface();
     public static HypeSdkInterface getInstance() { return hypeSdkInterface; }
 
-    protected void requestHypeToStart(Context context) throws UnsupportedEncodingException {
-        Hype.setUserIdentifier(0L);
+    protected void requestHypeToStart(Context context) throws UnsupportedEncodingException
+    {
         Hype.setAppIdentifier(HpsConstants.APP_IDENTIFIER);
         Hype.setContext(context);
         Hype.setAnnouncement((android.os.Build.MODEL).getBytes(HpsConstants.ENCODING_STANDARD));
