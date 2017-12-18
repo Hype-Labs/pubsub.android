@@ -9,7 +9,7 @@ public class Client
     final Instance instance;
     byte key[];
 
-    public Client(Instance instance) throws NoSuchAlgorithmException
+    public Client(Instance instance)
     {
         this.instance = instance;
         this.key = HpsGenericUtils.byteArrayHash(instance.getIdentifier());

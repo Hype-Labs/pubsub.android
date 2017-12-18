@@ -25,13 +25,25 @@ public class HpsMessage
         this.info = null;
     }
 
-    public byte[] toByteArray() throws IOException
+    public byte[] toByteArray()
     {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         outputStream.write((byte) type.ordinal());
-        outputStream.write(serviceKey);
+        try {
+            outputStream.write(serviceKey);
+        }
+        catch (IOException e){
+            throw new RuntimeException("Could not write ServiceKey to byte array" + e.getMessage(),e);
+        }
+
         if(info != null) {
-            outputStream.write(info.getBytes(HpsConstants.ENCODING_STANDARD));
+            try {
+                outputStream.write(info.getBytes(HpsConstants.ENCODING_STANDARD));
+            }
+            catch (IOException e){
+                throw new RuntimeException("Could not write ServiceKey to byte array" + e.getMessage(),e);
+            }
+
         }
 
         return outputStream.toByteArray();

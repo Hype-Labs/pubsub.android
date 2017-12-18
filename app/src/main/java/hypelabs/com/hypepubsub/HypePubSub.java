@@ -9,11 +9,8 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.ListIterator;
-import java.util.Locale;
 
 import com.hypelabs.hype.Instance;
 
@@ -45,14 +42,14 @@ public class HypePubSub
     // Request Issuing
     //////////////////////////////////////////////////////////////////////////////
 
-    void issueSubscribeReq(String serviceName) throws NoSuchAlgorithmException, IOException
+    boolean issueSubscribeReq(String serviceName)
     {
         byte serviceKey[] = HpsGenericUtils.stringHash(serviceName);
         Client managerClient = network.determineClientResponsibleForService(serviceKey);
 
         boolean wasSubscriptionAdded = ownSubscriptions.addSubscription(new Subscription(serviceName, managerClient));
         if(!wasSubscriptionAdded) {
-            return;
+            return false;
         }
 
         if(HpsGenericUtils.areClientsEqual(network.ownClient, managerClient))
@@ -63,16 +60,17 @@ public class HypePubSub
         else {
             Protocol.sendSubscribeMsg(serviceKey, managerClient.instance);
         }
+        return true;
     }
 
-    void issueUnsubscribeReq(String serviceName) throws NoSuchAlgorithmException, IOException
+    boolean issueUnsubscribeReq(String serviceName)
     {
         byte serviceKey[] = HpsGenericUtils.stringHash(serviceName);
         Client managerClient = network.determineClientResponsibleForService(serviceKey);
 
         boolean wasSubscriptionRemoved =  ownSubscriptions.removeSubscriptionWithServiceName(serviceName);
         if(!wasSubscriptionRemoved) {
-            return;
+            return false;
         }
 
         if(HpsGenericUtils.areClientsEqual(network.ownClient, managerClient))
@@ -83,6 +81,7 @@ public class HypePubSub
         else {
             Protocol.sendUnsubscribeMsg(serviceKey, managerClient.instance);
         }
+        return true;
     }
 
     void issuePublishReq(String serviceName, String msg) throws NoSuchAlgorithmException, IOException
@@ -104,7 +103,7 @@ public class HypePubSub
     // Request Processing
     //////////////////////////////////////////////////////////////////////////////
 
-    synchronized void processSubscribeReq(byte serviceKey[], Instance requesterInstance) throws NoSuchAlgorithmException, UnsupportedEncodingException
+    synchronized void processSubscribeReq(byte serviceKey[], Instance requesterInstance)
     {
         Client managerClient = network.determineClientResponsibleForService(serviceKey);
         if( ! HpsGenericUtils.areClientsEqual(managerClient, network.ownClient))
@@ -112,7 +111,7 @@ public class HypePubSub
             Log.i(TAG, String.format("%s Another instance should be responsible for the service 0x%s: %s",
                     HYPE_PUB_SUB_LOG_PREFIX,
                     BinaryUtils.byteArrayToHexString(serviceKey),
-                    HpsGenericUtils.buildClientLogIdStr(managerClient)));
+                    HpsGenericUtils.getLogStrFromClient(managerClient)));
             return;
         }
 
@@ -130,13 +129,13 @@ public class HypePubSub
 
         Log.i(TAG, String.format("%s Adding instance %s to the list of subscribers of the service 0x%s",
                 HYPE_PUB_SUB_LOG_PREFIX,
-                HpsGenericUtils.buildInstanceLogIdStr(requesterInstance),
+                HpsGenericUtils.getLogStrFromInstance(requesterInstance),
                 BinaryUtils.byteArrayToHexString(serviceKey)));
 
         serviceManager.subscribers.addClient(new Client(requesterInstance));
     }
 
-    synchronized void processUnsubscribeReq(byte serviceKey[], Instance requesterInstance) throws UnsupportedEncodingException
+    synchronized void processUnsubscribeReq(byte serviceKey[], Instance requesterInstance)
     {
         ServiceManager serviceManager = managedServices.findServiceManagerWithKey(serviceKey);
 
@@ -150,7 +149,7 @@ public class HypePubSub
 
         Log.i(TAG, String.format("%s Removing instance %s from the list of subscribers of the service 0x%s",
                 HYPE_PUB_SUB_LOG_PREFIX,
-                HpsGenericUtils.buildInstanceLogIdStr(requesterInstance),
+                HpsGenericUtils.getLogStrFromInstance(requesterInstance),
                 BinaryUtils.byteArrayToHexString(serviceKey)));
 
         serviceManager.subscribers.removeClientWithInstance(requesterInstance);
@@ -191,7 +190,7 @@ public class HypePubSub
                 Log.i(TAG, String.format("%s Publishing info from service 0x%s to %s",
                         HYPE_PUB_SUB_LOG_PREFIX,
                         BinaryUtils.byteArrayToHexString(serviceKey),
-                        HpsGenericUtils.buildClientLogIdStr(client)));
+                        HpsGenericUtils.getLogStrFromClient(client)));
                 Protocol.sendInfoMsg(serviceKey, client.instance, msg);
             }
         }
@@ -247,7 +246,7 @@ public class HypePubSub
                 Log.i(TAG, String.format("%s The service 0x%s will be managed by: %s. ServiceManager will be removed",
                         HYPE_PUB_SUB_LOG_PREFIX,
                         BinaryUtils.byteArrayToHexString(managedService.serviceKey),
-                        HpsGenericUtils.buildClientLogIdStr(newManagerClient)));
+                        HpsGenericUtils.getLogStrFromClient(newManagerClient)));
                 it.remove();
                 updateManagedServicesUI(); // Updated UI after removing a managed service
             }
@@ -268,7 +267,7 @@ public class HypePubSub
 
             Log.i(TAG, String.format("%s Analyzing subscription %s",
                     HYPE_PUB_SUB_LOG_PREFIX,
-                    HpsGenericUtils.buildSubscriptionLogStr(subscription)));
+                    HpsGenericUtils.getLogStrFromSubscription(subscription)));
 
             // If there is a node with a closer key to the service key we change the manager
             if( ! HpsGenericUtils.areClientsEqual(newManagerClient, subscription.manager))
@@ -276,7 +275,7 @@ public class HypePubSub
                 Log.i(TAG, String.format("%s The manager of the subscribed service '%s' has changed: %s. A new Subscribe message will be issued",
                         HYPE_PUB_SUB_LOG_PREFIX,
                         subscription.serviceName,
-                        HpsGenericUtils.buildClientLogIdStr(newManagerClient)));
+                        HpsGenericUtils.getLogStrFromClient(newManagerClient)));
 
                 subscription.manager = newManagerClient;
 
@@ -345,7 +344,7 @@ public class HypePubSub
     // Logging Methods
     //////////////////////////////////////////////////////////////////////////////
 
-    static void printIssueReqToHostInstanceLog(String msgType, String serviceName) throws UnsupportedEncodingException
+    static void printIssueReqToHostInstanceLog(String msgType, String serviceName)
     {
         Log.i(TAG, String.format("%s Issuing %s for service '%s' to HOST instance",
                 HYPE_PUB_SUB_LOG_PREFIX,

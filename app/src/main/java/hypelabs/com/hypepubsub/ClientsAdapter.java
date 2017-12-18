@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 
 public class ClientsAdapter extends ArrayAdapter<Client>
@@ -38,15 +37,9 @@ public class ClientsAdapter extends ArrayAdapter<Client>
         if (client != null)
         {
             // Populate the data into the template view using the data object
-            try
-            {
-                clientName.setText(HpsGenericUtils.buildInstanceAnnouncementStr(client.instance));
-                clientId.setText(BinaryUtils.byteArrayToHexString(client.instance.getIdentifier()));
-                clientKey.setText(BinaryUtils.byteArrayToHexString(client.key));
-            } catch (UnsupportedEncodingException e)
-            {
-                e.printStackTrace();
-            }
+            clientName.setText(HpsGenericUtils.getInstanceAnnouncementStr(client.instance));
+            clientId.setText(BinaryUtils.byteArrayToHexString(client.instance.getIdentifier()));
+            clientKey.setText(BinaryUtils.byteArrayToHexString(client.key));
         }
 
         // Return the completed view to render on screen

@@ -29,7 +29,9 @@
             android:id="@+id/activity_main_subscribe_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#009193"
             android:text="Subscribe Service"
+            android:textColor="#ffffff"
             tools:layout_editor_absoluteX="224dp"
             tools:layout_editor_absoluteY="55dp" />
 
@@ -44,12 +46,14 @@
         android:orientation="horizontal">
 
         <Button
-        android:id="@+id/activity_main_unsubscribe_button"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Unsubscribe Service"
-        tools:layout_editor_absoluteX="224dp"
-        tools:layout_editor_absoluteY="124dp" />
+            android:id="@+id/activity_main_unsubscribe_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#009193"
+            android:text="Unsubscribe Service"
+            android:textColor="#ffffff"
+            tools:layout_editor_absoluteX="224dp"
+            tools:layout_editor_absoluteY="124dp" />
 
     </LinearLayout>
 
@@ -66,7 +70,9 @@
             android:id="@+id/activity_main_publish_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#009193"
             android:text="Publish in Service"
+            android:textColor="#ffffff"
             tools:layout_editor_absoluteX="224dp"
             tools:layout_editor_absoluteY="242dp" />
     </LinearLayout>
@@ -83,8 +89,10 @@
             android:id="@+id/activity_main_check_own_id_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:background="#009193"
             android:text="Check Own ID"
-            android:layout_centerInParent="true"/>
+            android:textColor="#ffffff" />
 
     </LinearLayout>
 
@@ -100,8 +108,10 @@
             android:id="@+id/activity_main_check_hype_devices_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:background="#009193"
             android:text="Check Hype Devices"
-            android:layout_centerInParent="true"/>
+            android:textColor="#ffffff" />
 
     </LinearLayout>
 
@@ -117,8 +127,10 @@
             android:id="@+id/activity_main_check_own_subscriptions_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:background="#009193"
             android:text="Check Subscriptions"
-            android:layout_centerInParent="true"/>
+            android:textColor="#ffffff" />
 
     </LinearLayout>
 
@@ -134,8 +146,10 @@
             android:id="@+id/activity_main_check_managed_services_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:background="#009193"
             android:text="Check Managed Services"
-            android:layout_centerInParent="true"/>
+            android:textColor="#ffffff" />
 
     </LinearLayout>
 

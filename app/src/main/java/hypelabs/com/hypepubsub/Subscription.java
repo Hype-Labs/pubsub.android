@@ -16,7 +16,7 @@ public class Subscription {
     ArrayList<String> receivedMsg;
     private ArrayAdapter<String> receivedMsgAdapter;
 
-    public Subscription(String serviceName, Client manager) throws NoSuchAlgorithmException
+    public Subscription(String serviceName, Client manager)
     {
         this.serviceName = serviceName;
         this.serviceKey = HpsGenericUtils.stringHash(serviceName);

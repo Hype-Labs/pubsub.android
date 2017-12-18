@@ -44,7 +44,7 @@ public class AlertDialogUtils
      *                          This object defines what will be executed when the Ok and Cancel
      *                          buttons are pressed.
      */
-    public static void showSingleInputDialog(Context context, String title, String hintInput, final ISingleInputDialog singleInputDialog)
+    public static void showSingleInputDialog(Context context, String title, String msg, String hintInput, final ISingleInputDialog singleInputDialog)
     {
         final EditText input = new EditText(context);
         input.setHint(hintInput);
@@ -55,6 +55,7 @@ public class AlertDialogUtils
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);
+        builder.setMessage(msg);
         builder.setCancelable(true);
         builder.setView(layout);
         builder.setPositiveButton("Ok",
@@ -207,7 +208,7 @@ public class AlertDialogUtils
      * @param listViewInputDialog Object of a class that implemented the IListViewInputDialog interface.
      *                            This object defines what will be executed when an item of the list is clicked.
      */
-    public static void showListViewInputDialog(Context context, String title, ListAdapter adapter, final IListViewInputDialog listViewInputDialog)
+    public static void showListViewInputDialog(Context context, String title, String message, ListAdapter adapter, final IListViewInputDialog listViewInputDialog)
     {
         final ListView listView = new ListView(context);
         listView.setAdapter(adapter);
@@ -220,6 +221,7 @@ public class AlertDialogUtils
         builder.setTitle(title);
         builder.setCancelable(true);
         builder.setView(layout);
+        builder.setMessage(message);
         builder.setNegativeButton("Cancel",
                 new DialogInterface.OnClickListener()
                 {

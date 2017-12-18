@@ -25,10 +25,9 @@ public class SubscriptionsList
         return subscriptions.add(subscription);
     }
 
-    public synchronized boolean removeSubscriptionWithServiceName(String serviceName) throws NoSuchAlgorithmException
+    public synchronized boolean removeSubscriptionWithServiceName(String serviceName)
     {
-        MessageDigest md = MessageDigest.getInstance(HpsConstants.HASH_ALGORITHM);
-        byte serviceKey[] = md.digest(serviceName.getBytes());
+        byte serviceKey[] = HpsGenericUtils.stringHash(serviceName);
 
         Subscription subscription = findSubscriptionWithServiceKey(serviceKey);
         if(subscription == null) {
@@ -60,6 +59,13 @@ public class SubscriptionsList
 
         return true;
     }
+
+    public synchronized boolean containsSubscriptionWithServiceName(String serviceName)
+    {
+        byte serviceKey[] = HpsGenericUtils.stringHash(serviceName);
+        return containsSubscriptionWithServiceKey(serviceKey);
+    }
+
 
     public synchronized SubscriptionsAdapter getSubscriptionsAdapter(Context context)
     {

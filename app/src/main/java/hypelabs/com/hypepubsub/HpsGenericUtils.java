@@ -22,40 +22,88 @@ public class HpsGenericUtils
         return Arrays.equals(instance1.getIdentifier(), instance2.getIdentifier());
     }
 
-    public static String buildInstanceAnnouncementStr(Instance instance) throws UnsupportedEncodingException
+    public static byte[] getAndroidBuildModel()
+    {
+        try {
+            return (android.os.Build.MODEL).getBytes(HpsConstants.ENCODING_STANDARD);
+        }
+        catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Unsupported encoding: " + e.getMessage(), e);
+        }
+    }
+
+    public static String getInstanceAnnouncementStr(Instance instance)
     {
         if(instance.getAnnouncement() == null) {
             return "---";
         }
 
-        return new String(instance.getAnnouncement(), HpsConstants.ENCODING_STANDARD);
+        try {
+            return new String(instance.getAnnouncement(), HpsConstants.ENCODING_STANDARD);
+        }
+        catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Unsupported encoding: " + e.getMessage(), e);
+        }
     }
 
-    public static byte[] byteArrayHash(byte[] byteArray) throws NoSuchAlgorithmException
+    public static byte[] byteArrayHash(byte[] byteArray)
     {
-        MessageDigest md = MessageDigest.getInstance(HpsConstants.HASH_ALGORITHM);
-        return md.digest(byteArray);
+        try {
+            MessageDigest md = MessageDigest.getInstance(HpsConstants.HASH_ALGORITHM);
+            return md.digest(byteArray);
+        }
+        catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("No such algorithm: " + e.getMessage(), e);
+        }
     }
 
-    public static byte[] stringHash(String str) throws NoSuchAlgorithmException
+    public static byte[] stringHash(String str)
     {
-        MessageDigest md = MessageDigest.getInstance(HpsConstants.HASH_ALGORITHM);
-        return md.digest(str.getBytes());
+        return byteArrayHash(str.getBytes());
     }
 
-    public static String buildClientLogIdStr(Client client) throws UnsupportedEncodingException
+    public static String getLogStrFromClient(Client client)
     {
-        return buildInstanceLogIdStr(client.instance);
+        return getLogStrFromInstance(client.instance);
     }
 
-    public static String buildInstanceLogIdStr(Instance instance) throws UnsupportedEncodingException
+    public static String getLogStrFromInstance(Instance instance)
     {
-        return HpsGenericUtils.buildInstanceAnnouncementStr(instance) + " (0x" + BinaryUtils.byteArrayToHexString(instance.getIdentifier()) + ")";
+        return String.format("%s (%s)",
+                HpsGenericUtils.getInstanceAnnouncementStr(instance),
+                getIdStringFromInstance(instance));
     }
 
-    public static String buildSubscriptionLogStr(Subscription subscription) throws UnsupportedEncodingException
+    public static String getLogStrFromSubscription(Subscription subscription) throws UnsupportedEncodingException
     {
-        return subscription.serviceName + " (0x" + BinaryUtils.byteArrayToHexString(subscription.serviceKey) + ")";
+        return String.format("%s (%s)",
+            subscription.serviceName,
+            getKeyStringFromSubscription(subscription));
+    }
+
+    public static String getIdStringFromClient(Client client)
+    {
+        return getIdStringFromInstance(client.instance);
+    }
+
+    public static String getIdStringFromInstance(Instance instance)
+    {
+        return String.format("ID: 0x%s", BinaryUtils.byteArrayToHexString(instance.getIdentifier()));
+    }
+
+    public static String getKeyStringFromClient(Client client)
+    {
+        return String.format("Key: 0x%s", BinaryUtils.byteArrayToHexString(client.key));
+    }
+
+    public static String getKeyStringFromSubscription(Subscription subscription)
+    {
+        return String.format("Key: 0x%s", BinaryUtils.byteArrayToHexString(subscription.serviceKey));
+    }
+
+    public static String getKeyStringFromServiceManager(ServiceManager serviceManager)
+    {
+        return String.format("Key: 0x%s", BinaryUtils.byteArrayToHexString(serviceManager.serviceKey));
     }
 
     public static String getTimeStamp()

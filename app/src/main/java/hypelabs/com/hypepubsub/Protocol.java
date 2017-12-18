@@ -20,7 +20,7 @@ public class Protocol
     // Message Sending Processing Methods
     //////////////////////////////////////////////////////////////////////////////
 
-    static byte[] sendSubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException
+    static byte[] sendSubscribeMsg(byte serviceKey[], Instance destInstance)
     {
         HpsMessage hpsMsg = new HpsMessage(HpsMessageType.SUBSCRIBE_SERVICE, serviceKey);
         printMsgSendLog(hpsMsg, destInstance);
@@ -28,7 +28,7 @@ public class Protocol
         return hpsMsg.toByteArray();
     }
 
-    static byte[] sendUnsubscribeMsg(byte serviceKey[], Instance destInstance) throws IOException
+    static byte[] sendUnsubscribeMsg(byte serviceKey[], Instance destInstance)
     {
         HpsMessage hpsMsg = new HpsMessage(HpsMessageType.UNSUBSCRIBE_SERVICE, serviceKey);
         printMsgSendLog(hpsMsg, destInstance);
@@ -36,7 +36,7 @@ public class Protocol
         return hpsMsg.toByteArray();
     }
 
-    static byte[] sendPublishMsg(byte serviceKey[], Instance destInstance, String info) throws IOException
+    static byte[] sendPublishMsg(byte serviceKey[], Instance destInstance, String info)
     {
         HpsMessage hpsMsg = new HpsMessage(HpsMessageType.PUBLISH, serviceKey, info);
         printMsgSendLog(hpsMsg, destInstance);
@@ -44,7 +44,7 @@ public class Protocol
         return hpsMsg.toByteArray();
     }
 
-    static byte[] sendInfoMsg(byte serviceKey[], Instance destInstance, String info) throws IOException
+    static byte[] sendInfoMsg(byte serviceKey[], Instance destInstance, String info)
     {
         HpsMessage hpsMsg = new HpsMessage(HpsMessageType.INFO, serviceKey, info);
         printMsgSendLog(hpsMsg, destInstance);
@@ -183,19 +183,19 @@ public class Protocol
     // Logging Methods
     //////////////////////////////////////////////////////////////////////////////
 
-    static void printMsgSendLog(HpsMessage hpsMsg, Instance destination) throws UnsupportedEncodingException
+    static void printMsgSendLog(HpsMessage hpsMsg, Instance destination)
     {
         Log.i(TAG, String.format("%s Sending %s Destination %s",
                 PROTOCOL_LOG_PREFIX,
                 hpsMsg.toLogString(),
-                HpsGenericUtils.buildInstanceLogIdStr(destination)));
+                HpsGenericUtils.getLogStrFromInstance(destination)));
     }
 
-    static void printMsgReceivedLog(HpsMessage hpsMsg, Instance originator) throws UnsupportedEncodingException
+    static void printMsgReceivedLog(HpsMessage hpsMsg, Instance originator)
     {
         Log.i(TAG, String.format("%s Received %s Originator %s",
                 PROTOCOL_LOG_PREFIX,
                 hpsMsg.toLogString(),
-                HpsGenericUtils.buildInstanceLogIdStr(originator)));
+                HpsGenericUtils.getLogStrFromInstance(originator)));
     }
 }
