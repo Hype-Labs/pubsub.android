@@ -20,7 +20,7 @@ public class AlertDialogUtils
      * @param title Title of the the dialog.
      * @param message Message of the dialog.
      */
-    public static void showOkDialog(Context context, String title, String message)
+    public static void showInfoDialog(Context context, String title, String message)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);

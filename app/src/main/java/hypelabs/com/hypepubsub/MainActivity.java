@@ -14,9 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-
 public class MainActivity extends AppCompatActivity
 {
     private HypePubSub hps = HypePubSub.getInstance();
@@ -168,7 +165,7 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
 
-                AlertDialogUtils.showOkDialog(MainActivity.this,"Own Device",
+                AlertDialogUtils.showInfoDialog(MainActivity.this,"Own Device",
                         HpsGenericUtils.getInstanceAnnouncementStr(network.ownClient.instance) + "\n"
                                 + HpsGenericUtils.getIdStringFromClient(network.ownClient) + "\n"
                                 + HpsGenericUtils.getKeyStringFromClient(network.ownClient));
@@ -270,7 +267,7 @@ public class MainActivity extends AppCompatActivity
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        processUserNewServiceSelection(serviceAction);
+                        processNewServiceSelection(serviceAction);
                         dialog.dismiss();
                     }
                 });
@@ -304,7 +301,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             if (hps.ownSubscriptions.containsSubscriptionWithServiceName(serviceName)) {
-                AlertDialogUtils.showOkDialog(MainActivity.this,
+                AlertDialogUtils.showInfoDialog(MainActivity.this,
                         "INFO", "Service already subscribed");
                 return;
             }
@@ -349,7 +346,7 @@ public class MainActivity extends AppCompatActivity
                 public void onOk(String msg) {
                     msg = msg.trim();
                     if (msg.length() == 0) {
-                        AlertDialogUtils.showOkDialog(MainActivity.this,
+                        AlertDialogUtils.showInfoDialog(MainActivity.this,
                                 "WARNING",
                                 "A message must be specified");
                         return;
@@ -370,7 +367,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void processUserNewServiceSelection(final IServiceAction onServiceSelection)
+    private void processNewServiceSelection(final IServiceAction serviceAction)
     {
         AlertDialogUtils.ISingleInputDialog newServiceInput = new AlertDialogUtils.ISingleInputDialog() {
 
@@ -379,7 +376,7 @@ public class MainActivity extends AppCompatActivity
                 String serviceName = processUserServiceNameInput(input);
                 uiData.addAvailableService(MainActivity.this, serviceName);
                 uiData.addUnsubscribedService(MainActivity.this, serviceName);
-                onServiceSelection.action(serviceName);
+                serviceAction.action(serviceName);
             }
 
             @Override
@@ -408,15 +405,15 @@ public class MainActivity extends AppCompatActivity
     private void showHypeNotReadyDialog()
     {
         if(hypeSdk.hasHypeFailed){
-            AlertDialogUtils.showOkDialog(MainActivity.this,
+            AlertDialogUtils.showInfoDialog(MainActivity.this,
                     "Error", "Hype SDK could not be started.\n" + hypeSdk.hypeFailedMsg);
         }
         else if(hypeSdk.hasHypeStopped){
-            AlertDialogUtils.showOkDialog(MainActivity.this,
+            AlertDialogUtils.showInfoDialog(MainActivity.this,
                     "Error", "Hype SDK stopped.\n" + hypeSdk.hypeStoppedMsg);
         }
-        else if( ! hypeSdk.hasHypeStarted){
-            AlertDialogUtils.showOkDialog(MainActivity.this,
+        else if( !hypeSdk.hasHypeStarted){
+            AlertDialogUtils.showInfoDialog(MainActivity.this,
                     "Warning", "Hype SDK is not ready yet.");
         }
     }
@@ -428,7 +425,7 @@ public class MainActivity extends AppCompatActivity
 
     private void showNoServicesSubscribedDialog()
     {
-        AlertDialogUtils.showOkDialog(MainActivity.this,
+        AlertDialogUtils.showInfoDialog(MainActivity.this,
                 "INFO", "No services subscribed");
 
     }
