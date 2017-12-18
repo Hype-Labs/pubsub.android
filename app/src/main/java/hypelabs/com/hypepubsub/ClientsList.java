@@ -50,11 +50,7 @@ public class ClientsList
 
     public synchronized boolean containsClientWithInstance(Instance instance)
     {
-        if(findClientWithInstance(instance) == null) {
-            return false;
-        }
-
-        return true;
+        return findClientWithInstance(instance) != null;
     }
 
     public synchronized ClientsAdapter getClientsAdapter(Context context)

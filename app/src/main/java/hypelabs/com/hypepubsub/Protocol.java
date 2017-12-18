@@ -56,7 +56,7 @@ public class Protocol
     // Received Message Processing Methods
     //////////////////////////////////////////////////////////////////////////////
 
-    static int receiveMsg(Instance originInstance, byte packet[]) throws IOException, NoSuchAlgorithmException
+    static int receiveMsg(Instance originInstance, byte packet[])
     {
         if(packet.length <= 0) {
             Log.e(TAG, String.format("%s Received message has an invalid length", PROTOCOL_LOG_PREFIX));
@@ -85,7 +85,7 @@ public class Protocol
         return 0;
     }
 
-    private static int receiveSubscribeMsg(Instance originInstance, byte packet[]) throws NoSuchAlgorithmException, UnsupportedEncodingException
+    private static int receiveSubscribeMsg(Instance originInstance, byte packet[])
     {
         if(packet.length != (MESSAGE_TYPE_BYTE_SIZE + HpsConstants.HASH_ALGORITHM_DIGEST_LENGTH)) {
             Log.e(TAG, String.format("%s Received Subscribe message with an invalid length", PROTOCOL_LOG_PREFIX));
@@ -99,7 +99,7 @@ public class Protocol
         return 0;
     }
 
-    private static int receiveUnsubscribeMsg(Instance originInstance, byte packet[]) throws UnsupportedEncodingException
+    private static int receiveUnsubscribeMsg(Instance originInstance, byte packet[])
     {
         if(packet.length != (MESSAGE_TYPE_BYTE_SIZE + HpsConstants.HASH_ALGORITHM_DIGEST_LENGTH)) {
             Log.e(TAG, String.format("%s Received Unsubscribe message with an invalid length", PROTOCOL_LOG_PREFIX));
@@ -113,28 +113,30 @@ public class Protocol
         return 0;
     }
 
-    private static int receivePublishMsg(Instance originInstance, byte packet[]) throws IOException
+    private static int receivePublishMsg(Instance originInstance, byte packet[])
     {
         if(packet.length <= (MESSAGE_TYPE_BYTE_SIZE + HpsConstants.HASH_ALGORITHM_DIGEST_LENGTH)) {
             Log.e(TAG, String.format("%s Received Publish message with an invalid length", PROTOCOL_LOG_PREFIX));
             return -1;
         }
 
-        HpsMessage hpsMsg = new HpsMessage(HpsMessageType.PUBLISH, extractServiceKeyFromReceivedPacket(packet), new String(extractInfoFromReceivedPacket(packet), HpsConstants.ENCODING_STANDARD));
+        HpsMessage hpsMsg = new HpsMessage(HpsMessageType.PUBLISH, extractServiceKeyFromReceivedPacket(packet),
+                HpsGenericUtils.byteArrayToString(extractInfoFromReceivedPacket(packet)));
         printMsgReceivedLog(hpsMsg, originInstance);
         HypePubSub hps = HypePubSub.getInstance();
         hps.processPublishReq(hpsMsg.getServiceKey(), hpsMsg.getInfo());
         return 0;
     }
 
-    private static int receiveInfoMsg(Instance originInstance, byte packet[]) throws UnsupportedEncodingException
+    private static int receiveInfoMsg(Instance originInstance, byte packet[])
     {
         if(packet.length <= (MESSAGE_TYPE_BYTE_SIZE + HpsConstants.HASH_ALGORITHM_DIGEST_LENGTH)) {
             Log.e(TAG, String.format("%s Received Info message with an invalid length", PROTOCOL_LOG_PREFIX));
             return -1;
         }
 
-        HpsMessage hpsMsg = new HpsMessage(HpsMessageType.INFO, extractServiceKeyFromReceivedPacket(packet), new String(extractInfoFromReceivedPacket(packet), HpsConstants.ENCODING_STANDARD));
+        HpsMessage hpsMsg = new HpsMessage(HpsMessageType.INFO, extractServiceKeyFromReceivedPacket(packet),
+                HpsGenericUtils.byteArrayToString(extractInfoFromReceivedPacket(packet)));
         printMsgReceivedLog(hpsMsg, originInstance);
         HypePubSub hps = HypePubSub.getInstance();
         hps.processInfoMsg(hpsMsg.getServiceKey(), hpsMsg.getInfo());

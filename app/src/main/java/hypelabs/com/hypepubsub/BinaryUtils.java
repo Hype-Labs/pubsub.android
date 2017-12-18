@@ -1,7 +1,7 @@
 package hypelabs.com.hypepubsub;
 
-public class BinaryUtils
-{
+public class BinaryUtils {
+
     /**
      * Calculates the XOR operation between 2 byte arrays.
      *
@@ -11,8 +11,7 @@ public class BinaryUtils
      *         the length the arrays is different a Null pointer is returned. Otherwise a byte
      *         array containing the XOR result is returned.
      */
-    public static byte[] xor(byte array1[], byte array2[])
-    {
+    public static byte[] xor(byte array1[], byte array2[]) {
         if (array1 == null || array2 == null || array1.length != array2.length || array1.length == 0) {
             return null;
         }
@@ -37,8 +36,7 @@ public class BinaryUtils
      *         higher integer value the value 1 is returned. If the byte array specified in the second
      *         parameter has an higher integer value the value 2 is returned.
      */
-    public static int determineHigherBigEndianByteArray(byte array1[], byte array2[])
-    {
+    public static int determineHigherBigEndianByteArray(byte array1[], byte array2[]) {
         if (array1 == null || array2 == null || array1.length != array2.length || array1.length == 0) {
             return -1;
         }
@@ -70,8 +68,7 @@ public class BinaryUtils
      * @param array Byte array to be converted
      * @return Returns the string containing the hexadecimal representation of the byte array.
      */
-    public static String byteArrayToHexString(byte array[])
-    {
+    public static String byteArrayToHexString(byte array[]) {
         StringBuilder builder = new StringBuilder();
         for(byte b : array) {
             builder.append(String.format("%02x", b));
@@ -86,8 +83,7 @@ public class BinaryUtils
      * @param b Byte to be converted
      * @return Return the correspondent unsigned int value
      */
-    public static int byteToUnsignedInt(byte b)
-    {
+    public static int byteToUnsignedInt(byte b) {
         return ((int) b & 0xFF);
     }
 }

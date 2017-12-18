@@ -21,28 +21,24 @@ public class ClientsAdapter extends ArrayAdapter<Client>
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent)
     {
-        // Get the data item for this position
         Client client = getItem(position);
+        if (client == null) {
+            throw new NullPointerException();
+        }
 
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_client, parent, false);
         }
 
-        // Lookup view for data population
         TextView clientName = convertView.findViewById(R.id.item_client_name);
         TextView clientId = convertView.findViewById(R.id.item_client_id);
         TextView clientKey = convertView.findViewById(R.id.item_client_key);
 
-        if (client != null)
-        {
-            // Populate the data into the template view using the data object
-            clientName.setText(HpsGenericUtils.getInstanceAnnouncementStr(client.instance));
-            clientId.setText(BinaryUtils.byteArrayToHexString(client.instance.getIdentifier()));
-            clientKey.setText(BinaryUtils.byteArrayToHexString(client.key));
-        }
+        clientName.setText(HpsGenericUtils.getInstanceAnnouncementStr(client.instance));
+        clientId.setText(HpsGenericUtils.getIdStringFromClient(client));
+        clientKey.setText(HpsGenericUtils.getKeyStringFromClient(client));
 
-        // Return the completed view to render on screen
         return convertView;
     }
 

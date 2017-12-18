@@ -92,25 +92,19 @@ public class MainActivity extends AppCompatActivity
     private void setListenerSubscribeButton()
     {
         subscribeButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View arg0)
             {
                 if( !isHypeSdkReady()){
+                    showHypeNotReadyDialog();
                     return;
                 }
 
-                IOnServiceSelection onSubscribeServiceSelection = new IOnServiceSelection() {
-                    @Override
-                    public void action(String input) {
-                        processUserSubscribeAction(input);
-                    }
-                };
-
-                displayServicesNamesList(MainActivity.this,
-                        "Subscribe",
+                displayServicesNamesList("Subscribe",
                         "Select a service to subscribe",
                         uiData.getUnsubscribedServicesAdapter(MainActivity.this),
-                        onSubscribeServiceSelection,
+                        new subscribeServiceAction(),
                         true);
             }
         });
@@ -124,27 +118,18 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View arg0)
             {
                 if( !isHypeSdkReady()){
+                    showHypeNotReadyDialog();
+                    return;
+                }
+                if( isNoServiceSubscribed()){
+                    showNoServicesSubscribedDialog();
                     return;
                 }
 
-                if(uiData.subscribedServices.size() == 0){
-                    AlertDialogUtils.showOkDialog(MainActivity.this,
-                            "INFO", "No services subscribed");
-                    return;
-                }
-
-                IOnServiceSelection onUnsubscribeServiceSelection = new IOnServiceSelection() {
-                    @Override
-                    public void action(String input) {
-                        processUserUnsubscribeAction(input);
-                    }
-                };
-
-                displayServicesNamesList(MainActivity.this,
-                        "Unsubscribe",
+                displayServicesNamesList("Unsubscribe",
                         "Select a service to unsubscribe",
                         uiData.getSubscribedServicesAdapter(MainActivity.this),
-                        onUnsubscribeServiceSelection,
+                        new unsubscribeServiceAction(),
                         false);
             }
         });
@@ -152,27 +137,20 @@ public class MainActivity extends AppCompatActivity
 
     private void setListenerPublishButton()
     {
-        publishButton.setOnClickListener(new View.OnClickListener()
-        {
+        publishButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View arg0)
             {
                 if( !isHypeSdkReady()){
+                    showHypeNotReadyDialog();
                     return;
                 }
 
-                IOnServiceSelection onPublishServiceSelection = new IOnServiceSelection() {
-                    @Override
-                    public void action(String input) {
-                        processUserPublishAction(input);
-                    }
-                };
-
-                displayServicesNamesList(MainActivity.this,
-                        "Publish",
+                displayServicesNamesList("Publish",
                         "Select a service in which to publish",
                         uiData.getAvailableServicesAdapter(MainActivity.this),
-                        onPublishServiceSelection,
+                        new publishServiceAction(),
                         true);
             }
         });
@@ -185,7 +163,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View arg0)
             {
-                if( ! isHypeSdkReady()){
+                if( !isHypeSdkReady()){
+                    showHypeNotReadyDialog();
                     return;
                 }
 
@@ -206,7 +185,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View arg0)
             {
-                if( ! isHypeSdkReady()){
+                if( !isHypeSdkReady()){
+                    showHypeNotReadyDialog();
                     return;
                 }
 
@@ -224,13 +204,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View arg0)
             {
-                if( ! isHypeSdkReady()){
+                if( !isHypeSdkReady()){
+                    showHypeNotReadyDialog();
                     return;
                 }
-
-                if(hps.ownSubscriptions.size() == 0){
-                    AlertDialogUtils.showOkDialog(MainActivity.this,
-                            "INFO", "No services subscribed");
+                if( isNoServiceSubscribed()){
+                    showNoServicesSubscribedDialog();
                     return;
                 }
 
@@ -248,7 +227,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View arg0)
             {
-                if( ! isHypeSdkReady()){
+                if( !isHypeSdkReady()){
+                    showHypeNotReadyDialog();
                     return;
                 }
                 MainActivity.this.
@@ -261,39 +241,36 @@ public class MainActivity extends AppCompatActivity
     // User Action Processing Methods
     //////////////////////////////////////////////////////////////////////////////
 
-    private void displayServicesNamesList(Context context,
-                                          String title,
+    private void displayServicesNamesList(String title,
                                           String message,
-                                          ListAdapter adapter,
-                                          final IOnServiceSelection onServiceSelection,
+                                          ListAdapter serviceNamesAdapter,
+                                          final IServiceAction serviceAction,
                                           Boolean isNewServiceSelectionAllowed)
     {
-        final ListView listView = new ListView(context);
-        listView.setAdapter(adapter);
+        final ListView listView = new ListView(MainActivity.this);
+        listView.setAdapter(serviceNamesAdapter);
 
-        LinearLayout layout = new LinearLayout(context);
+        LinearLayout layout = new LinearLayout(MainActivity.this);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.addView(listView);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle(title);
         builder.setCancelable(true);
         builder.setView(layout);
         builder.setMessage(message);
         builder.setNegativeButton("Cancel",
-            new DialogInterface.OnClickListener()
-            {
+            new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) { }
             });
 
         if(isNewServiceSelectionAllowed) {
             builder.setNeutralButton("New Service",
-                new DialogInterface.OnClickListener()
-                {
+                new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        processUserNewServiceSelection(onServiceSelection);
+                        processUserNewServiceSelection(serviceAction);
                         dialog.dismiss();
                     }
                 });
@@ -306,94 +283,102 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String listItem = (String) listView.getItemAtPosition(position);
-                onServiceSelection.action(listItem);
+                serviceAction.action(listItem);
                 dialog.dismiss();
             }
         });
     }
 
-    private interface IOnServiceSelection
+    private interface IServiceAction
     {
-        void action(String serviceName);
+        void action(String userInput);
     }
 
-    private void processUserSubscribeAction(String userInput)
+    private class subscribeServiceAction implements IServiceAction
     {
-        String serviceName = processUserServiceNameInput(userInput);
-        if(serviceName.length() == 0) {
-            return;
-        }
+        @Override
+        public void action(String userInput) {
+            String serviceName = processUserServiceNameInput(userInput);
+            if (serviceName.length() == 0) {
+                return;
+            }
 
-        if(hps.ownSubscriptions.containsSubscriptionWithServiceName(serviceName))
-        {
-            AlertDialogUtils.showOkDialog(MainActivity.this,
-                    "INFO", "Service already subscribed");
-        }
-        else {
+            if (hps.ownSubscriptions.containsSubscriptionWithServiceName(serviceName)) {
+                AlertDialogUtils.showOkDialog(MainActivity.this,
+                        "INFO", "Service already subscribed");
+                return;
+            }
+
             boolean wasSubscribed = hps.issueSubscribeReq(serviceName);
-            if(wasSubscribed) {
+            if (wasSubscribed) {
                 uiData.addSubscribedService(MainActivity.this, serviceName);
                 uiData.removeUnsubscribedService(MainActivity.this, serviceName);
             }
         }
     }
 
-    private void processUserUnsubscribeAction(String userInput)
+    private class unsubscribeServiceAction implements IServiceAction
     {
-        String serviceName = processUserServiceNameInput(userInput);
-        if(serviceName.length() == 0) {
-            return;
-        }
-
-        boolean wasUnsubscribed = hps.issueUnsubscribeReq(serviceName);
-        if(wasUnsubscribed) {
-            uiData.addUnsubscribedService(MainActivity.this, serviceName);
-            uiData.removeSubscribedService(MainActivity.this, serviceName);
-        }
-    }
-
-    private void processUserPublishAction(String userInput)
-    {
-        final String serviceName = processUserServiceNameInput(userInput);
-        if(serviceName.length() == 0) {
-            return;
-        }
-
-        AlertDialogUtils.ISingleInputDialog publishMsgInput = new AlertDialogUtils.ISingleInputDialog() {
-
-            @Override
-            public void onOk(String msg) throws IOException, NoSuchAlgorithmException
-            {
-                msg = msg.trim();
-                if(msg.length() > 0)
-                    hps.issuePublishReq(serviceName, msg);
-                else
-                    AlertDialogUtils.showOkDialog(MainActivity.this,
-                            "WARNING",
-                            "A message must be specified");
+        @Override
+        public void action(String userInput) {
+            String serviceName = processUserServiceNameInput(userInput);
+            if (serviceName.length() == 0) {
+                return;
             }
 
-            @Override
-            public void onCancel() {}
-        };
-
-        AlertDialogUtils.showSingleInputDialog(MainActivity.this,
-                "Publish",
-                "Insert message to publish in the service: " + serviceName,
-                "message",
-                publishMsgInput);
+            boolean wasUnsubscribed = hps.issueUnsubscribeReq(serviceName);
+            if (wasUnsubscribed) {
+                uiData.addUnsubscribedService(MainActivity.this, serviceName);
+                uiData.removeSubscribedService(MainActivity.this, serviceName);
+            }
+        }
     }
 
-    private void processUserNewServiceSelection(final IOnServiceSelection onServiceSelection)
+    private class publishServiceAction implements IServiceAction
+    {
+        @Override
+        public void action(String userInput) {
+            final String serviceName = processUserServiceNameInput(userInput);
+            if (serviceName.length() == 0) {
+                return;
+            }
+
+            AlertDialogUtils.ISingleInputDialog publishMsgInput = new AlertDialogUtils.ISingleInputDialog() {
+
+                @Override
+                public void onOk(String msg) {
+                    msg = msg.trim();
+                    if (msg.length() == 0) {
+                        AlertDialogUtils.showOkDialog(MainActivity.this,
+                                "WARNING",
+                                "A message must be specified");
+                        return;
+                    }
+
+                    hps.issuePublishReq(serviceName, msg);
+                }
+
+                @Override
+                public void onCancel() {}
+            };
+
+            AlertDialogUtils.showSingleInputDialog(MainActivity.this,
+                    "Publish",
+                    "Insert message to publish in the service: " + serviceName,
+                    "message",
+                    publishMsgInput);
+        }
+    }
+
+    private void processUserNewServiceSelection(final IServiceAction onServiceSelection)
     {
         AlertDialogUtils.ISingleInputDialog newServiceInput = new AlertDialogUtils.ISingleInputDialog() {
 
             @Override
-            public void onOk(String input) throws IOException, NoSuchAlgorithmException {
+            public void onOk(String input) {
                 String serviceName = processUserServiceNameInput(input);
                 uiData.addAvailableService(MainActivity.this, serviceName);
                 uiData.addUnsubscribedService(MainActivity.this, serviceName);
-
                 onServiceSelection.action(serviceName);
             }
 
@@ -414,23 +399,38 @@ public class MainActivity extends AppCompatActivity
 
     private boolean isHypeSdkReady()
     {
+        if(!hypeSdk.hasHypeFailed  && !hypeSdk.hasHypeStopped && hypeSdk.hasHypeStarted) {
+            return true;
+        }
+        return false;
+    }
+
+    private void showHypeNotReadyDialog()
+    {
         if(hypeSdk.hasHypeFailed){
             AlertDialogUtils.showOkDialog(MainActivity.this,
                     "Error", "Hype SDK could not be started.\n" + hypeSdk.hypeFailedMsg);
-            return false;
         }
         else if(hypeSdk.hasHypeStopped){
             AlertDialogUtils.showOkDialog(MainActivity.this,
                     "Error", "Hype SDK stopped.\n" + hypeSdk.hypeStoppedMsg);
-            return false;
         }
         else if( ! hypeSdk.hasHypeStarted){
             AlertDialogUtils.showOkDialog(MainActivity.this,
                     "Warning", "Hype SDK is not ready yet.");
-            return false;
         }
+    }
 
-        return true;
+    private boolean isNoServiceSubscribed()
+    {
+        return uiData.getNumberOfSubscribedServices() == 0;
+    }
+
+    private void showNoServicesSubscribedDialog()
+    {
+        AlertDialogUtils.showOkDialog(MainActivity.this,
+                "INFO", "No services subscribed");
+
     }
 
     static String processUserServiceNameInput(String input)

@@ -49,7 +49,7 @@ public class Network
         return managerClient;
     }
 
-    protected void setOwnClient(Instance ownInstance) throws NoSuchAlgorithmException {
+    protected void setOwnClient(Instance ownInstance){
         ownClient = new Client(ownInstance);
     }
 }

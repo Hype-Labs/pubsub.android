@@ -9,11 +9,11 @@ import java.lang.ref.WeakReference;
 
 public class ClientsListActivity extends AppCompatActivity
 {
+    final private ClientsList activityClientsList = new ClientsList();
     private ListView clientsListView;
     private static WeakReference<ClientsListActivity> defaultInstance;
-    private ClientsList activityClientsList = new ClientsList();
     private ClientsAdapter activityClientsAdapter;
-    Network network = Network.getInstance();
+    private Network network = Network.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)

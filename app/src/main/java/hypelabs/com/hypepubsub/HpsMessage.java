@@ -29,6 +29,7 @@ public class HpsMessage
     {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         outputStream.write((byte) type.ordinal());
+
         try {
             outputStream.write(serviceKey);
         }
