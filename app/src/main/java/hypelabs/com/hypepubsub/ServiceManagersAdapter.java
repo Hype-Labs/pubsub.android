@@ -12,18 +12,16 @@ import java.util.LinkedList;
 
 public class ServiceManagersAdapter extends ArrayAdapter<ServiceManager>
 {
-    public ServiceManagersAdapter(Context context, LinkedList<ServiceManager> serviceManagers)
-    {
+    public ServiceManagersAdapter(Context context, LinkedList<ServiceManager> serviceManagers) {
         super(context, 0, serviceManagers);
     }
 
     @NonNull
     @Override
-    public View getView(int position, View convertView, @NonNull ViewGroup parent)
-    {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         ServiceManager serviceManager = getItem(position);
         if(serviceManager == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("ServiceManager from ServiceManagersAdapter is null!");
         }
 
         // Check if an existing view is being reused, otherwise inflate the view

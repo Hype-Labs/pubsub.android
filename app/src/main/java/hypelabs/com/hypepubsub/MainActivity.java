@@ -40,8 +40,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -54,14 +53,12 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void initHypeSdk()
-    {
+    private void initHypeSdk() {
         HypeSdkInterface hypeSdkInterface = HypeSdkInterface.getInstance();
         hypeSdkInterface.requestHypeToStart(getApplicationContext());
     }
 
-    private void setButtonListeners()
-    {
+    private void setButtonListeners() {
         setListenerSubscribeButton();
         setListenerUnsubscribeButton();
         setListenerPublishButton();
@@ -71,8 +68,7 @@ public class MainActivity extends AppCompatActivity
         setListenerCheckManagedServicesButton();
     }
 
-    private void initButtonsFromResourceIDs()
-    {
+    private void initButtonsFromResourceIDs() {
         subscribeButton = findViewById(R.id.activity_main_subscribe_button);
         unsubscribeButton = findViewById(R.id.activity_main_unsubscribe_button);
         publishButton = findViewById(R.id.activity_main_publish_button);
@@ -86,14 +82,13 @@ public class MainActivity extends AppCompatActivity
     // Button Listener Methods
     //////////////////////////////////////////////////////////////////////////////
 
-    private void setListenerSubscribeButton()
-    {
+    private void setListenerSubscribeButton() {
         subscribeButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0)
             {
-                if( !isHypeSdkReady()){
+                if( !isHypeSdkReady()) {
                     showHypeNotReadyDialog();
                     return;
                 }
@@ -107,18 +102,17 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void setListenerUnsubscribeButton()
-    {
+    private void setListenerUnsubscribeButton() {
         unsubscribeButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0)
             {
-                if( !isHypeSdkReady()){
+                if( !isHypeSdkReady()) {
                     showHypeNotReadyDialog();
                     return;
                 }
-                if( isNoServiceSubscribed()){
+                if( isNoServiceSubscribed()) {
                     showNoServicesSubscribedDialog();
                     return;
                 }
@@ -132,14 +126,13 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void setListenerPublishButton()
-    {
+    private void setListenerPublishButton() {
         publishButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0)
             {
-                if( !isHypeSdkReady()){
+                if( !isHypeSdkReady()) {
                     showHypeNotReadyDialog();
                     return;
                 }
@@ -153,14 +146,13 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void setListenerCheckOwnIdButton()
-    {
+    private void setListenerCheckOwnIdButton() {
         checkOwnIdButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0)
             {
-                if( !isHypeSdkReady()){
+                if( !isHypeSdkReady()) {
                     showHypeNotReadyDialog();
                     return;
                 }
@@ -173,8 +165,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void setListenerCheckHypeDevicesButton()
-    {
+    private void setListenerCheckHypeDevicesButton() {
         final Intent intent = new Intent(this, ClientsListActivity.class);
 
         checkHypeDevicesButton.setOnClickListener(new View.OnClickListener() {
@@ -182,7 +173,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View arg0)
             {
-                if( !isHypeSdkReady()){
+                if( !isHypeSdkReady()) {
                     showHypeNotReadyDialog();
                     return;
                 }
@@ -192,8 +183,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void setListenerCheckOwnSubscriptionsButton()
-    {
+    private void setListenerCheckOwnSubscriptionsButton() {
         final Intent intent = new Intent(this, SubscriptionsListActivity.class);
 
         checkOwnSubscriptionsButton.setOnClickListener(new View.OnClickListener() {
@@ -201,11 +191,11 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View arg0)
             {
-                if( !isHypeSdkReady()){
+                if( !isHypeSdkReady()) {
                     showHypeNotReadyDialog();
                     return;
                 }
-                if( isNoServiceSubscribed()){
+                if( isNoServiceSubscribed()) {
                     showNoServicesSubscribedDialog();
                     return;
                 }
@@ -215,8 +205,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void setListenerCheckManagedServicesButton()
-    {
+    private void setListenerCheckManagedServicesButton() {
         final Intent intent = new Intent(this, ServiceManagersListActivity.class);
 
         checkManagedServicesButton.setOnClickListener(new View.OnClickListener() {
@@ -224,7 +213,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View arg0)
             {
-                if( !isHypeSdkReady()){
+                if( !isHypeSdkReady()) {
                     showHypeNotReadyDialog();
                     return;
                 }
@@ -242,8 +231,7 @@ public class MainActivity extends AppCompatActivity
                                           String message,
                                           ListAdapter serviceNamesAdapter,
                                           final IServiceAction serviceAction,
-                                          Boolean isNewServiceSelectionAllowed)
-    {
+                                          Boolean isNewServiceSelectionAllowed) {
         final ListView listView = new ListView(MainActivity.this);
         listView.setAdapter(serviceNamesAdapter);
 
@@ -286,13 +274,11 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private interface IServiceAction
-    {
+    private interface IServiceAction {
         void action(String userInput);
     }
 
-    private class subscribeServiceAction implements IServiceAction
-    {
+    private class subscribeServiceAction implements IServiceAction {
         @Override
         public void action(String userInput) {
             String serviceName = processUserServiceNameInput(userInput);
@@ -314,8 +300,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private class unsubscribeServiceAction implements IServiceAction
-    {
+    private class unsubscribeServiceAction implements IServiceAction {
         @Override
         public void action(String userInput) {
             String serviceName = processUserServiceNameInput(userInput);
@@ -331,8 +316,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private class publishServiceAction implements IServiceAction
-    {
+    private class publishServiceAction implements IServiceAction {
         @Override
         public void action(String userInput) {
             final String serviceName = processUserServiceNameInput(userInput);
@@ -367,8 +351,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void processNewServiceSelection(final IServiceAction serviceAction)
-    {
+    private void processNewServiceSelection(final IServiceAction serviceAction) {
         AlertDialogUtils.ISingleInputDialog newServiceInput = new AlertDialogUtils.ISingleInputDialog() {
 
             @Override
@@ -394,25 +377,23 @@ public class MainActivity extends AppCompatActivity
     // Utilities
     //////////////////////////////////////////////////////////////////////////////
 
-    private boolean isHypeSdkReady()
-    {
+    private boolean isHypeSdkReady() {
         if(!hypeSdk.hasHypeFailed  && !hypeSdk.hasHypeStopped && hypeSdk.hasHypeStarted) {
             return true;
         }
         return false;
     }
 
-    private void showHypeNotReadyDialog()
-    {
-        if(hypeSdk.hasHypeFailed){
+    private void showHypeNotReadyDialog() {
+        if(hypeSdk.hasHypeFailed) {
             AlertDialogUtils.showInfoDialog(MainActivity.this,
                     "Error", "Hype SDK could not be started.\n" + hypeSdk.hypeFailedMsg);
         }
-        else if(hypeSdk.hasHypeStopped){
+        else if(hypeSdk.hasHypeStopped) {
             AlertDialogUtils.showInfoDialog(MainActivity.this,
                     "Error", "Hype SDK stopped.\n" + hypeSdk.hypeStoppedMsg);
         }
-        else if( !hypeSdk.hasHypeStarted){
+        else if( !hypeSdk.hasHypeStarted) {
             AlertDialogUtils.showInfoDialog(MainActivity.this,
                     "Warning", "Hype SDK is not ready yet.");
         }
@@ -423,8 +404,7 @@ public class MainActivity extends AppCompatActivity
         return uiData.getNumberOfSubscribedServices() == 0;
     }
 
-    private void showNoServicesSubscribedDialog()
-    {
+    private void showNoServicesSubscribedDialog() {
         AlertDialogUtils.showInfoDialog(MainActivity.this,
                 "INFO", "No services subscribed");
 

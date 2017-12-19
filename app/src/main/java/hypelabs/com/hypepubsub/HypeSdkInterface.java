@@ -30,8 +30,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     private static HypeSdkInterface hypeSdkInterface = new HypeSdkInterface();
     public static HypeSdkInterface getInstance() { return hypeSdkInterface; }
 
-    protected void requestHypeToStart(Context context)
-    {
+    protected void requestHypeToStart(Context context) {
         Hype.setAppIdentifier(HpsConstants.APP_IDENTIFIER);
         Hype.setContext(context);
         Hype.setAnnouncement(HpsGenericUtils.getAndroidBuildModel());
@@ -41,7 +40,6 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
         Hype.addMessageObserver(this);
 
         Hype.start();
-
         Log.i(TAG, String.format("%s Requested Hype SDK start.", HYPE_SDK_INTERFACE_LOG_PREFIX));
     }
 
@@ -55,17 +53,16 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     //////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void onHypeStart()
-    {
+    public void onHypeStart() {
         Log.i(TAG, String.format("%s Hype SDK started! Host Instance: %s",
-                HYPE_SDK_INTERFACE_LOG_PREFIX, HpsGenericUtils.getLogStrFromInstance(Hype.getHostInstance())));
+                HYPE_SDK_INTERFACE_LOG_PREFIX,
+                HpsGenericUtils.getLogStrFromInstance(Hype.getHostInstance())));
         hasHypeStarted = true;
         network.setOwnClient(Hype.getHostInstance());
     }
 
     @Override
-    public void onHypeStop(Error var1)
-    {
+    public void onHypeStop(Error var1) {
         hasHypeStopped = true;
         hypeStoppedMsg = String.format("Suggestion: %s\nDescription: %s\nReason: %s",
                 var1.getSuggestion(), var1.getDescription(), var1.getReason());
@@ -75,8 +72,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     }
 
     @Override
-    public void onHypeFailedStarting(Error var1)
-    {
+    public void onHypeFailedStarting(Error var1) {
         hasHypeFailed = true;
         hypeFailedMsg = String.format("Suggestion: %s\nDescription: %s\nReason: %s",
                 var1.getSuggestion(), var1.getDescription(), var1.getReason());
@@ -94,32 +90,28 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
         Log.i( TAG, String.format("%s Hype SDK is ready", HYPE_SDK_INTERFACE_LOG_PREFIX));
     }
 
-
     @Override
     public void onHypeStateChange() {
-        Log.i(TAG, String.format("%s Hype SDK state has changed to %s", HYPE_SDK_INTERFACE_LOG_PREFIX, Hype.getState()));
+        Log.i(TAG, String.format("%s Hype SDK state has changed to %s",
+                HYPE_SDK_INTERFACE_LOG_PREFIX, Hype.getState()));
     }
-
 
     //////////////////////////////////////////////////////////////////////////////
     // Network Observer Methods
     //////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void onHypeInstanceFound(Instance var1)
-    {
+    public void onHypeInstanceFound(Instance var1) {
         String instanceLogIdStr = HpsGenericUtils.getLogStrFromInstance(var1);
 
-        if(!var1.isResolved())
-        {
+        if(!var1.isResolved()) {
             Log.i(TAG, String.format("%s Hype SDK unresolved instance found: %s",
                     HYPE_SDK_INTERFACE_LOG_PREFIX, instanceLogIdStr));
             Log.i(TAG, String.format("%s Resolving Hype SDK instance: %s",
                     HYPE_SDK_INTERFACE_LOG_PREFIX, instanceLogIdStr));
             Hype.resolve(var1);
         }
-        else
-        {
+        else {
             Log.i(TAG, String.format("%s Hype SDK resolved instance found: %s",
                     HYPE_SDK_INTERFACE_LOG_PREFIX, instanceLogIdStr));
 
@@ -137,8 +129,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     }
 
     @Override
-    public void onHypeInstanceLost(Instance var1, Error var2)
-    {
+    public void onHypeInstanceLost(Instance var1, Error var2) {
         Log.i(TAG, String.format("%s Hype SDK instance lost: %s",
                 HYPE_SDK_INTERFACE_LOG_PREFIX, HpsGenericUtils.getLogStrFromInstance(var1)));
 
@@ -155,8 +146,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     }
 
     @Override
-    public void onHypeInstanceResolved(Instance var1, byte[] var2)
-    {
+    public void onHypeInstanceResolved(Instance var1, byte[] var2) {
         Log.i(TAG, String.format("%s Hype SDK instance resolved: %s",
                 HYPE_SDK_INTERFACE_LOG_PREFIX, HpsGenericUtils.getLogStrFromInstance(var1)));
 
@@ -172,8 +162,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     }
 
     @Override
-    public void onHypeInstanceFailResolving(Instance var1, Error var2)
-    {
+    public void onHypeInstanceFailResolving(Instance var1, Error var2) {
         Log.e(TAG, String.format("%s Hype SDK instance fail resolving: %s",
                 HYPE_SDK_INTERFACE_LOG_PREFIX, HpsGenericUtils.getLogStrFromInstance(var1)));
         Log.e(TAG, String.format("%s Hype SDK instance fail resolving. Suggestion: %s",
@@ -189,9 +178,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     //////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void onHypeMessageReceived(Message var1, Instance var2)
-    {
-
+    public void onHypeMessageReceived(Message var1, Instance var2) {
         final Message receivedMsg = var1;
         final Instance originatorInstance = var2;
 
@@ -207,8 +194,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     }
 
     @Override
-    public void onHypeMessageFailedSending(MessageInfo var1, Instance var2, Error var3)
-    {
+    public void onHypeMessageFailedSending(MessageInfo var1, Instance var2, Error var3) {
         Log.i(TAG, String.format("%s Hype SDK message failed sending to: %s",
                 HYPE_SDK_INTERFACE_LOG_PREFIX, HpsGenericUtils.getLogStrFromInstance(var2)));
         Log.e(TAG, String.format("%s Hype SDK message failed sending error. Suggestion: %s",
@@ -220,8 +206,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     }
 
     @Override
-    public void onHypeMessageSent(MessageInfo var1, Instance var2, float var3, boolean var4)
-    {
+    public void onHypeMessageSent(MessageInfo var1, Instance var2, float var3, boolean var4) {
         if(! var4) {
             Log.i(TAG, String.format("%s Hype SDK message %d sending percentage: %f",
                     HYPE_SDK_INTERFACE_LOG_PREFIX, var1.getIdentifier(), (var3 * 100)));
@@ -233,8 +218,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     }
 
     @Override
-    public void onHypeMessageDelivered(MessageInfo var1, Instance var2, float var3, boolean var4)
-    {
+    public void onHypeMessageDelivered(MessageInfo var1, Instance var2, float var3, boolean var4) {
         if(! var4) {
             Log.i(TAG, String.format("%s Hype SDK message %d delivered percentage: %f",
                     HYPE_SDK_INTERFACE_LOG_PREFIX, var1.getIdentifier(), (var3 * 100)));
@@ -249,13 +233,11 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     // Add and Remove Instances on Founds, Resolved and Lost
     //////////////////////////////////////////////////////////////////////////////
 
-    public void addInstanceAlreadyResolved(Instance instance)
-    {
+    public void addInstanceAlreadyResolved(Instance instance) {
         Log.i(TAG, String.format("%s Adding Hype SDK instance already resolved: %s",
                 HYPE_SDK_INTERFACE_LOG_PREFIX, HpsGenericUtils.getLogStrFromInstance(instance)));
 
-        synchronized (network) // Add thread safety to adding procedure
-        {
+        synchronized (network) { // Add thread safety to adding procedure
             network.networkClients.addClient(new Client(instance));
             hps.updateManagedServices();
             hps.updateOwnSubscriptions();
@@ -263,13 +245,11 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
         }
     }
 
-    public void removeInstance(Instance instance)
-    {
+    public void removeInstance(Instance instance) {
         Log.i(TAG, String.format("%s Removing Hype SDK instance already lost: %s",
                 HYPE_SDK_INTERFACE_LOG_PREFIX, HpsGenericUtils.getLogStrFromInstance(instance)));
 
-        synchronized (network) // Add thread safety to removal procedure
-        {
+        synchronized (network) { // Add thread safety to removal procedure
             network.networkClients.removeClientWithInstance(instance);
             hps.updateOwnSubscriptions();
             hps.removeSubscriptionsFromLostInstance(instance);
@@ -281,20 +261,17 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     // Calls to Hype Send
     //////////////////////////////////////////////////////////////////////////////
 
-    public void sendMsg(HpsMessage hpsMsg, Instance destination)
-    {
+    public void sendMsg(HpsMessage hpsMsg, Instance destination) {
         Message sdkMsg = Hype.send(hpsMsg.toByteArray(), destination, true);
-
         Log.i(TAG, String.format("%s Hype SDK send message with ID: %d",
                 HYPE_SDK_INTERFACE_LOG_PREFIX, sdkMsg.getIdentifier()));
     }
 
     //////////////////////////////////////////////////////////////////////////////
-    // Other methods
+    // UI methods
     //////////////////////////////////////////////////////////////////////////////
 
-    private void updateClientsUI()
-    {
+    private void updateClientsUI() {
         ClientsListActivity clientsListActivity = ClientsListActivity.getDefaultInstance();
         if (clientsListActivity != null) {
             clientsListActivity.updateUI();

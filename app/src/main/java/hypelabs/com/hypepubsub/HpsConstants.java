@@ -13,5 +13,6 @@ public class HpsConstants
     static public final String NOTIFICATIONS_CHANNEL = "HypePubSub";
     static public final String NOTIFICATIONS_TITLE = "HypePubSub";
     static public final String LOG_PREFIX = " :: HpsApplication :: ";
-    static public final ArrayList<String> STANDARD_HYPE_SERVICES = new ArrayList<>(Arrays.asList("hype-jobs", "hype-sports", "hype-news", "hype-weather", "hype-music", "hype-movies"));
+    static public final ArrayList<String> STANDARD_HYPE_SERVICES = new ArrayList<>(Arrays.asList(
+            "hype-jobs", "hype-sports", "hype-news", "hype-weather", "hype-music", "hype-movies"));
 }

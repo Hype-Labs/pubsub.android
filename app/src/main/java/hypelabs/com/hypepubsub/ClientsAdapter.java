@@ -12,18 +12,16 @@ import java.util.LinkedList;
 
 public class ClientsAdapter extends ArrayAdapter<Client>
 {
-    public ClientsAdapter(Context context, LinkedList<Client> clients)
-    {
+    public ClientsAdapter(Context context, LinkedList<Client> clients) {
         super(context, 0, clients);
     }
 
     @NonNull
     @Override
-    public View getView(int position, View convertView, @NonNull ViewGroup parent)
-    {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         Client client = getItem(position);
         if (client == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("Client from ClientsAdapter is null!");
         }
 
         // Check if an existing view is being reused, otherwise inflate the view

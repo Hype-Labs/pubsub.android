@@ -14,54 +14,43 @@ public class ServiceManagersList
     final private LinkedList<ServiceManager> serviceManagers = new LinkedList<>();
     private ServiceManagersAdapter serviceManagersAdapter = null;
 
-    public synchronized boolean addServiceManager(ServiceManager serviceManager)
-    {
+    public synchronized boolean addServiceManager(ServiceManager serviceManager) {
         if (containsServiceManagerWithKey(serviceManager.serviceKey)) {
             return false;
         }
-
         return serviceManagers.add(serviceManager);
     }
 
-    public synchronized boolean removeServiceManagerWithKey(byte serviceKey[])
-    {
+    public synchronized boolean removeServiceManagerWithKey(byte serviceKey[]) {
         ServiceManager serviceMan = findServiceManagerWithKey(serviceKey);
         if (serviceMan == null) {
             return false;
         }
-
         return serviceManagers.remove(serviceMan);
     }
 
-    public synchronized ServiceManager findServiceManagerWithKey(byte serviceKey[])
-    {
+    public synchronized ServiceManager findServiceManagerWithKey(byte serviceKey[]) {
         ListIterator<ServiceManager> it = listIterator();
-        while(it.hasNext())
-        {
+        while(it.hasNext()) {
             ServiceManager currentServiceMan = it.next();
             if(Arrays.equals(currentServiceMan.serviceKey, serviceKey)) {
                 return currentServiceMan;
             }
         }
-
         return null;
     }
 
-    public synchronized boolean containsServiceManagerWithKey(byte serviceKey[])
-    {
+    public synchronized boolean containsServiceManagerWithKey(byte serviceKey[]) {
         if(findServiceManagerWithKey(serviceKey) == null) {
             return false;
         }
-
         return true;
     }
 
-    public synchronized ServiceManagersAdapter getServiceManagersAdapter(Context context)
-    {
+    public synchronized ServiceManagersAdapter getServiceManagersAdapter(Context context) {
         if(serviceManagersAdapter == null){
             serviceManagersAdapter = new ServiceManagersAdapter(context, serviceManagers);
         }
-
         return serviceManagersAdapter;
     }
 

@@ -41,8 +41,7 @@ public class BinaryUtils {
             return -1;
         }
 
-        for(int i=0; i<array1.length; i++)
-        {
+        for(int i=0; i<array1.length; i++) {
             int val1 = byteToUnsignedInt(array1[i]);
             int val2 = byteToUnsignedInt(array2[i]);
 

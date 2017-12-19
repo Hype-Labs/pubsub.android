@@ -13,8 +13,7 @@ public class Network
     protected Client ownClient;
     protected ClientsList networkClients;
 
-    private Network()
-    {
+    private Network() {
         // The own client can only be initialized after the Hype start when we already
         // have an host instance.
         ownClient = null;
@@ -26,21 +25,17 @@ public class Network
         return network;
     }
 
-    protected Client determineClientResponsibleForService(byte serviceKey[])
-    {
+    protected Client determineClientResponsibleForService(byte serviceKey[]) {
         Client managerClient = ownClient;
         byte lowestDist[] = BinaryUtils.xor(serviceKey, ownClient.key);
 
-        synchronized (network) // Add thread safety to iteration procedure
-        {
+        synchronized (network) { // Add thread safety to iteration procedure
             ListIterator<Client> it = networkClients.listIterator();
-            while (it.hasNext())
-            {
+            while (it.hasNext()) {
                 Client client = it.next();
 
                 byte dist[] = BinaryUtils.xor(serviceKey, client.key);
-                if (BinaryUtils.determineHigherBigEndianByteArray(lowestDist, dist) == 1)
-                {
+                if (BinaryUtils.determineHigherBigEndianByteArray(lowestDist, dist) == 1) {
                     lowestDist = dist;
                     managerClient = client;
                 }
@@ -49,7 +44,7 @@ public class Network
         return managerClient;
     }
 
-    protected void setOwnClient(Instance ownInstance){
+    protected void setOwnClient(Instance ownInstance) {
         ownClient = new Client(ownInstance);
     }
 }

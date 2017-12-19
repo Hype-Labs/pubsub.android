@@ -15,8 +15,7 @@ public class MessagesActivity extends AppCompatActivity
     private static WeakReference<MessagesActivity> defaultInstance;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         byte[] subscriptionKey = this.getIntent().getByteArrayExtra(EXTRA_SUBSCRIPTION_KEY);
@@ -25,8 +24,9 @@ public class MessagesActivity extends AppCompatActivity
         HypePubSub hps = HypePubSub.getInstance();
         Subscription subscription = hps.ownSubscriptions.findSubscriptionWithServiceKey(subscriptionKey);
 
-        if(subscription == null) // Protection against subscription not found..
+        if(subscription == null) { // Protection against subscription not found..
             this.finish();
+        }
 
         this.setTitle(subscription.serviceName + " messages");
         setContentView(R.layout.activity_messages);
@@ -40,12 +40,10 @@ public class MessagesActivity extends AppCompatActivity
     }
 
     public static MessagesActivity getDefaultInstance() {
-
         return defaultInstance != null ? defaultInstance.get() : null;
     }
 
     private static void setMessagesActivity(MessagesActivity instance) {
-
         defaultInstance = new WeakReference<>(instance);
     }
 

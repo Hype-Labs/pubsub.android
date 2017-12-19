@@ -18,13 +18,13 @@ public class AlertDialogUtils
      *
      * @param context Context on which the dialog should be displayed.
      * @param title Title of the the dialog.
-     * @param message Message of the dialog.
+     * @param info Message of the dialog.
      */
-    public static void showInfoDialog(Context context, String title, String message)
+    public static void showInfoDialog(Context context, String title, String info)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);
-        builder.setMessage(message);
+        builder.setMessage(info);
         builder.setPositiveButton(android.R.string.ok, null);
         builder.show();
     }
@@ -35,18 +35,18 @@ public class AlertDialogUtils
      * @param context Context on which the dialog should be displayed.
      * @param title Title of the the dialog.
      * @param hintInput Hint to suggest the type of input expected.
-     * @param singleInputDialog Object of a class that implemented the ISingleInputDialog interface.
+     * @param inputDialog Object of a class that implemented the ISingleInputDialog interface.
      *                          This object defines what will be executed when the Ok and Cancel
      *                          buttons are pressed.
      */
-    public static void showSingleInputDialog(Context context, String title, String msg, String hintInput, final ISingleInputDialog singleInputDialog)
-    {
-        final EditText input = new EditText(context);
-        input.setHint(hintInput);
+    public static void showSingleInputDialog(Context context, String title, String msg,
+                                             String hintInput, final ISingleInputDialog inputDialog) {
+        final EditText textInput = new EditText(context);
+        textInput.setHint(hintInput);
 
         LinearLayout layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
-        layout.addView(input);
+        layout.addView(textInput);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);
@@ -59,12 +59,7 @@ public class AlertDialogUtils
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {
-                        try {
-                            singleInputDialog.onOk(input.getText().toString());
-                        }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        inputDialog.onOk(textInput.getText().toString());
                     }
                 });
 
@@ -73,7 +68,7 @@ public class AlertDialogUtils
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        singleInputDialog.onCancel();
+                        inputDialog.onCancel();
                     }
                 });
 
@@ -91,8 +86,8 @@ public class AlertDialogUtils
      * Interface to be implemented and passed as a parameter when using a ISingleInputDialog. It
      * acts like a callback when the Ok or the Cancel button are pressed.
      */
-    public interface ISingleInputDialog
-    {
+    public interface ISingleInputDialog {
+
         /**
          *
          * Method called when the Ok button of a ISingleInputDialog is pressed

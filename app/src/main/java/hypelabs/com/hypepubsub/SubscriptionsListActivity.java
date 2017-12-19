@@ -12,8 +12,7 @@ public class SubscriptionsListActivity extends AppCompatActivity
     private ListView subscriptionsListView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setTitle("Subscriptions");
         setContentView(R.layout.activity_subscriptions_list);

@@ -16,63 +16,49 @@ public class SubscriptionsList
     final private LinkedList<Subscription> subscriptions = new LinkedList<>();
     private SubscriptionsAdapter subscriptionsAdapter = null;
 
-    public synchronized boolean addSubscription(Subscription subscription)
-    {
+    public synchronized boolean addSubscription(Subscription subscription) {
         if (containsSubscriptionWithServiceKey(subscription.serviceKey)) {
             return false;
         }
-
         return subscriptions.add(subscription);
     }
 
-    public synchronized boolean removeSubscriptionWithServiceName(String serviceName)
-    {
+    public synchronized boolean removeSubscriptionWithServiceName(String serviceName) {
         byte serviceKey[] = HpsGenericUtils.stringHash(serviceName);
-
         Subscription subscription = findSubscriptionWithServiceKey(serviceKey);
         if(subscription == null) {
             return false;
         }
-
         return subscriptions.remove(subscription);
     }
 
-    public synchronized Subscription findSubscriptionWithServiceKey(byte serviceKey[])
-    {
+    public synchronized Subscription findSubscriptionWithServiceKey(byte serviceKey[]) {
         ListIterator<Subscription> it = listIterator();
-        while(it.hasNext())
-        {
+        while(it.hasNext()) {
             Subscription currentSubs = it.next();
             if(Arrays.equals(currentSubs.serviceKey, serviceKey)) {
                 return currentSubs;
             }
         }
-
         return null;
     }
 
-    public synchronized boolean containsSubscriptionWithServiceKey(byte serviceKey[])
-    {
+    public synchronized boolean containsSubscriptionWithServiceKey(byte serviceKey[]) {
         if(findSubscriptionWithServiceKey(serviceKey) == null) {
             return false;
         }
-
         return true;
     }
 
-    public synchronized boolean containsSubscriptionWithServiceName(String serviceName)
-    {
+    public synchronized boolean containsSubscriptionWithServiceName(String serviceName) {
         byte serviceKey[] = HpsGenericUtils.stringHash(serviceName);
         return containsSubscriptionWithServiceKey(serviceKey);
     }
 
-
-    public synchronized SubscriptionsAdapter getSubscriptionsAdapter(Context context)
-    {
+    public synchronized SubscriptionsAdapter getSubscriptionsAdapter(Context context) {
         if(subscriptionsAdapter == null) {
             subscriptionsAdapter = new SubscriptionsAdapter(context, subscriptions);
         }
-
         return  subscriptionsAdapter;
     }
 
@@ -80,8 +66,7 @@ public class SubscriptionsList
     //  LinkedList methods to enable
     //////////////////////////////////////////////////////////////////////////////
 
-    public synchronized ListIterator<Subscription> listIterator()
-    {
+    public synchronized ListIterator<Subscription> listIterator() {
         return subscriptions.listIterator();
     }
 

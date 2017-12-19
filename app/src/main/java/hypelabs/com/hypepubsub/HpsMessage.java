@@ -11,22 +11,19 @@ public class HpsMessage
     private byte[] serviceKey;
     private String info;
 
-    public HpsMessage(HpsMessageType type, byte[] serviceKey, String info)
-    {
+    public HpsMessage(HpsMessageType type, byte[] serviceKey, String info) {
         this.type = type;
         this.serviceKey = serviceKey;
         this.info = info;
     }
 
-    public HpsMessage(HpsMessageType type, byte[] serviceKey)
-    {
+    public HpsMessage(HpsMessageType type, byte[] serviceKey) {
         this.type = type;
         this.serviceKey = serviceKey;
         this.info = null;
     }
 
-    public byte[] toByteArray()
-    {
+    public byte[] toByteArray() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         outputStream.write((byte) type.ordinal());
 
@@ -34,7 +31,7 @@ public class HpsMessage
             outputStream.write(serviceKey);
         }
         catch (IOException e){
-            throw new RuntimeException("Could not write ServiceKey to byte array" + e.getMessage(),e);
+            throw new RuntimeException("Could not write message ServiceKey to byte array" + e.getMessage(),e);
         }
 
         if(info != null) {
@@ -42,7 +39,7 @@ public class HpsMessage
                 outputStream.write(info.getBytes(HpsConstants.ENCODING_STANDARD));
             }
             catch (IOException e){
-                throw new RuntimeException("Could not write ServiceKey to byte array" + e.getMessage(),e);
+                throw new RuntimeException("Could not write message Info to byte array" + e.getMessage(),e);
             }
 
         }
@@ -50,9 +47,7 @@ public class HpsMessage
         return outputStream.toByteArray();
     }
 
-    public String toLogString()
-    {
-
+    public String toLogString() {
         String logString = String.format("%s message for service 0x%s.",
                 type.toString(), BinaryUtils.byteArrayToHexString(serviceKey));
         if(info != null) {
@@ -60,10 +55,6 @@ public class HpsMessage
         }
 
         return logString;
-    }
-
-    public HpsMessageType getType(){
-        return type;
     }
 
     public byte[] getServiceKey(){

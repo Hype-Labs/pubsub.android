@@ -13,8 +13,7 @@ public class ServiceManagersListActivity extends AppCompatActivity
     private static WeakReference<ServiceManagersListActivity> defaultInstance;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setTitle("Managed Services");
         setContentView(R.layout.activity_service_managers_list);
@@ -28,12 +27,10 @@ public class ServiceManagersListActivity extends AppCompatActivity
     }
 
     public static ServiceManagersListActivity getDefaultInstance() {
-
         return defaultInstance != null ? defaultInstance.get() : null;
     }
 
     private static void setServiceManagersListActivity(ServiceManagersListActivity instance) {
-
         defaultInstance = new WeakReference<>(instance);
     }
 

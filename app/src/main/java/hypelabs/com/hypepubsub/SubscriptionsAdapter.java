@@ -12,18 +12,16 @@ import java.util.LinkedList;
 
 public class SubscriptionsAdapter extends ArrayAdapter<Subscription>
 {
-    public SubscriptionsAdapter(Context context, LinkedList<Subscription> subscriptions)
-    {
+    public SubscriptionsAdapter(Context context, LinkedList<Subscription> subscriptions) {
         super(context, 0, subscriptions);
     }
 
     @NonNull
     @Override
-    public View getView(int position, View convertView, @NonNull ViewGroup parent)
-    {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         Subscription subscription = getItem(position);
         if(subscription == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("Subscription from SubscriptionsAdapter is null!");
         }
 
         // Check if an existing view is being reused, otherwise inflate the view

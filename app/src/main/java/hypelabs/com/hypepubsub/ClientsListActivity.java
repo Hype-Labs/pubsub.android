@@ -16,8 +16,7 @@ public class ClientsListActivity extends AppCompatActivity
     private Network network = Network.getInstance();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setTitle("Hype Devices");
         setContentView(R.layout.activity_clients_list);
@@ -29,8 +28,7 @@ public class ClientsListActivity extends AppCompatActivity
         setClientsListActivity(this);
     }
 
-    private void setClientsAdapterFromNetworkClients()
-    {
+    private void setClientsAdapterFromNetworkClients() {
         ClientsAdapter clientAdapter = getClientsAdapter();
         clientAdapter.clear();
         for(int i=0; i<network.networkClients.size();i++) {
@@ -38,8 +36,7 @@ public class ClientsListActivity extends AppCompatActivity
         }
     }
 
-    private ClientsAdapter getClientsAdapter()
-    {
+    private ClientsAdapter getClientsAdapter() {
         if (activityClientsAdapter == null) {
             activityClientsAdapter = activityClientsList.getClientsAdapter(ClientsListActivity.this);
         }
