@@ -115,16 +115,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
             Log.i(TAG, String.format("%s Hype SDK resolved instance found: %s",
                     HYPE_SDK_INTERFACE_LOG_PREFIX, instanceLogIdStr));
 
-            // Add the instance found in a separate thread to release the lock of the
-            // Hype instance object preventing possible deadlock
-            final Instance instanceFound = var1;
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    addInstanceAlreadyResolved(instanceFound);
-                }
-            });
-            t.start();
+            addInstanceAlreadyResolved(var1);
         }
     }
 
@@ -133,16 +124,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
         Log.i(TAG, String.format("%s Hype SDK instance lost: %s",
                 HYPE_SDK_INTERFACE_LOG_PREFIX, HpsGenericUtils.getLogStrFromInstance(var1)));
 
-        // Remove the instance lost in a separate thread to release the lock of the
-        // Hype instance object preventing possible deadlock
-        final Instance instanceToRemove = var1;
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                removeInstance(instanceToRemove);
-            }
-        });
-        t.start();
+        removeInstance(var1);
     }
 
     @Override
@@ -150,15 +132,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
         Log.i(TAG, String.format("%s Hype SDK instance resolved: %s",
                 HYPE_SDK_INTERFACE_LOG_PREFIX, HpsGenericUtils.getLogStrFromInstance(var1)));
 
-        // Add instance in a separate thread to prevent deadlock
-        final Instance instanceFound = var1;
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                addInstanceAlreadyResolved(instanceFound);
-            }
-        });
-        t.start();
+        addInstanceAlreadyResolved(var1);
     }
 
     @Override
@@ -179,18 +153,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
 
     @Override
     public void onHypeMessageReceived(Message var1, Instance var2) {
-        final Message receivedMsg = var1;
-        final Instance originatorInstance = var2;
-
-        // Process the received message in a separate thread to release the lock of the
-        // Hype instance object preventing possible deadlock
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Protocol.receiveMsg(originatorInstance, receivedMsg.getData());
-            }
-        });
-        t.start();
+        Protocol.receiveMsg(var2, var1.getData());
     }
 
     @Override
