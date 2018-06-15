@@ -96,6 +96,11 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
                 HYPE_SDK_INTERFACE_LOG_PREFIX, Hype.getState()));
     }
 
+    @Override
+    public String onHypeRequestAccessToken(int var1) {
+        return "3f07c41b53c9e753ca8d610b4147e3";
+    }
+
     //////////////////////////////////////////////////////////////////////////////
     // Network Observer Methods
     //////////////////////////////////////////////////////////////////////////////
