@@ -151,7 +151,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     }
 
     @Override
-    public void onHypeInstanceResolved(Instance var1, byte[] var2) {
+    public void onHypeInstanceResolved(Instance var1) {
         Log.i(TAG, String.format("%s Hype SDK instance resolved: %s",
                 HYPE_SDK_INTERFACE_LOG_PREFIX, HpsGenericUtils.getLogStrFromInstance(var1)));
 
