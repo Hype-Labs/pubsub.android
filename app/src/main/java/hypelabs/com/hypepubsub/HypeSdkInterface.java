@@ -64,8 +64,11 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
     @Override
     public void onHypeStop(Error var1) {
         hasHypeStopped = true;
-        hypeStoppedMsg = String.format("Suggestion: %s\nDescription: %s\nReason: %s",
-                var1.getSuggestion(), var1.getDescription(), var1.getReason());
+        hypeStoppedMsg = "";
+        if(var1 != null) {
+            hypeStoppedMsg = String.format("Suggestion: %s\nDescription: %s\nReason: %s",
+                    var1.getSuggestion(), var1.getDescription(), var1.getReason());
+        }
 
         Log.i(TAG,  String.format("%s Hype SDK stopped!", HYPE_SDK_INTERFACE_LOG_PREFIX));
         requestHypeToStop();
