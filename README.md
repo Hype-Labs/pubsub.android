@@ -10,7 +10,7 @@ You can [start using Hype](http://hypelabs.io/?r=10) today.
 
 ## Project
 
-This project is a decentralized peer-to-peer publisher-subscriber system powered by the HypeSDK, for the Android platform. Due to its decentralized nature this system is more robust than traditional publisher-subscriber systems that usually requires a centralized broker to serve as intermediary between publishers and subscribers. You can find out a detailed description of the system in this ![article](https://hypelabs.io/). You can also see a demonstration video of the system ![here](https://hypelabs.io/).
+This project is a decentralized peer-to-peer publisher-subscriber system powered by the HypeSDK, for the Android platform. Due to its decentralized nature this system is more robust than traditional publisher-subscriber systems that usually requires a centralized broker to serve as intermediary between publishers and subscribers. You can find out a detailed description of the system in this [article](https://medium.com/@hypelabs.io). You can also see a demonstration video of the system [here](https://www.youtube.com/watch?v=2fMwe3q1NYc&t=2s).
 
 
 
@@ -19,7 +19,7 @@ This project is a decentralized peer-to-peer publisher-subscriber system powered
 This demo does not work out of the box. The following are the necessary steps to configure it:
 
  1. [Download](https://hypelabs.io/downloads/?r=10) the SDK binary for Android
- 2. Extract it, and drag it to the Hype named folder inside the project root folder
+ 2. Extract it, and drag it to the *hype* named folder inside the project root folder
  3. Access the [apps](https://hypelabs.io/apps/?r=10) page and create a new app
  4. Name the app and press "Create new app"
  5. Go to the app settings
@@ -41,8 +41,8 @@ If you run into trouble, feel free to reach out to our [community](https://hypel
 
 Besides Android, this project is available for the following platforms:
 
-![iOS](https://github.com/Hype-Labs/pubsub.ios) <br>
-![Linux](https://github.com/Hype-Labs/pubsub.linux) (still in progress)
+[iOS](https://github.com/Hype-Labs/pubsub.ios) <br>
+[Linux](https://github.com/Hype-Labs/pubsub.linux) (still in progress)
 
 ## License
 
