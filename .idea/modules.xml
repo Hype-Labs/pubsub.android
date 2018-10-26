@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/HypePubSub.android.iml" filepath="$PROJECT_DIR$/HypePubSub.android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/HypePubSub-HypeGithub.android.iml" filepath="$PROJECT_DIR$/HypePubSub-HypeGithub.android.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/hype/hype.iml" filepath="$PROJECT_DIR$/hype/hype.iml" />
       <module fileurl="file://$PROJECT_DIR$/mockito-all-1.10.19/mockito-all-1.10.19.iml" filepath="$PROJECT_DIR$/mockito-all-1.10.19/mockito-all-1.10.19.iml" />
