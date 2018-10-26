@@ -101,7 +101,7 @@ public class HypeSdkInterface implements NetworkObserver, StateObserver, Message
 
     @Override
     public String onHypeRequestAccessToken(int var1) {
-        return "3f07c41b53c9e753ca8d610b4147e3";
+        return HpsConstants.ACCESS_TOKEN;
     }
 
     //////////////////////////////////////////////////////////////////////////////
