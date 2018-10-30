@@ -44,6 +44,10 @@ Besides Android, this project is available for the following platforms:
 - [iOS](https://github.com/Hype-Labs/pubsub.ios) <br>
 - [Linux](https://github.com/Hype-Labs/pubsub.linux)
 
+## Demonstration
+
+Click [here](https://www.youtube.com/watch?v=2fMwe3q1NYc) to see a demonstration video, on the iOS platform.
+
 ## License
 
 This project is MIT-licensed.
