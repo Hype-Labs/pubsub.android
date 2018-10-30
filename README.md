@@ -41,8 +41,8 @@ If you run into trouble, feel free to reach out to our [community](https://hypel
 
 Besides Android, this project is available for the following platforms:
 
-[iOS](https://github.com/Hype-Labs/pubsub.ios) <br>
-[Linux](https://github.com/Hype-Labs/pubsub.linux) (still in progress)
+- [iOS](https://github.com/Hype-Labs/pubsub.ios) <br>
+- [Linux](https://github.com/Hype-Labs/pubsub.linux)
 
 ## License
 
