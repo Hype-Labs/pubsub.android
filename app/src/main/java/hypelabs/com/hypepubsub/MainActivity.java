@@ -1,10 +1,13 @@
 package hypelabs.com.hypepubsub;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -54,8 +57,34 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initHypeSdk() {
-        HypeSdkInterface hypeSdkInterface = HypeSdkInterface.getInstance();
-        hypeSdkInterface.requestHypeToStart(getApplicationContext());
+        requestHypeRequiredPermissions(this);
+    }
+
+    public void requestHypeRequiredPermissions(Activity activity) {
+
+        // Request AccessCoarseLocation permissions if the Android version of the device
+        // requires it. Otherwise it starts the Hype SDK immediately. If the permissions are
+        // requested the framework only starts if the permissions are granted (see
+        // MainActivity.onRequestPermissionsResult()
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            activity.requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION},
+                    HpsConstants.REQUEST_ACCESS_COARSE_LOCATION_ID);
+        }
+        else {
+            HypeSdkInterface hypeSdkInterface = HypeSdkInterface.getInstance();
+            hypeSdkInterface.requestHypeToStart(getApplicationContext());
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case HpsConstants.REQUEST_ACCESS_COARSE_LOCATION_ID:
+                HypeSdkInterface hypeSdkInterface = HypeSdkInterface.getInstance();
+                hypeSdkInterface.requestHypeToStart(getApplicationContext());
+                break;
+        }
     }
 
     private void setButtonListeners() {
