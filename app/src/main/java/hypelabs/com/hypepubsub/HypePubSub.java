@@ -1,8 +1,10 @@
 package hypelabs.com.hypepubsub;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -290,9 +292,12 @@ public class HypePubSub
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        if(notificationManager != null) {
-            notificationManager.notify(id, builder.build());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // In newer Android version we must create the channel first
+            NotificationChannel mChannel = new NotificationChannel(HpsConstants.NOTIFICATIONS_CHANNEL, HpsConstants.NOTIFICATIONS_CHANNEL, NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(mChannel);
         }
+        notificationManager.notify(id, builder.build());
 
         notificationID++;
     }

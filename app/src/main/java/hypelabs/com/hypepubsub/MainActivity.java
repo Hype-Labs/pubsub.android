@@ -81,6 +81,10 @@ public class MainActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case HpsConstants.REQUEST_ACCESS_COARSE_LOCATION_ID:
+                // If the permission is not granted the Hype SDK starts but BLE transport
+                // will not be active. Regardless of this, this callback must be implemented
+                // because the Hype SDK should only start after the permission request being
+                // concluded.
                 HypeSdkInterface hypeSdkInterface = HypeSdkInterface.getInstance();
                 hypeSdkInterface.requestHypeToStart(getApplicationContext());
                 break;
